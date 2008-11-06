@@ -15,13 +15,15 @@ class KtvFunctions {
     var $password;
     var $cookie;
     var $traces;
+    var $erotic;
 
     function KtvFunctions($cookie = "", $traces = false) {
-        global $USERNAME, $PASSWORD;
+        global $USERNAME, $PASSWORD, $ALLOW_EROTIC;
         $this->username = $USERNAME;
         $this->password = $PASSWORD;
         $this->cookie   = $cookie;
         $this->traces   = $traces;
+        $this->erotic   = $ALLOW_EROTIC;
     }
 
     function trace($msg) {
@@ -68,7 +70,10 @@ class KtvFunctions {
 
     function getStreamUrl($id) {
         $this->trace("Getting URL of stream $id");
-        $url = "http://iptv.kartina.tv/?m=channels&act=get_stream_url&cid=$id";
+        $url  = "http://iptv.kartina.tv/?m=channels&act=get_stream_url&cid=$id";
+        if ($this->erotic) {
+            $url .= "&protect_code=$this->password";
+        }
         $reply = getPageContent($url, $this->cookie);
         if (! $this->isAuthorized($reply)) {
             $this->authorize(); 
