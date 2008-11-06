@@ -37,15 +37,15 @@ session_start();
 
     $content = $ktvFunctions->getStreamUrl($id);
     $url = preg_replace('/.*url="http(\/ts|)([^ "]*).*/', 'http$2', $content);
-    
-    if ($url) {    
+
+    if (0 === strpos($url, "http://")) {
         # Combination onFocusLoad + onFocusSet forces this link to be 
         # loaded automatically and when the video/audio will be stopped
         # the link written in onFocusSet will be immediately activated
         print "<a href=\"$url\" onFocusLoad onFocusSet=\"returnToIndex\"";
     
         # depending on channel id we distinguish video and audio
-        print $id > 90 ? " aod>" : " vod>\n";
+        print ($id > 90 && $id < 120) ? " aod>" : " vod>\n";
 
         # display channel logo
         $imgUrl="http://www.kartina.tv/images/icons/channels/$id.gif";
@@ -58,8 +58,8 @@ session_start();
         print '<a href="index.php" name="returnToIndex" onFocusLoad>';
         print "Returning to channel selection...</a><br>\n";
     } else {
-        print "Cannot get picture from kartina.tv!\n";
-        print "Press RETURN to get back to channels selection\n";
+        print "Channel is closed or temporary unavailable!<br>\n";
+        print "Press <b>RETURN</b> to get back to channels selection\n";
     }
 ?>
 </td></tr></table></div>
