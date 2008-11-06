@@ -7,7 +7,11 @@ the IP-TV channels broadcasted by katrina.tv provider.
 
 Changes
 -------
-Changes in version 0.6:
+Changes in version 0.6.1:
+- Support of adult channels
+- Better detection of wrong responses and closed channels
+
+Changes in version 0.6.0:
 - Code is completely rewritten on PHP
 - Pages support for faster channels browsing
 - Optimization of channles list loading
@@ -17,7 +21,7 @@ Changes in version 0.6:
 - New keyboard behaviour
 - Comments in code are partially lost
 
-Changes in version 0.5:
+Changes in version 0.5.0:
 - This README.txt provided
 - Short-cuts support:
   1. Key LEFT:  10 channels up
