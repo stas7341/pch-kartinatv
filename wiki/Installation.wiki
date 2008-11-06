@@ -1,4 +1,5 @@
 #summary How to install the plugin.
+#labels Phase-Implementation
 = Installation =
 
  # Copy the `katrina.tv` folder to the root of the internal hard disk. If you want to install it to any other location you will have to update your MSP URL accordingly.
