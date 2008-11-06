@@ -1,14 +1,13 @@
 #summary How to use the plugin
-
-= Usage =
+#labels Phase-Support,Featured
 
 Pickup wished channel in the channels list and press *ENTER* to play it. To quit playing press *STOP*. 
 When the channel is closing you can see
 for a couple of seconds a *kartina.tv* logo. Simply wait and you will be
 forwarded to channels list automatically.
 
-= Keyboard Assignment =
-== During Channel selection ==
+== Keyboard Assignment ==
+==== During Channel selection ====
 
 || *KEY*    || *Action* || 
 || *UP*     || Go one channel up ||
@@ -21,5 +20,5 @@ forwarded to channels list automatically.
 || *SOURCE* || Leave the plugin ||
     
 
-== During playback ==
+==== During playback ====
 Just usual short-cuts, no extensions
