@@ -1,0 +1,11 @@
+#summary How to install the plugin.
+= Installation =
+
+ # Copy the `katrina.tv` folder to the root of the internal hard disk. If you want to install it to any other location you will have to update your MSP URL accordingly.
+ # Edit `auth.inc` and write there your account settings obtained from *kartina.tv*
+ # Add a new MSP entry for this plugin. 
+   To do that enter the `NMT->Web Services->Add/Edit` and write there following:
+   * Service Name: `Kartina.TV`
+   * Service URL: `http://localhost:8088/stream/file=/share/kartina.tv/index.php`
+   Check the URL against the path where you've put the katrina.tv folder.
+   Please note that the equal sign "=" can be entered only via USB-Keyboard.
