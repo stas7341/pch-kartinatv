@@ -1,5 +1,5 @@
 #summary How to install the plugin.
-#labels Phase-Implementation,Featured
+#labels Phase-Deploy,Featured
 
  * Copy the *katrina.tv* folder to the root of the internal hard disk. If you want to install it to any other location you will have to update your MSP URL accordingly.
  * Edit *auth.inc* and write there your account settings obtained from *kartina.tv*
