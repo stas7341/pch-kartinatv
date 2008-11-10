@@ -6,10 +6,9 @@
 # Author: consros 2008                                                      #
 #############################################################################
 
+require_once "settings.inc";
 require_once "tools.inc";
 require_once "channelsParser.inc";
-
-define("ITEMS_PER_PAGE", 15);
 
 function displayHtmlHeader() {
 ?>
@@ -98,32 +97,32 @@ function displayChannel($channel, $firstChannelNumber, $lastChannelNumber) {
 
 function addShortcuts(
     $channelsAmount, $firstChannelNumber, 
-    $lastChannelNumber, $displayNames = false) 
+    $lastChannelNumber, $hideNames = EMBEDDED_BROWSER) 
 {
     # support for page up operation
     $pageupRef = ($firstChannelNumber > 1) ? 
         $firstChannelNumber - 1 : $channelsAmount;
     print '<a href="' . $_SERVER['PHP_SELF'] . '?selectedChannel=';
     print $pageupRef . '" name="pageup" TVID="PGUP" onFocusLoad>';
-    print ($displayNames ? " PGUP " : "") . "</a>\n";
+    print ($hideNames ? "" : " PGUP ") . "</a>\n";
 
     # support for page down operation
     $pagedownRef = ($lastChannelNumber < $channelsAmount) ?
         $lastChannelNumber + 1 : 1;
     print '<a href="' . $_SERVER['PHP_SELF'] . '?selectedChannel=';
     print $pagedownRef . '" name="pagedown" TVID="PGDN" onFocusLoad>';
-    print ($displayNames ? " PGDN " : "") . "</a>\n";
+    print ($hideNames ? "" : " PGDN ") . "</a>\n";
 
     # support for home operation
     print '<a href="' . $_SERVER['PHP_SELF'] . '?selectedChannel=';
     print '1" TVID="TAB">';
-    print ($displayNames ? " HOME " : "") . "</a>\n";
+    print ($hideNames ? "" : " HOME ") . "</a>\n";
     
     # support for direct channel selection
     for ($i = 10; $i < $channelsAmount; $i += 10) {
         print '<a href="' . $_SERVER['PHP_SELF'] . '?selectedChannel=';
         print $i . '" TVID="' . ($i / 10) . "\">";
-        print ($displayNames ? " $i " : "") . "</a>\n";
+        print ($hideNames ? "" : " $i ") . "</a>\n";
     }
  }
 
@@ -141,13 +140,14 @@ function displayChannelsList($channelsParser) {
 <table class="channels">
 
 <?php
+    # $_SERVER['HTTP_USER_AGENT']
     $itemsToDisplay     = array(); # itmes to be displayed on page
     $firstChannelNumber = 0;       # first displayed channel on page
     $lastChannelNumber  = 0;       # last displayed channel on page
     $currentEntry       = 0;
     $foundSelected      = false;
     foreach ($channelsParser->categories as $category) {
-        if ($currentEntry % ITEMS_PER_PAGE == 0) {
+        if ($currentEntry % CL_ITEMS_PER_PAGE == 0) {
             if ($foundSelected) {
                 break;
             } else {
@@ -158,7 +158,7 @@ function displayChannelsList($channelsParser) {
         $itemsToDisplay[] = $category;
         $currentEntry++;
         foreach ($category->channels as $channel) {
-            if ($currentEntry % ITEMS_PER_PAGE == 0) {
+            if ($currentEntry % CL_ITEMS_PER_PAGE == 0) {
                 if ($foundSelected) {
                     break;
                 } else {
@@ -190,10 +190,10 @@ function displayChannelsList($channelsParser) {
     }
 
     # time for shortcuts
-    print "<th colspan=\"7\" align=\"center\">\n";
+    print "<tr><th colspan=\"7\" align=\"center\">\n";
     addShortcuts($channelsParser->channelsAmount, 
         $firstChannelNumber, $lastChannelNumber);
-    print "</th>\n";
+    print "</th></tr>\n";
     print "</table>\n";
     
     if ($lastChannelNumber == $channelsParser->channelsAmount) {

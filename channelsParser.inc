@@ -7,6 +7,21 @@
 # Author: consros 2008                                                      #
 #############################################################################
 
+
+class Program {
+    var $name;
+    var $beginTime;
+    var $endTime;
+
+    function Program($name, $beginTime, $endTime) {
+        $this->name = $name;
+        if (isset ($beginTime) && isset ($endTime)) {
+            $this->beginTime = strtotime($beginTime);
+            $this->endTime   = strtotime($endTime);
+        }
+    }
+}
+
 class Channel {
     var $number;
     var $id;
@@ -24,6 +39,9 @@ class Channel {
         if (isset ($beginTime) && isset ($endTime)) {
             $this->beginTime = strtotime($beginTime);
             $this->endTime   = strtotime($endTime);
+        }
+        if (isset($program)) {
+            $this->programClass = new Program($program, $beginTime, $endTime);
         }
     }
 }

@@ -8,10 +8,9 @@
 # Author: consros 2008                                                      #
 #############################################################################
 
+require_once "settings.inc";
 require_once "channelsList.inc";
 require_once "ktvFunctions.inc";
-
-define("CL_UPDATE_INTERVAL", 60*1);
 
 session_start();
 

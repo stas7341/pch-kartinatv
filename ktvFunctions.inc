@@ -7,36 +7,29 @@
 # Author: consros 2008                                                      #
 #############################################################################
 
+require_once "settings.inc";
 require_once "tools.inc";
-require_once "auth.inc";
 
 class KtvFunctions {
-    var $username;
-    var $password;
     var $cookie;
     var $traces;
-    var $erotic;
 
     function KtvFunctions($cookie = "", $traces = false) {
-        global $USERNAME, $PASSWORD, $ALLOW_EROTIC;
-        $this->username = $USERNAME;
-        $this->password = $PASSWORD;
         $this->cookie   = $cookie;
         $this->traces   = $traces;
-        $this->erotic   = $ALLOW_EROTIC;
     }
 
     function trace($msg) {
         if ($this->traces) {
-            print "DEBUG: $this->username: $msg\n";
+            print "DEBUG: " . USERNAME . ": $msg\n";
         }
     }
 
     function authorize() {
         $this->trace("Authorization started");
         $request  = "act=login";
-        $request .= "&code_login=$this->username";
-        $request .= "&code_pass=$this->password";
+        $request .= "&code_login=" . USERNAME;
+        $request .= "&code_pass="  . PASSWORD;
         $this->cookie = getCookies("http://iptv.kartina.tv", $request);
         strpos($this->cookie, "SSID") or 
             die ("Authorization failed!\nReturned: $this->cookie");
@@ -54,35 +47,40 @@ class KtvFunctions {
         return $ok;
     }
 
-    function getChannelsList() {
-        $this->trace("Getting channels list");
-        $url = "http://iptv.kartina.tv/?m=channels&act=get_list_xml";
+    function getData($url, $name) {
+        $this->trace("Getting $name");
         $reply = getPageContent($url, $this->cookie);
         if (! $this->isAuthorized($reply)) {
             $this->authorize(); 
-            $this->trace("Second try to get channels list");
+            $this->trace("Second try to get $name");
             $reply = getPageContent($url, $this->cookie);
             $this->isAuthorized($reply) or 
-                die ("Failed to get channels list:\n$reply");
+                die ("Failed to get $name:\n$reply");
         }
         return $reply;
     }
 
+    function getChannelsList() {
+        $url  = "http://iptv.kartina.tv/";
+        $url .= "?m=channels&act=get_list_xml";
+        return $this->getData($url, "channels list");
+    }
+
     function getStreamUrl($id) {
-        $this->trace("Getting URL of stream $id");
-        $url  = "http://iptv.kartina.tv/?m=channels&act=get_stream_url&cid=$id";
-        if ($this->erotic) {
-            $url .= "&protect_code=$this->password";
+        $url  = "http://iptv.kartina.tv/";
+        $url .= "?m=channels&act=get_stream_url&cid=$id";
+        if (ALLOW_EROTIC) {
+            $url .= "&protect_code=" . PASSWORD;
         }
-        $reply = getPageContent($url, $this->cookie);
-        if (! $this->isAuthorized($reply)) {
-            $this->authorize(); 
-            $this->trace("Second try to get URL of stream $id");
-            $reply = getPageContent($url, $this->cookie);
-            $this->isAuthorized($reply) or 
-                die ("Failed to get URL of stream $id:\n$reply");
-        }
-        return $reply;
+        return $this->getData($url, "URL of stream $id");
+    }
+
+    function getEpg($id, $date = null) {
+        $date = isset($date) ? 
+            date(EPG_DATE_FORMAT, $date) : date(EPG_DATE_FORMAT); # 091108
+        $url  = "http://iptv.kartina.tv/";
+        $url .= "?m=epg&act=show_day_xml&day=$date&cid=$id";
+        return $this->getData($url, "EPG for channel $id");
     }
 }
 ?>

@@ -22,15 +22,19 @@ require_once "ktvFunctions.inc";
 <table><tr><td class="page" align="center">
 <textarea cols="110" rows="27">
 <?php
+    # 091108
+    print "Hi there " . date('dmy', strtotime("Nov 09, 2008 22:00:00")) . "\n";
+
     $ktvFunctions = new KtvFunctions("", true);
-    print $ktvFunctions->getChannelsList() . "\n\n\n";
+    # print $ktvFunctions->getChannelsList() . "\n\n\n";
    
     $id = isset($HTTP_GET_VARS['id']) ? $HTTP_GET_VARS['id'] : 7;
-    $content = $ktvFunctions->getStreamUrl($id);
+    #$content = $ktvFunctions->getStreamUrl($id);
+    $content = $ktvFunctions->getEpg($id);
     print $content . "\n\n\n";
     
-    $url = preg_replace('/.*url="http(\/ts|)([^ "]*).*/', 'http$2', $content);
-    print $url . "\n";
+    #$url = preg_replace('/.*url="http(\/ts|)([^ "]*).*/', 'http$2', $content);
+    #print $url . "\n";
     
 ?>
 </textarea>
