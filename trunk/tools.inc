@@ -132,17 +132,40 @@ function getCookies($url, $request, $headerExt = "") {
     return $cookies;
 }
 
-function cutString($str, $limit) {
-    if (strlen($str) < $limit) {
-        return $str;
+function ut8_strlen($str) {
+    return preg_match_all('/./uSs', $str, $out);
+}
+
+function ut8_substr($str, $start, $length = null) {    
+    if (! isset($length)) {
+        return preg_replace('/^.{'.$start.'}(.*)$/uSs', '$1', $str);
+    } else if ($length <= 0) {
+        return "";
     }
-    $str = substr($str, 0, $limit);
-    $index = strpos(strrev($str), " ");
-    if (! $index) {
+    return preg_replace('/^.{'.$start.'}(.{'.$length.'}).*$/uSs', '$1', $str);
+}
+
+function utf8_cutByPixel($str, $pixels, $charWidth = 10) {
+    $colors = array("#dde5f8", "#bbbed9", "#99a1bd", "#6d80a0");
+    $limit = $pixels / $charWidth;
+    if ($limit <= 0) {
+        return "";
+    }
+    $len = ut8_strlen($str);
+    if ($len <= $limit) {
         return $str;
-    } 
-    $index = strlen($str) - $index;
-    return substr($str, 0, $index);
+    }    
+
+    $wishedStart = $limit - count($colors);
+    for ($start = $wishedStart; $start < 0; $start++);
+    
+    $res = ut8_substr($str, 0, $start);
+    for ($i = $start; $i < $limit; $i++) {
+        $res .= '<font color="' . $colors[$i - $wishedStart] . '">';
+        $res .= ut8_substr($str, $i, 1) . "</font>";
+    }
+
+    return $res;
 }
 
 ?>

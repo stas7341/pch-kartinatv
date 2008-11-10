@@ -53,7 +53,8 @@ function displayCategory($category) {
 function displayChannel($channel, $firstChannelNumber, $lastChannelNumber) {
     $number   = ($channel->number < 10 ? "0" : "") . $channel->number;
     $logo     = "http://iptv.kartina.tv/img/ico/24/$channel->id.gif";
-    $program  = cutString($channel->program, 60);
+    $name     = utf8_cutByPixel($channel->name, 105);
+    $program  = utf8_cutByPixel($channel->program, 350);
     $linkUrl  = "openChannel.php?id=$channel->id&number=$channel->number";
     $linkUrl .= "&title=" . urlencode($channel->name);
     $linkExt  = "name=\"channel-$channel->number\"";
@@ -85,10 +86,10 @@ function displayChannel($channel, $firstChannelNumber, $lastChannelNumber) {
     if ("" == $program && "" == $time) {
         print "<th colspan=\"3\" class=\"longName\">";
         print "<a href=\"$linkUrl\" $linkExt>";
-        print "$channel->name</a></th>\n";
+        print "$name</a></th>\n";
     } else {
         print "<td class=\"name\"><a href=\"$linkUrl\" $linkExt>";
-        print "$channel->name</a></td>\n";
+        print "$name</a></td>\n";
         print "<td class=\"program\">$program</td>\n";
         print "<td class=\"time\" align=\"right\">$time</td>\n";
     }
