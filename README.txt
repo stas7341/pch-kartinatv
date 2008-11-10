@@ -7,6 +7,12 @@ the IP-TV channels broadcasted by katrina.tv provider.
 
 Changes
 -------
+Changes in version 0.6.2:
+- New string trancation with gradiental ending
+- Functions to get channel EPG xml
+- Non-gaya browser support
+- VLC-plugin support on openChannel.php page
+
 Changes in version 0.6.1:
 - Support of adult channels
 - Better detection of wrong responses and closed channels
