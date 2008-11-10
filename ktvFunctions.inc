@@ -32,9 +32,9 @@ class KtvFunctions {
         $request .= "&code_pass="  . PASSWORD;
         $this->cookie = getCookies("http://iptv.kartina.tv", $request);
         strpos($this->cookie, "SSID") or 
-            die ("Authorization failed!\nReturned: $this->cookie");
+            die (USERNAME . ": Authorization of user failed!");
         strpos($this->cookie, "=deleted") and 
-            die ("Authorization failed!\nWrong request: $this->cookie");
+            die (USERNAME . ": Wrong authorization request");
         $this->trace("Authorization returned: $this->cookie");
     }
 
