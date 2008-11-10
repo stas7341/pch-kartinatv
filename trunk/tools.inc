@@ -38,9 +38,10 @@ function getPageContent($url, $cookie) {
     # support for broken DNS in PCH version of PHP
     $parsedUrl = parse_url($url);
     $host = $parsedUrl['host'];
-    $ip   = exec("ping -c1 -q $host");
-    $ip   = preg_replace('/.*\((\d+\.\d+\.\d+\.\d+)\).*/', '$1', $ip);
-    $url  = preg_replace("/$host/", "$ip", $url);
+    exec("ping -c1 -q $host", &$ip);
+    $ip  = implode("", $ip);
+    $ip  = preg_replace('/.*\((\d+\.\d+\.\d+\.\d+)\).*/', '$1', $ip);
+    $url = preg_replace("/$host/", "$ip", $url);
     
     $opts = array(
         'http' => array(
@@ -97,8 +98,9 @@ function getCookies($url, $request, $headerExt = "") {
     $path = $parsedUrl['path'];
     
     # support for broken DNS in PCH version of PHP
-    $ip   = exec("ping -c1 -q $host");
-    $ip   = preg_replace('/.*\((\d+\.\d+\.\d+\.\d+)\).*/', '$1', $ip);
+    exec("ping -c1 -q $host", &$ip);
+    $ip = implode("", $ip);
+    $ip = preg_replace('/.*\((\d+\.\d+\.\d+\.\d+)\).*/', '$1', $ip);
     if ("" == $path) {
         $path = "/";
     }

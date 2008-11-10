@@ -43,7 +43,7 @@ Installation
    If you want to install it to any other location you will have to update 
    your MSP URL accordingly.
 
-2. Edit auth.inc and write there your account settings obtained from kartina.tv
+2. Edit settings.inc and write there your account settings obtained from kartina.tv
 
 3. Add a new MSP entry for this plugin. 
    To do that enter the NMT->Web Services->Add/Edit and write there following:
