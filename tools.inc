@@ -147,7 +147,7 @@ function ut8_substr($str, $start, $length = null) {
 
 function utf8_cutByPixel($str, $pixels, $charWidth = 10) {
     $colors = array("#dde5f8", "#bbbed9", "#99a1bd", "#6d80a0");
-    $limit = $pixels / $charWidth;
+    $limit = (int) ($pixels / $charWidth);
     if ($limit <= 0) {
         return "";
     }

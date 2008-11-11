@@ -25,6 +25,13 @@ require_once "ktvFunctions.inc";
     # 091108
     print "Hi there " . date('dmy', strtotime("Nov 09, 2008 22:00:00")) . "\n";
 
+    # gd_info();
+    # // Create the image
+    # $im = ImageCreateFrompng("images/myImg.png");
+    #$image = imagecreatetruecolor(80,60) 
+    # or die('Cannot create image'); 
+    # $yellow = imagecolorallocate($im, 255, 255, 0);
+
     $ktvFunctions = new KtvFunctions("", true);
     # print $ktvFunctions->getChannelsList() . "\n\n\n";
    
