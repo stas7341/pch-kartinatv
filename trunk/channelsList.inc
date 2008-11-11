@@ -84,7 +84,7 @@ function displayChannel($channel, $firstChannelNumber, $lastChannelNumber) {
 
     # for channels with less information a longer channel name is used
     if ("" == $program && "" == $time) {
-        print "<th colspan=\"3\" class=\"longName\">";
+        print "<th colspan=\"3\" class=\"longName\" align=\"left\">";
         print "<a href=\"$linkUrl\" $linkExt>";
         print "$name</a></th>\n";
     } else {
