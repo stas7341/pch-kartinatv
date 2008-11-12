@@ -12,9 +12,11 @@ forwarded to channels list automatically.
 || *KEY*    || *Action* || 
 || *UP*     || Go one channel up ||
 || *DOWN*   || Go one channel down ||
-|| *LEFT*   || Go to first channel displayed on the screen ||
-|| *RIGHT*  || Go to last channel displayed on the screen ||
+|| *LEFT*   || Go to first channel displayed on the screen, on first channel = *PGUP* ||
+|| *RIGHT*  || Go to last channel displayed on the screen, on last channel = *PGDOWN* ||
 || *MENU*   || Go to channel 1 ||
+|| *PGUP*   || Go one page up ||
+|| *PGDOWN* || Go one page down ||
 || *1-7*    || Go to channel 10,20,30,40,50,60 or 70 ||
 || *ENTER*  || Play the channel ||
 || *SOURCE* || Leave the plugin ||
