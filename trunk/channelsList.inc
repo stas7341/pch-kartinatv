@@ -53,22 +53,26 @@ function displayCategory($category) {
 function displayChannel($channel, $firstChannelNumber, $lastChannelNumber) {
     $number   = ($channel->number < 10 ? "0" : "") . $channel->number;
     $logo     = "http://iptv.kartina.tv/img/ico/24/$channel->id.gif";
-    $name     = utf8_cutByPixel($channel->name, 105);
-    $program  = utf8_cutByPixel($channel->program, 350);
+    $name     = utf8_cutByPixel($channel->name, 105, true);
+    $program  = utf8_cutByPixel($channel->program, 350, false);
     $linkUrl  = "openChannel.php?id=$channel->id&number=$channel->number";
     $linkUrl .= "&title=" . urlencode($channel->name);
     $linkExt  = "name=\"channel-$channel->number\"";
-    $linkExt .= "\nonKeyLeftSet=\"channel-$firstChannelNumber\"";
-    $linkExt .= "\nonKeyRightSet=\"channel-$lastChannelNumber\"";
 
     # for first channel it's allowed to call page up with up button
     if ($firstChannelNumber == $channel->number) {
         $linkExt .= "\nonKeyUpSet=\"pageup\"";
+        $linkExt .= "\nonKeyLeftSet=\"pageup\"";
+    } else {
+        $linkExt .= "\nonKeyLeftSet=\"channel-$firstChannelNumber\"";
     }
 
     # for last channel it's allowed to call page down with down button
     if ($lastChannelNumber == $channel->number) {
         $linkExt .= "\nonKeyDownSet=\"pagedown\"";
+        $linkExt .= "\nonKeyRightSet=\"pagedown\"";
+    } else {
+        $linkExt .= "\nonKeyRightSet=\"channel-$lastChannelNumber\"";
     }
     
     # add time stamps only if they are provided

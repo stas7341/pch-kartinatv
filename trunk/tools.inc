@@ -145,24 +145,44 @@ function ut8_substr($str, $start, $length = null) {
     return preg_replace('/^.{'.$start.'}(.{'.$length.'}).*$/uSs', '$1', $str);
 }
 
-function utf8_cutByPixel($str, $pixels, $charWidth = 10) {
+function utf8_getAllowedLength($str, $pixels, $bold = false) {
+    $rusUp = "[\x{0410}-\x{042F}]";
+    $rusLo = "[\x{0430}-\x{044F}]";
+    
+    $length = preg_match_all(
+        "/([A-Z])|([a-z])|($rusUp)|($rusLo)|(.)/uSs", $str, $out);
+
+    $curr = 0;
+    for ($i = 0; $i < $length && $curr <= $pixels; $i++) {
+        $val = 0;
+        $val  += $out[1][$i] == "" ? 0 : 10.0;
+        $val  += $out[2][$i] == "" ? 0 :  7.5;
+        $val  += $out[3][$i] == "" ? 0 : 12.0;
+        $val  += $out[4][$i] == "" ? 0 :  8.5;
+        $val  += $out[5][$i] == "" ? 0 :  7.0;       
+        $curr += $bold ? ($val * 1.3) : $val;
+    }
+
+    return $i == $length ? TRUE : $i;
+}
+
+function utf8_cutByPixel($str, $pixels, $bold = false) {  
     $colors = array("#dde5f8", "#bbbed9", "#99a1bd", "#6d80a0");
-    $limit = (int) ($pixels / $charWidth);
-    if ($limit <= 0) {
+    $limit = utf8_getAllowedLength($str, $pixels, $bold);
+    if (TRUE === $limit) {
+        return $str;
+    } else if (0 === $limit) {
         return "";
     }
-    $len = ut8_strlen($str);
-    if ($len <= $limit) {
-        return $str;
-    }    
 
     $wishedStart = $limit - count($colors);
     for ($start = $wishedStart; $start < 0; $start++);
     
     $res = ut8_substr($str, 0, $start);
     for ($i = $start; $i < $limit; $i++) {
+        $char = ut8_substr($str, $i, 1);
         $res .= '<font color="' . $colors[$i - $wishedStart] . '">';
-        $res .= ut8_substr($str, $i, 1) . "</font>";
+        $res .= ($char == " " ? "&nbsp;" : $char) . "</font>";
     }
 
     return $res;
