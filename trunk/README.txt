@@ -14,6 +14,8 @@ Changes in version 0.6.2:
 - VLC-plugin support on openChannel.php page
 - Left/Right on first/last channel act as PgUp/PgDn
 - index.htm to open plugin via HDD browser not only Web Services
+- all configuration is now performed via settings.inc
+- auth.inc removed as unused
 
 Changes in version 0.6.1:
 - Support of adult channels
