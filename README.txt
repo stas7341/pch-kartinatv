@@ -12,6 +12,7 @@ Changes in version 0.6.2:
 - Functions to get channel EPG xml
 - Non-gaya browser support
 - VLC-plugin support on openChannel.php page
+- Left/Right on first/last channel act as PgUp/PgDn
 
 Changes in version 0.6.1:
 - Support of adult channels
@@ -71,7 +72,11 @@ Keyboard Assignment
     UP     = Go one channel up
     DOWN   = Go one channel down
     LEFT   = Go to first channel displayed on the screen
+             On first channel = PGUP
     RIGHT  = Go to last channel displayed on the screen
+             On last channel = PGDOWN
+    PGUP   = go one page up
+    PGDOWN = go one page down
     MENU   = Go to channel 1
     1-7    = Go to channel 10,20,30,40,50,60 or 70
     ENTER  = Play the channel
