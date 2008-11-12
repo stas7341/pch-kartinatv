@@ -13,6 +13,7 @@ Changes in version 0.6.2:
 - Non-gaya browser support
 - VLC-plugin support on openChannel.php page
 - Left/Right on first/last channel act as PgUp/PgDn
+- index.htm to open plugin via HDD browser not only Web Services
 
 Changes in version 0.6.1:
 - Support of adult channels
