@@ -70,6 +70,9 @@ function displayChannel($channel, $firstChannelNumber,
     $linkUrl  = "openChannel.php?id=$channel->id&number=$channel->number";
     $linkUrl .= "&title=" . urlencode($channel->name);
     $linkExt  = "name=\"channel-$channel->number\"";
+    
+    # info button on chanel
+    $linkExt .= "\nalt=\"" . htmlspecialchars($channel->program) . '"';
 
     # for first channel it's allowed to call page up with up button
     if ($firstChannelNumber == $channel->number) {

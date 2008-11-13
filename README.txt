@@ -8,11 +8,12 @@ the IP-TV channels broadcasted by katrina.tv provider.
 Changes
 -------
 Changes in version 0.6.3:
-- Details panel feature for full program name display. 
-  Switched off by default because of substantive slow down of browsing.
-- Details panel can be switched on/off via REPEAT button.
+- Details panel feature for full program name display
+  Switched off by default because of substantive slow down of browsing
+- Details panel can be switched on/off via REPEAT button
+- INFO button shows full program name in popup
 - Colored buttons RED,GREEN,YELLOW and BLUE can now be assigned 
-  to channels via settings.inc file.
+  to channels via settings.inc file
 
 Changes in version 0.6.2:
 - New string trancation with gradiental ending
@@ -89,8 +90,9 @@ Keyboard Assignment
     PGDOWN = Go one page down
     MENU   = Go to channel 1
     1-7    = Go to channel 10,20,30,40,50,60 or 70
-    RED,GREEN,YELLOW,BLUE = Go to channels defined in settings.inc
+    RED,GREEN,YELLOW,BLUE = Go to favourite channels defined in settings.inc
     REPEAT = Toggle details panel
+    INFO   = Show full program name in popup
     ENTER  = Play the channel
     SOURCE = Leave the plugin
     
