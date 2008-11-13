@@ -27,10 +27,12 @@ define("ALLOW_EROTIC", TRUE);
 define("CL_UPDATE_INTERVAL", 60*1);
 
 # so much channels should be displayed per page in channels list
+# channel groups (headers) are also counted as channels
+# if details panel is shown then this value will be less on two
 define("CL_ITEMS_PER_PAGE", 15);
 
 # defines whether the details panel is to be displayed
-define("CL_DETAILS_PANEL", FALSE);
+define("CL_SHOW_DETAILS_PANEL", FALSE);
 
 # favourite channels on colored buttons
 define("CL_CHANNEL_RED",    21);

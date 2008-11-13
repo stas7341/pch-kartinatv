@@ -5,8 +5,25 @@
 # Author: consros 2008                                                      #
 #############################################################################
 
+require_once "settings.inc";
 require_once "tools.inc";
 require_once "ktvFunctions.inc";
+
+function toggleBooleanOption($filename, $optionName) {
+    $file = fopen($filename, "r") or exit("Unable to read $filename!");
+    while(! feof($file)) {
+        $line = fgets($file);
+        if (preg_match('/^\s*define\s*\(\s*"' . $optionName . '"/', $line)) {
+            $line = preg_replace('/,\s*.*?\);/', 
+                ', '. (constant("$optionName") ? 'FALSE':'TRUE') .');', $line);
+        }
+        $content .= $line;
+    }
+    fclose($file);
+    $file = fopen($filename, "w") or exit("Unable to write $filename!");
+    fputs($file, $content);
+    fclose($file);
+}
 
 ?>
 <html>

@@ -29,7 +29,7 @@ if (! isset($_SESSION['lastUpdate']) ||
     $_SESSION['lastUpdate'] = time();
 } else {
 
-    # use rememberes list
+    # use remembered list
     $rawList = $_SESSION['channelsList'];
 }
 
@@ -48,7 +48,15 @@ $channelsParser->parse($rawList);
 # $channelsParser->parseFile('channels.xml');
 $channelsParser->selectedChannel = $selectedChannel;
 
+# decide whether to show the details panel
+$showDetailsPanel = isset($HTTP_GET_VARS['showDetailsPanel']) ?
+    $HTTP_GET_VARS['showDetailsPanel'] : $_SESSION['showDetailsPanel'];
+if (! isset($showDetailsPanel)) {
+    $showDetailsPanel = CL_SHOW_DETAILS_PANEL;
+}
+$_SESSION['showDetailsPanel'] = $showDetailsPanel;
+
 # show channels list to user
-displayChannelsList($channelsParser);
+displayChannelsList($channelsParser, $showDetailsPanel);
 
 ?>
