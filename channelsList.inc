@@ -30,7 +30,7 @@ function displayCustomStyles() {
     th.longName    { width:  560px; background-color: #005B95; }
     td.program     { width:  350px; font-weight : normal; }
     td.time        { width:  105px; }
-    th.details     { width:  610px; height:  70px; background-color: #005B95; }
+    th.details     { width:  610px; height: 70px; font-size: 12pt; background-color: #005B95; }
 </style>
 <?php
 }
