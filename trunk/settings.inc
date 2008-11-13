@@ -29,6 +29,15 @@ define("CL_UPDATE_INTERVAL", 60*1);
 # so much channels should be displayed per page in channels list
 define("CL_ITEMS_PER_PAGE", 15);
 
+# defines whether the details panel is to be displayed
+define("CL_DETAILS_PANEL", FALSE);
+
+# favourite channels on colored buttons
+define("CL_CHANNEL_RED",    21);
+define("CL_CHANNEL_GREEN",  29);
+define("CL_CHANNEL_YELLOW", 39);
+define("CL_CHANNEL_BLUE",   46);
+
 # size of video window on open channel page
 define("OC_VIDEO_WIDTH",  352);
 define("OC_VIDEO_HEIGHT", 288);

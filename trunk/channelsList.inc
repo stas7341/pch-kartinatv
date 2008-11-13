@@ -30,23 +30,34 @@ function displayCustomStyles() {
     th.longName    { width:  560px; background-color: #005B95; }
     td.program     { width:  350px; font-weight : normal; }
     td.time        { width:  105px; }
+    th.details     { width:  610px; height:  70px; background-color: #005B95; }
 </style>
+<?php
+}
+
+function displayDetailsPanel() {
+?>
+    <tr><th colspan="7"><table border="1" cellspacing="0" cellpadding="0"><tr>
+    <th class="details" align="center">
+    <a href="" id="details"></a>Kartina TV</th>
+    </tr></table></th></tr>
 <?php
 }
 
 function displayCredits() {
 ?>
-    <br><hr>
+    <hr>
     <div align="center">Kartina.TV for 
     <font color="white"> Popcorn Hour</font> by <b>consros</b> 
     <font color="white"> (c) 2008</font></div>
-    <br>
 <?php
 }       
 
 function displayCategory($category) {
+    $name = ($category->color == "#efefef") ? 
+        "<font color=\"gray\">$category->name</font>" : $category->name;
     print "\n<tr bgcolor=\"$category->color\">\n";
-    print "<th colspan=\"7\" align=\"center\">$category->name</th>\n";
+    print "<th colspan=\"7\" align=\"center\">$name</th>\n";
     print "</tr>\n";
 }
 
@@ -73,7 +84,15 @@ function displayChannel($channel, $firstChannelNumber, $lastChannelNumber) {
     } else {
         $linkExt .= "\nonKeyRightSet=\"channel-$lastChannelNumber\"";
     }
-    
+
+    if (true === CL_DETAILS_PANEL) {
+        $text = "" == $channel->program ? 
+            'Kartina TV' : htmlspecialchars($channel->program);
+        $linkExt .= "\nonFocus=\"updateDetails('$text')\"";
+        $linkExt .= "\nonMouseOver=\"updateDetails('$text')\"";
+        $linkExt .= "\nonMouseOut=\"updateDetails('Kartina TV')\"";
+    }
+
     # add time stamps only if they are provided
     if (isset($channel->beginTime) && isset($channel->endTime)) {
         $start = date('H:i', $channel->beginTime);
@@ -104,7 +123,6 @@ function addShortcuts(
     $channelsAmount, $firstChannelNumber, 
     $lastChannelNumber, $hideNames = EMBEDDED_BROWSER) 
 {
-    # support for page up operation
     $pageupRef = ($firstChannelNumber > 1) ? 
         $firstChannelNumber - 1 : $channelsAmount;
     print '<a href="' . $_SERVER['PHP_SELF'] . '?selectedChannel=';
@@ -129,7 +147,15 @@ function addShortcuts(
         print $i . '" TVID="' . ($i / 10) . "\">";
         print ($hideNames ? "" : " $i ") . "</a>\n";
     }
- }
+
+    # support for colored buttons
+    foreach(array("RED", "GREEN", "YELLOW", "BLUE") as $color) {
+        print '<a href="' . $_SERVER['PHP_SELF'] . '?selectedChannel=';
+        print constant("CL_CHANNEL_" . $color) . '" TVID="' . $color . '">';
+        print '<font color="' . $color . '">';
+        print ($hideNames ? "" : " $color ") . "</font></a>\n";
+    }    
+}
 
 function displayChannelsList($channelsParser) {
 ?>
@@ -138,6 +164,16 @@ function displayChannelsList($channelsParser) {
 <? displayHtmlHeader();   ?>
 <? displayCommonStyles(); ?>
 <? displayCustomStyles(); ?>
+
+<script type="text/javascript">
+    function updateDetails(text) {
+        var s = document.styleSheets[0].cssRules[0].style;
+        if (s.visibility != "hidden") {
+            document.getElementById('details').nextSibling.nodeValue = text;
+        }
+    }
+</script>
+
 </head>
 <body <?=getBodyStyles() . 
     " onLoadSet=\"channel-$channelsParser->selectedChannel\""?>>
@@ -145,14 +181,18 @@ function displayChannelsList($channelsParser) {
 <table class="channels">
 
 <?php
-    # $_SERVER['HTTP_USER_AGENT']
+    if (true === CL_DETAILS_PANEL) {
+        displayDetailsPanel();
+    }
+
     $itemsToDisplay     = array(); # itmes to be displayed on page
     $firstChannelNumber = 0;       # first displayed channel on page
     $lastChannelNumber  = 0;       # last displayed channel on page
     $currentEntry       = 0;
     $foundSelected      = false;
+    $limit = CL_DETAILS_PANEL ? CL_ITEMS_PER_PAGE - 2 : CL_ITEMS_PER_PAGE; 
     foreach ($channelsParser->categories as $category) {
-        if ($currentEntry % CL_ITEMS_PER_PAGE == 0) {
+        if ($currentEntry % $limit == 0) {
             if ($foundSelected) {
                 break;
             } else {
@@ -163,7 +203,7 @@ function displayChannelsList($channelsParser) {
         $itemsToDisplay[] = $category;
         $currentEntry++;
         foreach ($category->channels as $channel) {
-            if ($currentEntry % CL_ITEMS_PER_PAGE == 0) {
+            if ($currentEntry % $limit == 0) {
                 if ($foundSelected) {
                     break;
                 } else {
