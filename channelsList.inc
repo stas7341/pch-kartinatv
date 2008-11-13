@@ -167,10 +167,7 @@ function displayChannelsList($channelsParser) {
 
 <script type="text/javascript">
     function updateDetails(text) {
-        var s = document.styleSheets[0].cssRules[0].style;
-        if (s.visibility != "hidden") {
-            document.getElementById('details').nextSibling.nodeValue = text;
-        }
+        document.getElementById('details').nextSibling.nodeValue = text;
     }
 </script>
 
