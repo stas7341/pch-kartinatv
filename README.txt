@@ -7,13 +7,19 @@ the IP-TV channels broadcasted by katrina.tv provider.
 
 Changes
 -------
+Changes in version 0.6.3:
+- Details panel feature for full program name display. 
+  Switched off by default because of substantive slow down of browsing.
+- Colored buttons RED,GREEN,YELLOW and BLUE can now be assigned 
+  to channels via settings.inc file.
+
 Changes in version 0.6.2:
 - New string trancation with gradiental ending
 - Functions to get channel EPG xml
 - Non-gaya browser support
 - VLC-plugin support on openChannel.php page
 - Left/Right on first/last channel act as PgUp/PgDn
-- index.htm to open plugin via HDD browser not only Web Services
+- index.htm to open plugin via HDD browser not only via Web Services
 - all configuration is now performed via settings.inc
 - auth.inc removed as unused
 
@@ -78,8 +84,8 @@ Keyboard Assignment
              On first channel = PGUP
     RIGHT  = Go to last channel displayed on the screen
              On last channel = PGDOWN
-    PGUP   = go one page up
-    PGDOWN = go one page down
+    PGUP   = Go one page up
+    PGDOWN = Go one page down
     MENU   = Go to channel 1
     1-7    = Go to channel 10,20,30,40,50,60 or 70
     ENTER  = Play the channel
