@@ -61,7 +61,9 @@ function displayCategory($category) {
     print "</tr>\n";
 }
 
-function displayChannel($channel, $firstChannelNumber, $lastChannelNumber) {
+function displayChannel($channel, $firstChannelNumber, 
+    $lastChannelNumber, $showDetailsPanel) 
+{
     $number   = ($channel->number < 10 ? "0" : "") . $channel->number;
     $logo     = "http://iptv.kartina.tv/img/ico/24/$channel->id.gif";
     $program  = utf8_cutByPixel($channel->program, 350, false);
@@ -85,7 +87,7 @@ function displayChannel($channel, $firstChannelNumber, $lastChannelNumber) {
         $linkExt .= "\nonKeyRightSet=\"channel-$lastChannelNumber\"";
     }
 
-    if (true === CL_DETAILS_PANEL) {
+    if ($showDetailsPanel) {
         $text = "" == $channel->program ? 
             'Kartina TV' : htmlspecialchars($channel->program);
         $linkExt .= "\nonFocus=\"updateDetails('$text')\"";
@@ -121,7 +123,7 @@ function displayChannel($channel, $firstChannelNumber, $lastChannelNumber) {
 
 function addShortcuts(
     $channelsAmount, $firstChannelNumber, 
-    $lastChannelNumber, $hideNames = EMBEDDED_BROWSER) 
+    $lastChannelNumber, $showDetailsPanel, $hideNames = EMBEDDED_BROWSER) 
 {
     $pageupRef = ($firstChannelNumber > 1) ? 
         $firstChannelNumber - 1 : $channelsAmount;
@@ -140,7 +142,7 @@ function addShortcuts(
     print '<a href="' . $_SERVER['PHP_SELF'] . '?selectedChannel=';
     print '1" TVID="TAB">';
     print ($hideNames ? "" : " HOME ") . "</a>\n";
-    
+
     # support for direct channel selection
     for ($i = 10; $i < $channelsAmount; $i += 10) {
         print '<a href="' . $_SERVER['PHP_SELF'] . '?selectedChannel=';
@@ -155,9 +157,14 @@ function addShortcuts(
         print '<font color="' . $color . '">';
         print ($hideNames ? "" : " $color ") . "</font></a>\n";
     }    
+    
+    # support for toggle details panel operation
+    print '<a href="' . $_SERVER['PHP_SELF'] . '?showDetailsPanel=';
+    print ($showDetailsPanel ? '0' : '1') .'" TVID="REPEAT">';
+    print ($hideNames ? "" : " DETAILS ") . "</a>\n";
 }
 
-function displayChannelsList($channelsParser) {
+function displayChannelsList($channelsParser, $showDetailsPanel) {
 ?>
 <html>
 <head>
@@ -178,7 +185,7 @@ function displayChannelsList($channelsParser) {
 <table class="channels">
 
 <?php
-    if (true === CL_DETAILS_PANEL) {
+    if ($showDetailsPanel) {
         displayDetailsPanel();
     }
 
@@ -187,7 +194,7 @@ function displayChannelsList($channelsParser) {
     $lastChannelNumber  = 0;       # last displayed channel on page
     $currentEntry       = 0;
     $foundSelected      = false;
-    $limit = CL_DETAILS_PANEL ? CL_ITEMS_PER_PAGE - 2 : CL_ITEMS_PER_PAGE; 
+    $limit = $showDetailsPanel ? CL_ITEMS_PER_PAGE - 2 : CL_ITEMS_PER_PAGE; 
     foreach ($channelsParser->categories as $category) {
         if ($currentEntry % $limit == 0) {
             if ($foundSelected) {
@@ -234,7 +241,7 @@ function displayChannelsList($channelsParser) {
     # time for shortcuts
     print "<tr><th colspan=\"7\" align=\"center\">\n";
     addShortcuts($channelsParser->channelsAmount, 
-        $firstChannelNumber, $lastChannelNumber);
+        $firstChannelNumber, $lastChannelNumber, $showDetailsPanel);
     print "</th></tr>\n";
     print "</table>\n";
     
