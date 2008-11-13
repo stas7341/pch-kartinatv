@@ -18,7 +18,7 @@ forwarded to channels list automatically.
 || *PGDOWN* || Go one page down ||
 || *MENU*   || Go to channel 1 ||
 || *1-7*    || Go to channel 10,20,30,40,50,60 or 70 ||
-|| *RED,GREEN,YELLOW,BLUE*  || Go to favourite channels defined in settings.inc ||
+|| *RED,GREEN,YELLOW,BLUE*  || Go to favourite channels defined in *settings.inc* ||
 || *REPEAT* || Toggle details panel ||
 || *INFO*   || Show full program name in popup ||
 || *ENTER*  || Play the channel ||
