@@ -9,3 +9,4 @@
 
  * Check the URL against the path where you've put the katrina.tv folder.
  * Please note that the equal sign "=" can be entered only via USB-Keyboard.
+ * As an alternative to a Web Service you can simply go to *kartina.tv* folder via HDD browser and open there the *index.htm* file.
