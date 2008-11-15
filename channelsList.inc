@@ -92,10 +92,10 @@ function displayChannel($channel, $firstChannelNumber,
 
     if ($showDetailsPanel) {
         $text = "" == $channel->program ? 
-            'Kartina TV' : htmlspecialchars($channel->program);
+            '' : htmlspecialchars($channel->program);
         $linkExt .= "\nonFocus=\"updateDetails('$text')\"";
         $linkExt .= "\nonMouseOver=\"updateDetails('$text')\"";
-        $linkExt .= "\nonMouseOut=\"updateDetails('Kartina TV')\"";
+        $linkExt .= "\nonMouseOut=\"updateDetails('')\"";
     }
 
     # add time stamps only if they are provided
@@ -177,7 +177,8 @@ function displayChannelsList($channelsParser, $showDetailsPanel) {
 
 <script type="text/javascript">
     function updateDetails(text) {
-        document.getElementById('details').nextSibling.nodeValue = text;
+        document.getElementById('details').nextSibling.nodeValue = 
+            text == '' ? "Kartina TV" : text;
     }
 </script>
 
