@@ -157,8 +157,8 @@ function utf8_getAllowedLength($str, $pixels, $bold = false) {
         $val = 0;
         $val  += $out[1][$i] == "" ? 0 : 11.5;
         $val  += $out[2][$i] == "" ? 0 :  7.5;
-        $val  += $out[3][$i] == "" ? 0 : 12.0;
-        $val  += $out[4][$i] == "" ? 0 :  8.7;
+        $val  += $out[3][$i] == "" ? 0 : 12.3;
+        $val  += $out[4][$i] == "" ? 0 :  8.9;
         $val  += $out[5][$i] == "" ? 0 :  7.0;       
         $curr += $bold ? ($val * 1.3) : $val;
     }
