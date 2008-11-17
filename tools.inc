@@ -6,6 +6,8 @@
 # Author: consros 2008                                                      #
 #############################################################################
 
+require_once "settings.inc";
+
 function getBodyStyles() {
     return 'focusColor="#FF0000" focusText="#FFFFFF" background="img/bg.jpg"';
 }
@@ -21,15 +23,16 @@ function displayCommonStyles() {
         margin-bottom     : 40px;
         margin-right      : 48px;
         margin-left       : 48px;           
-        font-family:arial,helvetica,verdana,sans-serif; 
+        font-family       : arial,helvetica,verdana,sans-serif;
+        font-size         : <?=FONT_SIZE?>pt;
         text-align        : left;
     }
     img     { color: #46d0f0; }
-    a       { font-size   : 12pt; color: white;   text-decoration: none;  }
-    a:hover { background  : #FF0000;              }
-    div     { font-size   : 16pt; color: #46d0f0; }
-    th      { font-size   : 14pt; color: white;   }
-    td      { font-size   : 12pt; color: white;   }
+    a       { color: white; text-decoration: none; }
+    a:hover { background: #FF0000; }
+    div     { color: #46d0f0; }
+    th      { color: white;   }
+    td      { color: white;   }
 </style>
 <?php
 }
@@ -146,23 +149,25 @@ function ut8_substr($str, $start, $length = null) {
 }
 
 function utf8_getAllowedLength($str, $pixels, $bold = false) {
-    $rusUp = "[\x{0410}-\x{042F}]";
-    $rusLo = "[\x{0430}-\x{044F}]";
+    $cyrUp = "[\x{0410}-\x{042F}]";
+    $cyrLo = "[\x{0430}-\x{044F}]";
     
     $length = preg_match_all(
-        "/([A-Z])|([a-z])|($rusUp)|($rusLo)|(.)/uSs", $str, $out);
+        "/([A-Z])|([a-z])|($cyrUp)|($cyrLo)|(.)/uSs", $str, $out);
 
     $curr = 0;
     for ($i = 0; $i < $length && $curr <= $pixels; $i++) {
         $val = 0;
-        $val  += $out[1][$i] == "" ? 0 : 11.5;
-        $val  += $out[2][$i] == "" ? 0 :  7.5;
-        $val  += $out[3][$i] == "" ? 0 : 12.3;
-        $val  += $out[4][$i] == "" ? 0 :  8.9;
-        $val  += $out[5][$i] == "" ? 0 :  7.0;       
-        $curr += $bold ? ($val * 1.3) : $val;
+        $val += $out[1][$i] == "" ? 0 : 11.5;     # mean capital latin
+        $val += $out[2][$i] == "" ? 0 :  7.5;     # mean normal  latin
+        $val += $out[3][$i] == "" ? 0 : 12.6;     # mean capital cyrilic
+        $val += $out[4][$i] == "" ? 0 :  9.0;     # mean normal  cyrilic
+        $val += $out[5][$i] == "" ? 0 :  7.0;     # mean others
+        $val = $val * (FONT_SIZE - 4) / (12 - 4); # default font size is 12
+        $curr += $bold ? ($val * 1.2) : $val;     # bold font difference
     }
 
+    # TRUE means length is OK, string should not be cut
     return $i == $length ? TRUE : $i;
 }
 
