@@ -99,6 +99,7 @@ Keyboard Assignment
     INFO   = Show full program name in popup
     ENTER  = Play the channel
     SOURCE = Leave the plugin
+    RETURN = Go back to web services list
     
 - During playback
     Just usual short-cuts, no extensions
