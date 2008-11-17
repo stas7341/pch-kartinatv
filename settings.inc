@@ -34,14 +34,14 @@ define("CL_UPDATE_INTERVAL", 60*1);
 # if details panel is shown then this value will be less on two
 define("CL_ITEMS_PER_PAGE",  15);
 
-# following constants defines column widthes of channels list table
+# following constants defines column widths of channels list table
 define("CL_WIDTH_NUMBER",    20);
 define("CL_WIDTH_LOGO",      25);
 define("CL_WIDTH_NAME",     105);
 define("CL_WIDTH_PROGRAM",  350);
 define("CL_WIDTH_TIME",     105);
 
-# these widthes are calculated and should not be changed manually
+# these widths are calculated and should not be changed manually
 define("CL_WIDTH_LONGNAME", CL_WIDTH_NAME+CL_WIDTH_PROGRAM+CL_WIDTH_TIME);
 define("CL_WIDTH_TABLE", CL_WIDTH_NUMBER+CL_WIDTH_LOGO+CL_WIDTH_LONGNAME);
 
