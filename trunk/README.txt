@@ -10,6 +10,7 @@ Changes
 Changes in version 0.6.4:
 - Scrollable program
 - Selection cursor goes now over programs not channels
+- Short-cut for RETURN key
 
 Changes in version 0.6.3:
 - Details panel feature for full program name display
