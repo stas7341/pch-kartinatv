@@ -21,16 +21,16 @@ function displayHtmlHeader() {
 function displayCustomStyles() {
 ?>
 <style type="text/css">
-    td             { font-weight : bold; }
+    td             { font-weight: bold; }
     td.page        { height: 480px; }
-    table.channels { width:  610px; }
-    td.number      { width:   20px; }
-    td.logo        { width:   25px; }
-    td.name        { width:  105px; background-color: #005B95; }
-    th.longName    { width:  560px; background-color: #005B95; }
-    td.program     { width:  350px; font-weight : normal; }
-    td.time        { width:  105px; }
-    th.details     { width:  610px; height: 70px; font-size: 12pt; background-color: #005B95; }
+    table.channels { width: <?=CL_WIDTH_TABLE?>px; }
+    td.number      { width: <?=CL_WIDTH_NUMBER?>px; }
+    td.logo        { width: <?=CL_WIDTH_LOGO?>px; }
+    td.name        { width: <?=CL_WIDTH_NAME?>px; background-color: #005B95; }
+    th.longName    { width: <?=CL_WIDTH_LONGNAME?>px; background-color: #005B95; }
+    td.program     { width: <?=CL_WIDTH_PROGRAM?>px; font-weight: normal; }
+    td.time        { width: <?=CL_WIDTH_TIME?>px; }
+    th.details     { width: <?=CL_WIDTH_TABLE?>px; height: 70px; background-color: #005B95; }
 </style>
 <?php
 }
@@ -66,19 +66,21 @@ function displayChannel($channel, $firstChannelNumber,
 {
     $number   = ($channel->number < 10 ? "0" : "") . $channel->number;
     $logo     = "http://iptv.kartina.tv/img/ico/24/$channel->id.gif";
-    $program  = utf8_cutByPixel($channel->program, 350, false);
     $linkUrl  = "openChannel.php?id=$channel->id&number=$channel->number";
     $linkUrl .= "&title=" . urlencode($channel->name);
     $linkExt  = "name=\"channel-$channel->number\"";
     
-    # info button on chanel
-    $linkExt .= "\nalt=\"" . htmlspecialchars($channel->program) . '"';
+    # info button on selected chanel
+    if ("" != $channel->program) {
+        $linkExt .= "\nalt=\"" . htmlspecialchars($channel->program) . '"';
+    }
 
     # for first channel it's allowed to call page up with up button
     if ($firstChannelNumber == $channel->number) {
         $linkExt .= "\nonKeyUpSet=\"pageup\"";
         $linkExt .= "\nonKeyLeftSet=\"pageup\"";
     } else {
+        $linkExt .= "\nonKeyUpSet=\"channel-" . ($channel->number - 1) . "\"";
         $linkExt .= "\nonKeyLeftSet=\"channel-$firstChannelNumber\"";
     }
 
@@ -87,12 +89,13 @@ function displayChannel($channel, $firstChannelNumber,
         $linkExt .= "\nonKeyDownSet=\"pagedown\"";
         $linkExt .= "\nonKeyRightSet=\"pagedown\"";
     } else {
+        $linkExt .= "\nonKeyDownSet=\"channel-" . ($channel->number + 1) . "\"";
         $linkExt .= "\nonKeyRightSet=\"channel-$lastChannelNumber\"";
     }
 
+    # details panel or name scrolling
     if ($showDetailsPanel) {
-        $text = "" == $channel->program ? 
-            '' : htmlspecialchars($channel->program);
+        $text = htmlspecialchars($channel->program);
         $linkExt .= "\nonFocus=\"updateDetails('$text')\"";
         $linkExt .= "\nonMouseOver=\"updateDetails('$text')\"";
         $linkExt .= "\nonMouseOut=\"updateDetails('')\"";
@@ -109,17 +112,31 @@ function displayChannel($channel, $firstChannelNumber,
     print "<td class=\"number\">$number</td>\n";
     print "<td class=\"logo\"><img src=\"$logo\" /></td>\n";
 
+    # <a href="" id="details"></a>Kartina TV</th>
     # for channels with less information a longer channel name is used
-    if ("" == $program && "" == $time) {
+    if ("" == $channel->program && "" == $time) {
+        $name = EMBEDDED_BROWSER ? 
+            '<marquee behavior="focus">'.$channel->name.'</marquee>':
+            utf8_cutByPixel($channel->name, CL_WIDTH_LONGNAME, true);    
         print "<th colspan=\"3\" class=\"longName\" align=\"left\">";
         print "<a href=\"$linkUrl\" $linkExt>";
-        print $channel->name . "</a></th>\n";
+        print $name;
+        print "</a>";
+        print "</th>\n";
     } else {
-        $name = utf8_cutByPixel($channel->name, 105, true);
-        print "<td class=\"name\"><a href=\"$linkUrl\" $linkExt>";
-        print "$name</a></td>\n";
-        print "<td class=\"program\">$program</td>\n";
-        print "<td class=\"time\" align=\"right\">$time</td>\n";
+        $name = utf8_cutByPixel($channel->name, CL_WIDTH_NAME, true);
+        $program = EMBEDDED_BROWSER ? 
+            '<marquee behavior="focus">'.$channel->program.'</marquee>':
+            utf8_cutByPixel($channel->program, CL_WIDTH_PROGRAM, false);    
+        print "<td class=\"name\">"; 
+        print $name;
+        print "</td>\n";
+        print "<td class=\"program\">\n";
+        print "<a href=\"$linkUrl\" $linkExt>";
+        print $program;
+        print "</a>";
+        print "</td>\n";
+        print "<td class=\"time\" align=\"right\" nowrap>$time</td>\n";
     }
     print "</tr>\n";
 }
@@ -165,6 +182,10 @@ function addShortcuts(
     print '<a href="' . $_SERVER['PHP_SELF'] . '?showDetailsPanel=';
     print ($showDetailsPanel ? '0' : '1') .'" TVID="REPEAT">';
     print ($hideNames ? "" : " DETAILS ") . "</a>\n";
+
+    # return to web services
+    print '<a href="file:///opt/sybhttpd/default/webservices_list.html"';
+    print ' TVID="BACK"></a>';
 }
 
 function displayChannelsList($channelsParser, $showDetailsPanel) {
@@ -238,7 +259,7 @@ function displayChannelsList($channelsParser, $showDetailsPanel) {
             displayCategory($item);
         } else {
             displayChannel($item, $firstChannelNumber, 
-                $lastChannelNumber, $channelsParser->selectedChannel);
+                $lastChannelNumber, $showDetailsPanel);
         }
     }
 

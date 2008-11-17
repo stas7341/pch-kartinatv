@@ -7,6 +7,10 @@ the IP-TV channels broadcasted by katrina.tv provider.
 
 Changes
 -------
+Changes in version 0.6.4:
+- Scrollable program
+- Selection cursor goes now over programs not channels
+
 Changes in version 0.6.3:
 - Details panel feature for full program name display
   Switched off by default because of substantive slow down of browsing
