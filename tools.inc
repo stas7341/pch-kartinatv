@@ -27,12 +27,12 @@ function displayCommonStyles() {
         font-size         : <?=FONT_SIZE?>pt;
         text-align        : left;
     }
-    img     { color: #46d0f0; }
-    a       { color: white; text-decoration: none; }
-    a:hover { background: #FF0000; }
-    div     { color: #46d0f0; }
-    th      { color: white;   }
-    td      { color: white;   }
+    img     { font-size: <?=FONT_SIZE?>pt; color: #46d0f0; }
+    a       { font-size: <?=FONT_SIZE?>pt; color: white; text-decoration: none; }
+    a:hover { font-size: <?=FONT_SIZE?>pt; background: #FF0000; }
+    div     { font-size: <?=FONT_SIZE?>pt; color: #46d0f0; }
+    th      { font-size: <?=FONT_SIZE?>pt; color: white;   }
+    td      { font-size: <?=FONT_SIZE?>pt; color: white;   }
 </style>
 <?php
 }
