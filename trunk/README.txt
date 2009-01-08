@@ -7,6 +7,10 @@ the IP-TV channels broadcasted by katrina.tv provider.
 
 Changes
 -------
+Changes in version 0.6.5:
+- Channel type detection (video/audio) improved
+- Font selection via settings.inc bug is fixed
+
 Changes in version 0.6.4:
 - Scrollable program
 - Selection cursor goes now over programs not channels
