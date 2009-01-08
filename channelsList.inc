@@ -68,6 +68,7 @@ function displayChannel($channel, $firstChannelNumber,
     $logo     = "http://iptv.kartina.tv/img/ico/24/$channel->id.gif";
     $linkUrl  = "openChannel.php?id=$channel->id&number=$channel->number";
     $linkUrl .= "&title=" . urlencode($channel->name);
+    $linkUrl .= "&vid=" . ($channel->isVideo ? 1 : 0);
     $linkExt  = "name=\"channel-$channel->number\"";
     
     # info button on selected chanel

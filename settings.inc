@@ -17,12 +17,8 @@
 #   USERNAME: 147; PASSWORD: 741
 #   USERNAME: 148; PASSWORD: 841
 #   USERNAME: 149; PASSWORD: 941
-#define("TMP_TIME", date("s") % 10);
-#define("USERNAME", "14" . TMP_TIME);
-#define("PASSWORD", TMP_TIME . "41");
-
-define("USERNAME", "1005923");
-define("PASSWORD", "517699");
+define("USERNAME", "148");
+define("PASSWORD", "841");
 
 # set this flag to TRUE if you want the adult channels to be available
 define("ALLOW_EROTIC", TRUE);
@@ -56,13 +52,11 @@ define("CL_SHOW_DETAILS_PANEL", FALSE);
 define("CL_CHANNEL_RED",    21);
 define("CL_CHANNEL_GREEN",  29);
 define("CL_CHANNEL_YELLOW", 39);
-define("CL_CHANNEL_BLUE",   61);
+define("CL_CHANNEL_BLUE",   46);
 
 # size of video window on open channel page
-# define("OC_VIDEO_WIDTH",  352);
-# define("OC_VIDEO_HEIGHT", 288);
-define("OC_VIDEO_WIDTH",  704);
-define("OC_VIDEO_HEIGHT", 576);
+define("OC_VIDEO_WIDTH",  352);
+define("OC_VIDEO_HEIGHT", 288);
 
 # detection of used browser: normal or PCH-specific one
 define("EMBEDDED_BROWSER", 

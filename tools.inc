@@ -161,7 +161,7 @@ function utf8_getAllowedLength($str, $pixels, $bold = false) {
         $val += $out[1][$i] == "" ? 0 : 11.5;     # mean capital latin
         $val += $out[2][$i] == "" ? 0 :  7.5;     # mean normal  latin
         $val += $out[3][$i] == "" ? 0 : 12.6;     # mean capital cyrilic
-        $val += $out[4][$i] == "" ? 0 :  9.0;     # mean normal  cyrilic
+        $val += $out[4][$i] == "" ? 0 :  9.4;     # mean normal  cyrilic
         $val += $out[5][$i] == "" ? 0 :  7.0;     # mean others
         $val = $val * (FONT_SIZE - 4) / (12 - 4); # default font size is 12
         $curr += $bold ? ($val * 1.2) : $val;     # bold font difference

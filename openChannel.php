@@ -48,6 +48,7 @@ function displayVideo($url = null) {
     $id     = $HTTP_GET_VARS['id'];
     $number = $HTTP_GET_VARS['number'];
     $name   = $HTTP_GET_VARS['title'];
+    $vid    = $HTTP_GET_VARS['vid'];
     $_SESSION['selectedChannel'] = $number;
 
     $content = $ktvFunctions->getStreamUrl($id);
@@ -62,8 +63,8 @@ function displayVideo($url = null) {
         # the link written in onFocusSet will be immediately activated
         print "<a href=\"$url\" onFocusLoad onFocusSet=\"returnToIndex\"";
     
-        # depending on channel id we distinguish video and audio
-        print ($id > 90 && $id < 120) ? " aod>" : " vod>\n";
+        # video and audio have different extensions
+        print $vid ? " vod>" : " aod>\n";
 
         # display channel logo
         $imgUrl="http://www.kartina.tv/images/icons/channels/$id.gif";

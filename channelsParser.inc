@@ -31,6 +31,8 @@ class Channel {
     var $beginTime;
     var $endTime;
 
+    var $isVideo;
+
     function Channel($number, $id, $name, $program, $beginTime, $endTime) {
         $this->number  = $number;
         $this->id      = $id;
@@ -43,6 +45,7 @@ class Channel {
         if (isset($program)) {
             $this->programClass = new Program($program, $beginTime, $endTime);
         }
+        $this->isVideo = true;
     }
 }
 
@@ -51,15 +54,20 @@ class Category {
     var $name;
     var $color;
     var $channels;
+    var $isVideo;
 
     function Category($id, $name, $color) {
         $this->id       = $id;
         $this->name     = $name;
         $this->color    = $color;
         $this->channels = array();
+
+        # radio group has id = 23
+        $this->isVideo  = 23 != $this->id;
     }
 
     function addChannel($channel) {
+        $channel->isVideo = $this->isVideo;
         $this->channels[] = $channel;
     }
 }
