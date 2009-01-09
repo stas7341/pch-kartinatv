@@ -37,6 +37,12 @@ function displayCommonStyles() {
 <?php
 }
 
+function writeLocalFile($filename, $content) {
+    $fh = fopen($filename, 'w') or die("Cannot write file: " . $filename);
+    fwrite($fh, $content);
+    fclose($fh);
+}
+
 function getPageContent($url, $cookie) {
     # support for broken DNS in PCH version of PHP
     $parsedUrl = parse_url($url);
