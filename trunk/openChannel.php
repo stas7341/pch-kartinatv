@@ -9,6 +9,11 @@
 require_once "settings.inc";
 require_once "tools.inc";
 require_once "ktvFunctions.inc";
+require_once "backgrounds.inc";
+
+define("FILE_REF", "http://localhost:8088/stream/file=");
+define("TMP_CHANNEL", "/tmp/channel.jsp");
+define("TMP_BACKGROUND", "/tmp/bg.jsp");
 
 session_start();
 
@@ -28,34 +33,18 @@ function playMedia($url = null) {
     print '<br><br><br>' . "\n";
 }
 
-function displayDeviantPlaylist($name, $url) {
-    # write channel to playlist file
-    $channelFile = "/tmp/channel.jsp";
-    $fh = fopen($channelFile, 'w') or 
-        die("Cannot write playlist: " . $channelFile);
-    fwrite($fh, "$name|0|0|$url|");
-    fclose($fh);
 
-    # parse deviant art
-    $offset = rand(1, 960);
-    $content = getCompactedPageContent(
-        "http://browse.deviantart.com/photography/?order=9&offset=$offset", "");
-    if (preg_match_all('|"http://th\d\d.deviantart.com/[^"]*.jpg"|i', $content, $matches)) {
-        foreach ($matches[0] as $thumb) {
-            $img = preg_replace('|"http://th\d(\d.*?)/150/(.*?)"$|', 'http://fc3$1/$2', $thumb);
-            $photos .= "5|0|Background|$img|\n";
-        }
+function displayAudioPlaylist($name, $url) {
+    $images = getBackgrounds();    
+    foreach ($images as $img) {
+        $photos .= "5|0|Background|$img|\n";
     }
-    
-    # write backgrounds to playlist file
-    $bgFile = "/tmp/bg.jsp";
-    $fh = fopen($bgFile, 'w') or 
-        die("Cannot write playlist: " . $bgFile);
-    fwrite($fh, $photos);
-    fclose($fh);
-    
-    print "href=\"http://localhost:8088/stream/file=$channelFile\" ";
-    print "pod=\"2,1,http://localhost:8088/stream/file=$bgFile\">";
+
+    writeLocalFile(TMP_CHANNEL, "$name|0|0|$url|");
+    writeLocalFile(TMP_BACKGROUND, $photos);
+
+    print 'href="' . FILE_REF . TMP_CHANNEL . '" ';
+    print 'pod="2,1,' . FILE_REF . TMP_BACKGROUND . '">';
 }
 
 ?>
@@ -97,8 +86,11 @@ function displayDeviantPlaylist($name, $url) {
         if ($vid) {
             print "href=\"$url\" vod>";
         } else {
-            displayDeviantPlaylist($name, $url);
+            # simple version
             # print "href=\"$url\" aod>";
+
+            # extended version
+            displayAudioPlaylist($name, $url);
         }
 
         # display channel logo
