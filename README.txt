@@ -10,6 +10,10 @@ Changes
 Changes in version 0.6.5:
 - Channel type detection (video/audio) improved
 - Font selection via settings.inc bug is fixed
+- Slide show support for music channels.
+  Created lists can be observed via these links:
+    http://pch-a100:8088/stream/file=/tmp/channel.jsp
+    http://pch-a100:8088/stream/file=/tmp/bg.jsp
 
 Changes in version 0.6.4:
 - Scrollable program

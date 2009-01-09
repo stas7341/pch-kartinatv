@@ -12,7 +12,7 @@ require_once "ktvFunctions.inc";
 
 session_start();
 
-function displayVideo($url = null) {
+function playMedia($url = null) {
     if (! isset($url) || FALSE === $url) {
         print '<img src="http://www.kartina.tv/templates/redline/img/logo.jpg" border="4" />';
     } else {
@@ -26,6 +26,36 @@ function displayVideo($url = null) {
         print '</embed>' . "\n";
     }
     print '<br><br><br>' . "\n";
+}
+
+function displayDeviantPlaylist($name, $url) {
+    # write channel to playlist file
+    $channelFile = "/tmp/channel.jsp";
+    $fh = fopen($channelFile, 'w') or 
+        die("Cannot write playlist: " . $channelFile);
+    fwrite($fh, "$name|0|0|$url|");
+    fclose($fh);
+
+    # parse deviant art
+    $offset = rand(1, 960);
+    $content = getCompactedPageContent(
+        "http://browse.deviantart.com/photography/?order=9&offset=$offset", "");
+    if (preg_match_all('|"http://th\d\d.deviantart.com/[^"]*.jpg"|i', $content, $matches)) {
+        foreach ($matches[0] as $thumb) {
+            $img = preg_replace('|"http://th\d(\d.*?)/150/(.*?)"$|', 'http://fc3$1/$2', $thumb);
+            $photos .= "5|0|Background|$img|\n";
+        }
+    }
+    
+    # write backgrounds to playlist file
+    $bgFile = "/tmp/bg.jsp";
+    $fh = fopen($bgFile, 'w') or 
+        die("Cannot write playlist: " . $bgFile);
+    fwrite($fh, $photos);
+    fclose($fh);
+    
+    print "href=\"http://localhost:8088/stream/file=$channelFile\" ";
+    print "pod=\"2,1,http://localhost:8088/stream/file=$bgFile\">";
 }
 
 ?>
@@ -56,15 +86,20 @@ function displayVideo($url = null) {
 
     if (0 === strpos($url, "http://")) {
         # show kartina.tv logo or video via vlc
-        displayVideo(EMBEDDED_BROWSER ? null : $url);
+        playMedia(EMBEDDED_BROWSER ? null : $url);
 
         # Combination onFocusLoad + onFocusSet forces this link to be 
         # loaded automatically and when the video/audio will be stopped
         # the link written in onFocusSet will be immediately activated
-        print "<a href=\"$url\" onFocusLoad onFocusSet=\"returnToIndex\"";
-    
+        print '<a onFocusLoad onFocusSet="returnToIndex" ';
+
         # video and audio have different extensions
-        print $vid ? " vod>" : " aod>\n";
+        if ($vid) {
+            print "href=\"$url\" vod>";
+        } else {
+            displayDeviantPlaylist($name, $url);
+            # print "href=\"$url\" aod>";
+        }
 
         # display channel logo
         $imgUrl="http://www.kartina.tv/images/icons/channels/$id.gif";
@@ -78,7 +113,7 @@ function displayVideo($url = null) {
         print "Returning to channel selection...</a><br>\n";
     } else {
         # show kartina.tv logo
-        displayVideo();
+        playMedia();
         print "Channel is closed or temporary unavailable!<br>\n";
         print "Press <b>RETURN</b> to get back to channels selection\n";
     }
