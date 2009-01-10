@@ -58,7 +58,7 @@ define("CL_CHANNEL_BLUE",   46);
 define("OC_VIDEO_WIDTH",  352);
 define("OC_VIDEO_HEIGHT", 288);
 
-# delay in seconds between slides change
+# delay in seconds between slides change.
 # value = 0 means no slide show is wished.
 define("OC_SLIDE_SHOW_DELAY", 10);
 
