@@ -37,7 +37,7 @@ function playMedia($url = null) {
 function displayAudioPlaylist($name, $url) {
     $images = getBackgrounds();    
     foreach ($images as $img) {
-        $photos .= "5|0|Background|$img|\n";
+        $photos .= OC_SLIDE_SHOW_DELAY . "|0|Background|$img|\n";
     }
 
     writeLocalFile(TMP_CHANNEL, "$name|0|0|$url|");

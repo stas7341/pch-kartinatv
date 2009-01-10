@@ -58,6 +58,9 @@ define("CL_CHANNEL_BLUE",   46);
 define("OC_VIDEO_WIDTH",  352);
 define("OC_VIDEO_HEIGHT", 288);
 
+# delay in seconds between slides change
+define("OC_SLIDE_SHOW_DELAY", 10);
+
 # detection of used browser: normal or PCH-specific one
 define("EMBEDDED_BROWSER", 
     FALSE !== strpos($_SERVER['HTTP_USER_AGENT'], 'Syabas'));
