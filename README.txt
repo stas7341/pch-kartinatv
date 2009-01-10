@@ -124,6 +124,17 @@ Keyboard Assignment
 - During playback
     Just usual short-cuts, no extensions
 
+Troubleshooting
+---------------
+Q1: I'm getting set of following error messages above the channels list:
+   Warning: session_start(): open(/tmp/sess_67097718925a02165591a622f2641d91, 
+   O_RDWR) failed: Permission denied (13) in 
+   /opt/sybhttpd/localhost.drives/HARD_DISK/kartina.tv/index.php on line 15
+A1: Please make sure at least one of following services is running:
+    - Torrent
+    - Usenet Client
+    - Casgle Client
+
 Credits
 -------
 This plugin is written by consros with assistance of Stalker and Kostix
