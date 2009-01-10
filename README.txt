@@ -16,6 +16,7 @@ Changes in version 0.6.5:
     http://pch-a100:8088/stream/file=/tmp/bg.jsp
   At the moment the list is created basing on works published 
   on http://www.deviantart.com/ under photography category.
+  Slide show delay can be configured via OC_SLIDE_SHOW_DELAY parameter.
 
 Changes in version 0.6.4:
 - Scrollable program
