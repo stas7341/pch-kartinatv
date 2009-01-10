@@ -59,6 +59,7 @@ define("OC_VIDEO_WIDTH",  352);
 define("OC_VIDEO_HEIGHT", 288);
 
 # delay in seconds between slides change
+# value = 0 means no slide show is wished.
 define("OC_SLIDE_SHOW_DELAY", 10);
 
 # detection of used browser: normal or PCH-specific one
