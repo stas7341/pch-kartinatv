@@ -14,6 +14,8 @@ Changes in version 0.6.5:
   Created lists can be observed via these links:
     http://pch-a100:8088/stream/file=/tmp/channel.jsp
     http://pch-a100:8088/stream/file=/tmp/bg.jsp
+  At the moment the list is created basing on works published 
+  on http://www.deviantart.com/ under photography category.
 
 Changes in version 0.6.4:
 - Scrollable program
