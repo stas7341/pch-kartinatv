@@ -83,8 +83,16 @@ Installation
    To do that enter the NMT->Web Services->Add/Edit and write there following:
       Service Name: Kartina.TV
       Service URL: http://localhost:8088/stream/file=/share/kartina.tv/index.php
+
+4. Notes
    Check the URL against the path where you've put the katrina.tv folder.
    Please note that the equal sign "=" can be entered only via USB-Keyboard.
+   As an alternative to a Web Service you can simply go to kartina.tv folder 
+   via HDD browser and open there the index.htm file.
+   Please make sure at least one of following services is running:
+      - Torrent
+      - Usenet Client
+      - Casgle Client 
 
 Usage
 -----
