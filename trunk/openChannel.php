@@ -35,6 +35,11 @@ function playMedia($url = null) {
 
 
 function displayAudioPlaylist($name, $url) {
+    if (0 == OC_SLIDE_SHOW_DELAY) {
+        print "href=\"$url\" aod>";
+        return;
+    }
+
     $images = getBackgrounds();    
     foreach ($images as $img) {
         $photos .= OC_SLIDE_SHOW_DELAY . "|0|Background|$img|\n";
@@ -86,10 +91,6 @@ function displayAudioPlaylist($name, $url) {
         if ($vid) {
             print "href=\"$url\" vod>";
         } else {
-            # simple version
-            # print "href=\"$url\" aod>";
-
-            # extended version
             displayAudioPlaylist($name, $url);
         }
 
