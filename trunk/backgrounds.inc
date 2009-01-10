@@ -21,6 +21,7 @@ function getDeviantArtBackgrounds() {
     $offset = rand(1, 2000);
     $content = getCompactedPageContent(
         "http://browse.deviantart.com/photography/?order=9&offset=$offset", "");
+    $content = preg_replace('|You are viewing.*|', '', $content);
     if (preg_match_all('|"http://th\d\d.deviantart.com/[^"]*.jpg"|i', 
             $content, $matches)) 
     {
