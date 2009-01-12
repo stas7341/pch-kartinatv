@@ -7,6 +7,10 @@ the IP-TV channels broadcasted by katrina.tv provider.
 
 Changes
 -------
+Changes in version 0.6.6:
+- Detailed programs list for a desired channel, activated with <MENU> key
+- Instant transition to the first channel in now mapped on <HOME> key
+
 Changes in version 0.6.5:
 - Channel type detection (video/audio) improved
 - Font selection via settings.inc bug is fixed
@@ -69,7 +73,8 @@ Changes in version 0.5.0:
 
 Prerequisites
 -------------
-Popcorn Hour A100 with an internal harddisk and activated samba service.
+Popcorn Hour A100 with installed harddisk and 
+installed and activated NMT services (e.g. torrent).
 
 Installation
 ------------
@@ -112,8 +117,9 @@ Keyboard Assignment
              On last channel = PGDOWN
     PGUP   = Go one page up
     PGDOWN = Go one page down
-    MENU   = Go to channel 1
-    1-7    = Go to channel 10,20,30,40,50,60 or 70
+    HOME   = Go to channel 1
+    MENU   = Show detailed programs list for desired channel
+    1-7    = Go to channel 10, 20, 30, 40, 50, 60 or 70
     RED,GREEN,YELLOW,BLUE = Go to favourite channels defined in settings.inc
     REPEAT = Toggle details panel
     INFO   = Show full program name in popup
@@ -122,6 +128,9 @@ Keyboard Assignment
     RETURN = Go back to web services list
     
 - During playback
+    Just usual short-cuts, no extensions
+
+- On program list page
     Just usual short-cuts, no extensions
 
 Troubleshooting
