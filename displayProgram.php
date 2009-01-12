@@ -19,7 +19,7 @@ $vid = $HTTP_GET_VARS['vid'];
 ?>
 <html>
 <head>
-    <title>NMT check of KtvFunctions class</title>
+    <title>NMT detailed programs list for desired channel</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <? displayCommonStyles(); ?>
     <style type="text/css">
