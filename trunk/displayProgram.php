@@ -64,8 +64,7 @@ session_start();
         } else {
             print "<tr class=\"future\">\n";
         }
-#        print '<td class="time" align="center">' . date('H:i', $program->beginTime) . "</td>\n";
-        print '<td class="time" align="center">' . date('H:i', $program->beginTime) . " = " . date('H:i') . "</td>\n";
+        print '<td class="time" align="center">' . date('H:i', $program->beginTime) . "</td>\n";
         print "<td><table>\n";
         print '<tr><td class="name">' . $program->name. "</td></tr>\n";
         print '<tr><td class="details">' . $program->details . "</td></tr>\n";
