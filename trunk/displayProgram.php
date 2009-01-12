@@ -12,6 +12,10 @@ require_once "channelsParser.inc";
 
 session_start();
 
+# id transmitted as a part of ref parameter at the very end
+$id  = preg_replace('/.*\?id=/', '', $HTTP_GET_VARS['ref']);
+$vid = $HTTP_GET_VARS['vid'];
+
 ?>
 <html>
 <head>
@@ -20,10 +24,10 @@ session_start();
     <? displayCommonStyles(); ?>
     <style type="text/css">
         td.page    { height: 480px; }
-        tr.past    { background-color: #005B95; }
+        tr.past    { background-color: #4d6080; }
         tr.current { background-color: #99a1bd; }
-        tr.future  { }
-        td.title   { width: 560px; font-weight: bold; background-color: #005B95; }
+        tr.future  { background-color: #6d80a0; }
+        td.title   { width: 560px; font-weight: bold; background-color: #005B95; font-size: 14pt; }
         td.time    { width:  60px; font-weight: bold; background-color: #005B95; }
         td.name    { width: 560px; } 
         td.details { width: 560px; font-size: 10pt; }
@@ -32,16 +36,12 @@ session_start();
 <body <?=getBodyStyles() ?>>
 <div align="center"><table><tr><td class="page" align="center">
 <table>
-<tr>
-<td class="time"  align="center"><?=$HTTP_GET_VARS['number']?></td>
-<td class="title" align="center"><?=$HTTP_GET_VARS['title']?></td>
+<tr><td class="time" align="center">
+    <img src="http://iptv.kartina.tv/img/ico/24/<?=$id?>.gif" />
+</td><td class="title"><?=$HTTP_GET_VARS['title']?></td>
 </tr>
 
 <?php
-    # id transmitted as a part of ref parameter at the very end
-    $id  = preg_replace('/.*\?id=/', '', $HTTP_GET_VARS['ref']);
-    $vid = $HTTP_GET_VARS['vid'];
-
     # renew the list using existing cookie
     $ktvFunctions = new KtvFunctions($_SESSION['cookie'], false);
     $program = $ktvFunctions->getEpg($id);
