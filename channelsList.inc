@@ -110,7 +110,11 @@ function displayChannel($channel, $firstChannelNumber,
     }
 
     print "<tr>\n";
-    print "<td class=\"number\">$number</td>\n";
+    print "<td class=\"number\">";
+    print EMBEDDED_BROWSER ? $number : 
+        '<a href="displayProgram.php?ref=' . "$linkUrl\">$number</a>";
+    print "</td>\n";
+
     print "<td class=\"logo\"><img src=\"$logo\" /></td>\n";
 
     # <a href="" id="details"></a>Kartina TV</th>
