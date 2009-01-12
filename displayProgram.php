@@ -38,12 +38,9 @@ session_start();
 </tr>
 
 <?php
+    # id transmitted as a part of ref parameter at the very end
     $id  = preg_replace('/.*\?id=/', '', $HTTP_GET_VARS['ref']);
     $vid = $HTTP_GET_VARS['vid'];
-    $HTTP_GET_VARS['id'] = $id;
-
-    $p = new AbstractParser();
-    $p->traceVariable($HTTP_GET_VARS, "/tmp/param.txt");
 
     # renew the list using existing cookie
     $ktvFunctions = new KtvFunctions($_SESSION['cookie'], false);
