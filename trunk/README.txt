@@ -8,8 +8,9 @@ the IP-TV channels broadcasted by katrina.tv provider.
 Changes
 -------
 Changes in version 0.6.6:
-- Detailed programs list for a desired channel, activated with <MENU> key
-- Instant transition to the first channel in now mapped on <HOME> key
+- Detailed programs list for a desired channel, activated with <MENU> key.
+  In external browser mode it can be activated by click on channel number.
+- Instant transition to the first channel in now mapped on <HOME> key.
 
 Changes in version 0.6.5:
 - Channel type detection (video/audio) improved
