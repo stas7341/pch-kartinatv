@@ -10,15 +10,13 @@
 
 class Program {
     var $name;
+    var $details;
     var $beginTime;
-    var $endTime;
 
-    function Program($name, $beginTime, $endTime) {
+    function Program($name, $details, $beginTime) {
         $this->name = $name;
-        if (isset ($beginTime) && isset ($endTime)) {
-            $this->beginTime = strtotime($beginTime);
-            $this->endTime   = strtotime($endTime);
-        }
+        $this->details = $details;
+        $this->beginTime = strtotime($beginTime);
     }
 }
 
@@ -41,9 +39,6 @@ class Channel {
         if (isset ($beginTime) && isset ($endTime)) {
             $this->beginTime = strtotime($beginTime);
             $this->endTime   = strtotime($endTime);
-        }
-        if (isset($program)) {
-            $this->programClass = new Program($program, $beginTime, $endTime);
         }
         $this->isVideo = true;
     }
@@ -72,8 +67,43 @@ class Category {
     }
 }
 
+class AbstractParser {
+    function parseFile($filename) {
+        if (! ($fp = fopen($filename, "r"))) {
+            die ("Could not open XML file: $filename");
+        }
+        $data = fread($fp, filesize($filename));
+        fclose($fp);
+        $this->parse($data);
+    }
 
-class ChannelsParser {
+    function reportWrongElement($xmlElem) {
+        ob_start();
+        print ("Unextected structure/level of XML element \"");
+        print ($xmlElem['tag'] . "\": ");
+        print_r($xmlElem);
+        $res = ob_get_contents();
+        ob_end_clean();
+        return $res;
+    }
+
+    function traceVariable($var, $filename) {
+        ob_start();
+        print_r($var);
+        $printed = ob_get_contents();
+        ob_end_clean();
+
+        if (isset($filename)) { 
+            $f = fopen($filename, "w");
+            fwrite($f, $printed);
+            fclose($f);
+        }
+        return $printed;
+    }
+}
+
+
+class ChannelsParser extends AbstractParser {
     var $selectedChannel;
     var $channelsAmount;
     var $categories;
@@ -82,15 +112,6 @@ class ChannelsParser {
         $this->selectedChannel = 0;
         $this->channelsAmount = 0;
         $this->categories = array();
-    }
-
-    function parseFile($filename) {
-        if (! ($fp = fopen($filename, "r"))) {
-            die ("Could not open XML file: $filename");
-        }
-        $data = fread($fp, filesize($filename));
-        fclose($fp);
-        $this->parse($data);
     }
 
     function parse($string) {
@@ -137,29 +158,35 @@ class ChannelsParser {
             }
         }
     }        
-
-    function reportWrongElement($xmlElem) {
-        ob_start();
-        print ("Unextected structure/level of XML element \"");
-        print ($xmlElem['tag'] . "\": ");
-        print_r($xmlElem);
-        $res = ob_get_contents();
-        ob_end_clean();
-        return $res;
-    }
-
-    function traceVariable($var, $filename) {
-        ob_start();
-        print_r($var);
-        $printed = ob_get_contents();
-        ob_end_clean();
-
-        if (isset($filename)) { 
-            $f = fopen($filename, "w");
-            fwrite($f, $printed);
-            fclose($f);
-        }
-        return $printed;
-    }
 }
+
+class ProgramsParser extends AbstractParser {
+    var $programs;
+
+    function ProgramsParser() {
+        $this->programs = array();
+    }
+
+    function parse($string) {
+        $xmlParser = xml_parser_create();
+        xml_parse_into_struct($xmlParser, $string, &$elements, &$index);
+        xml_parser_free($xmlParser);
+
+        foreach ($elements as $xmlElem) {
+            if ('complete' == $xmlElem['type']) {
+                if ('ITEM' == $xmlElem['tag']) {
+                    if ('2' != $xmlElem['level']) {
+                        die (reportWrongElement($xmlElem));
+                    }
+                    $attr = $xmlElem['attributes'];
+                    $program = new Program(
+                        $attr['PROGNAME'], $attr['PDESCR'], $attr['T_START']);
+                
+                    $this->programs[] = $program;
+                }
+            }
+        }
+    }        
+}
+
 ?>
