@@ -184,9 +184,12 @@ function addShortcuts(
     print ($showDetailsPanel ? '0' : '1') .'" TVID="REPEAT">';
     print ($hideNames ? "" : " DETAILS ") . "</a>\n";
 
+    # support for detailed channel programs display
+    print '<a href="displayProgram.php?ref=" TVID="_HOME"></a>' . "\n";
+
     # return to web services
-    print '<a href="file:///opt/sybhttpd/default/webservices_list.html"';
-    print ' TVID="BACK"></a>';
+    print '<a href="file:///opt/sybhttpd/default/webservices_list.html" ';
+    print 'TVID="BACK"></a>' . "\n";
 }
 
 function displayChannelsList($channelsParser, $showDetailsPanel) {
