@@ -23,21 +23,21 @@ $vid = $HTTP_GET_VARS['vid'];
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <? displayCommonStyles(); ?>
     <style type="text/css">
-        td.page    { height: 480px; }
+        td.page    { height:<?=DEFAULT_PAGE_HEIGHT?>px; }
         tr.past    { background-color: #4d6080; }
         tr.current { background-color: #99a1bd; }
         tr.future  { background-color: #6d80a0; }
-        td.title   { width: 560px; font-weight: bold; background-color: #005B95; font-size: 14pt; }
-        td.time    { width:  60px; font-weight: bold; background-color: #005B95; }
-        td.name    { width: 560px; } 
-        td.details { width: 560px; font-size: 10pt; }
+        td.title   { width: 1000px; font-weight: bold; background-color: #005B95; }
+        td.time    { width:  100px; font-weight: bold; background-color: #005B95; }
+        td.name    { } 
+        td.details { font-size: 10pt; }
     </style>
 </head>
 <body <?=getBodyStyles() ?>>
 <div align="center"><table><tr><td class="page" align="center">
 <table>
 <tr><td class="time" align="center">
-    <img src="http://iptv.kartina.tv/img/ico/24/<?=$id?>.gif" />
+    <img src="http://www.kartina.tv/images/icons/channels/<?=$id?>.gif" />
 </td><td class="title"><?=$HTTP_GET_VARS['title']?></td>
 </tr>
 
@@ -67,10 +67,10 @@ $vid = $HTTP_GET_VARS['vid'];
             print "<tr class=\"future\">\n";
         }
         print '<td class="time" align="center">' . date('H:i', $program->beginTime) . "</td>\n";
-        print "<td><table>\n";
-        print '<tr><td class="name">' . $program->name. "</td></tr>\n";
-        print '<tr><td class="details">' . $program->details . "</td></tr>\n";
-        print "</table></td></tr>\n";
+        print "<td><table><tr>\n";
+        print '<td class="name">' . $program->name. "</td>\n";
+        print '<td class="details">' . $program->details . "</td>\n";
+        print "</tr></table></td></tr>\n";
     }
 ?>
 </table>

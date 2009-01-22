@@ -22,7 +22,7 @@ function displayCustomStyles() {
 ?>
 <style type="text/css">
     td             { font-weight: bold; }
-    td.page        { height: 480px; }
+    td.page        { height:<?=DEFAULT_PAGE_HEIGHT?>px; }
     table.channels { width: <?=CL_WIDTH_TABLE?>px; }
     td.number      { width: <?=CL_WIDTH_NUMBER?>px; }
     td.logo        { width: <?=CL_WIDTH_LOGO?>px; }
@@ -49,7 +49,7 @@ function displayCredits() {
     <hr>
     <div align="center">Kartina.TV for 
     <font color="white"> Popcorn Hour</font> by <b>consros</b> 
-    <font color="white"> (c) 2008</font></div>
+    <font color="white"> (c) 2009</font></div>
 <?php
 }       
 
@@ -109,40 +109,31 @@ function displayChannel($channel, $firstChannelNumber,
         $time  = "$start - $stop";
     }
 
+    # decide how to display the program
+    if ("" == $channel->program) {
+        $name = EMBEDDED_BROWSER ? 
+            '<marquee behavior="focus">'.$channel->name.'</marquee>':
+            utf8_cutByPixel($channel->name, CL_WIDTH_LONGNAME, true);    
+        $name = "<a href=\"$linkUrl\" $linkExt>$name</a>";
+        $program = "";
+    } else {
+        $name = utf8_cutByPixel($channel->name, CL_WIDTH_NAME, true);
+        $program = EMBEDDED_BROWSER ? 
+            '<marquee behavior="focus">'.$channel->program.'</marquee>':
+            utf8_cutByPixel($channel->program, CL_WIDTH_PROGRAM, false);
+        $program = "<a href=\"$linkUrl\" $linkExt>$program</a>";
+    }
+
+    # now the entry itself 
     print "<tr>\n";
     print "<td class=\"number\">";
     print EMBEDDED_BROWSER ? $number : 
         '<a href="displayProgram.php?ref=' . "$linkUrl\">$number</a>";
     print "</td>\n";
-
     print "<td class=\"logo\"><img src=\"$logo\" /></td>\n";
-
-    # <a href="" id="details"></a>Kartina TV</th>
-    # for channels with less information a longer channel name is used
-    if ("" == $channel->program && "" == $time) {
-        $name = EMBEDDED_BROWSER ? 
-            '<marquee behavior="focus">'.$channel->name.'</marquee>':
-            utf8_cutByPixel($channel->name, CL_WIDTH_LONGNAME, true);    
-        print "<th colspan=\"3\" class=\"longName\" align=\"left\">";
-        print "<a href=\"$linkUrl\" $linkExt>";
-        print $name;
-        print "</a>";
-        print "</th>\n";
-    } else {
-        $name = utf8_cutByPixel($channel->name, CL_WIDTH_NAME, true);
-        $program = EMBEDDED_BROWSER ? 
-            '<marquee behavior="focus">'.$channel->program.'</marquee>':
-            utf8_cutByPixel($channel->program, CL_WIDTH_PROGRAM, false);    
-        print "<td class=\"name\">"; 
-        print $name;
-        print "</td>\n";
-        print "<td class=\"program\">\n";
-        print "<a href=\"$linkUrl\" $linkExt>";
-        print $program;
-        print "</a>";
-        print "</td>\n";
-        print "<td class=\"time\" align=\"right\" nowrap>$time</td>\n";
-    }
+    print "<td class=\"name\">$name</td>\n";
+    print "<td class=\"program\">$program</td>\n";
+    print "<td class=\"time\" align=\"right\" nowrap>$time</td>\n";
     print "</tr>\n";
 }
 

@@ -7,6 +7,9 @@ the IP-TV channels broadcasted by katrina.tv provider.
 
 Changes
 -------
+Changes in version 0.7.0:
+- Finally support of HD mode - I've bought a new 52" TV.
+
 Changes in version 0.6.6:
 - Detailed programs list for a desired channel, activated with <MENU> key.
   In external browser mode it can be activated by click on channel number.

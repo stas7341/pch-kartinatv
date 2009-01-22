@@ -59,9 +59,9 @@ function displayAudioPlaylist($name, $url) {
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <? displayCommonStyles(); ?>
     <style type="text/css">
-        a       { font-size   :  12pt; color: #46d0f0; }
-        div     { font-size   :  14pt; color: white;   }
-        td.page { height      : 480px; }
+        a       { color: #46d0f0; }
+        div     { color: white;   }
+        td.page { height:<?=DEFAULT_PAGE_HEIGHT?>px; }
     </style>
 </head>
 <body <?=getBodyStyles()?>>
