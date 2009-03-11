@@ -1,7 +1,7 @@
 #summary How to install the plugin.
 #labels Phase-Deploy,Featured
 
-*Please note that last two versions of firmware are not supported due to famous "resume feature" which tries to resume an old stream instead of getting the new one.*
+*Please note that last two versions of firmware are not supported due to famous resume "feature" which tries to resume the old stream instead of getting the new one.*
  * Release Date : 03 March 2009 *Not supported!*
  * Release Date : 21 January 2009 *Not supported!*
 
