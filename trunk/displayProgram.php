@@ -15,17 +15,36 @@ session_start();
 # id transmitted as a part of ref parameter at the very end
 $id  = preg_replace('/.*\?id=/', '', $HTTP_GET_VARS['ref']);
 $vid = $HTTP_GET_VARS['vid'];
+$currentTime = time() + (TIME_ZONE * 60 * 60);
+
+function getArraySlice($array, $selIndex, $wndWidth) {
+    $lastIndex = count($array) - 1;
+
+    $leftWidth  = (int) ($wndWidth / 2);
+    $rightWidth = (int) ($wndWidth / 2 - 0.5);
+
+    $leftWished  = $selIndex - $leftWidth;
+    $rightWished = $selIndex + $rightWidth;
+
+    $leftOver  = max(0, 0 - $leftWished);
+    $rightOver = max(0, $rightWished - $lastIndex);
+
+    $A = max(0, $leftWished - $rightOver);
+    $B = min($lastIndex, $rightWished + $leftOver);
+
+    return array_slice($array, $A, $B - $A + 1); 
+}
 
 ?>
 <html>
 <head>
     <title>NMT detailed programs list for desired channel</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="refresh" content="60" />
     <? displayCommonStyles(); ?>
     <style type="text/css">
-        td.page    { height:<?=DEFAULT_PAGE_HEIGHT?>px; }
         tr.past    { background-color: #4d6080; }
-        tr.current { background-color: #99a1bd; }
+        tr.current { background-color: #99a1bd; font-size: 16pt; font-weight: bold; }
         tr.future  { background-color: #6d80a0; }
         td.title   { width: 1000px; font-weight: bold; background-color: #005B95; }
         td.time    { width:  100px; font-weight: bold; background-color: #005B95; }
@@ -34,11 +53,14 @@ $vid = $HTTP_GET_VARS['vid'];
     </style>
 </head>
 <body <?=getBodyStyles() ?>>
-<div align="center"><table><tr><td class="page" align="center">
+<div align="center">
 <table>
-<tr><td class="time" align="center">
+<tr>
+<td class="time" align="center">
     <img src="http://www.kartina.tv/images/icons/channels/<?=$id?>.gif" />
-</td><td class="title"><?=$HTTP_GET_VARS['title']?></td>
+</td>
+<td class="title" align="center"><?=$HTTP_GET_VARS['title']?></td>
+<td class="time" align="center"><?=date('H:i', $currentTime)?></td>
 </tr>
 
 <?php
@@ -50,30 +72,33 @@ $vid = $HTTP_GET_VARS['vid'];
     $parser = new ProgramsParser();
     $parser->parse($program);
 
-    $current = null;
+    $currentProgram = null;
+    $currentIndex = 0;
     foreach ($parser->programs as $program) {
-        if ($program->beginTime > time()) {
+        if ($program->beginTime > $currentTime) {
             break;
         }
-        $current = $program;
+        $currentProgram = $program;
+        $currentIndex++;
     }
 
-    foreach ($parser->programs as $program) {
-        if ($program === $current) {
+    $programs = getArraySlice($parser->programs, $currentIndex, PR_ITEMS_PER_PAGE);
+    foreach ($programs as $program) {
+        if ($program === $currentProgram) {
             print "<tr class=\"current\">\n";
-        } else if ($program->beginTime <= time()) {
+        } else if ($program->beginTime <= $currentTime) {
             print "<tr class=\"past\">\n";
         } else {
             print "<tr class=\"future\">\n";
         }
         print '<td class="time" align="center">' . date('H:i', $program->beginTime) . "</td>\n";
-        print "<td><table><tr>\n";
+        print "<td colspan=\"2\"><table><tr>\n";
         print '<td class="name">' . $program->name. "</td>\n";
         print '<td class="details">' . $program->details . "</td>\n";
         print "</tr></table></td></tr>\n";
     }
 ?>
 </table>
-</td></tr></table></div>
+</div>
 </body>
 </html>

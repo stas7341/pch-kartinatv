@@ -76,8 +76,8 @@ class KtvFunctions {
     }
 
     function getEpg($id, $date = null) {
-        $date = isset($date) ? 
-            date(EPG_DATE_FORMAT, $date) : date(EPG_DATE_FORMAT); # 091108
+        $date = isset($date) ? date(EPG_DATE_FORMAT, $date) : 
+            date(EPG_DATE_FORMAT, time() + ((TIME_ZONE - 3.5) * 60 * 60)); # 091108
         $url  = "http://iptv.kartina.tv/";
         $url .= "?m=epg&act=show_day_xml&day=$date&cid=$id";
         return $this->getData($url, "EPG for channel $id");

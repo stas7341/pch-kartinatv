@@ -22,7 +22,6 @@ function displayCustomStyles() {
 ?>
 <style type="text/css">
     td             { font-weight: bold; }
-    td.page        { height:<?=DEFAULT_PAGE_HEIGHT?>px; }
     table.channels { width: <?=CL_WIDTH_TABLE?>px; }
     td.number      { width: <?=CL_WIDTH_NUMBER?>px; }
     td.logo        { width: <?=CL_WIDTH_LOGO?>px; }
@@ -31,6 +30,8 @@ function displayCustomStyles() {
     td.program     { width: <?=CL_WIDTH_PROGRAM?>px; font-weight: normal; }
     td.time        { width: <?=CL_WIDTH_TIME?>px; }
     th.details     { width: <?=CL_WIDTH_TABLE?>px; height: 70px; background-color: #005B95; }
+    td.progress    { background-color: #79a1bd; height: 3px; }
+    
 </style>
 <?php
 }
@@ -124,6 +125,8 @@ function displayChannel($channel, $firstChannelNumber,
         $program = "<a href=\"$linkUrl\" $linkExt>$program</a>";
     }
 
+
+
     # now the entry itself 
     print "<tr>\n";
     print "<td class=\"number\">";
@@ -132,7 +135,16 @@ function displayChannel($channel, $firstChannelNumber,
     print "</td>\n";
     print "<td class=\"logo\"><img src=\"$logo\" /></td>\n";
     print "<td class=\"name\">$name</td>\n";
-    print "<td class=\"program\">$program</td>\n";
+
+
+    $offset = TIME_ZONE * 60 * 60;
+    $full = ($channel->endTime - $channel->beginTime);
+    $curr = time() + $offset - $channel->beginTime;
+    $percent = 0 == $full ? 0 : (int) ($curr * 100 / $full);
+    $rest = 100 - $percent;
+
+    $num = round($percent / 10.0);
+    print "<td class=\"program\" background=\"img/progress-${num}0.PNG\">$program</td>\n";
     print "<td class=\"time\" align=\"right\" nowrap>$time</td>\n";
     print "</tr>\n";
 }
@@ -205,7 +217,7 @@ function displayChannelsList($channelsParser, $showDetailsPanel) {
 </head>
 <body <?=getBodyStyles() . 
     " onLoadSet=\"channel-$channelsParser->selectedChannel\""?>>
-<div align="center"><table><tr><td class="page" align="center">
+<div align="center">
 <table class="channels">
 
 <?php
@@ -273,7 +285,7 @@ function displayChannelsList($channelsParser, $showDetailsPanel) {
         displayCredits();
     }
 ?>
-</td></tr></table></div>
+</div>
 </body>
 </html>
 <?php

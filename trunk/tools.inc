@@ -29,7 +29,7 @@ function displayCommonStyles() {
     }
     img     { font-size: <?=FONT_SIZE?>pt; color: #46d0f0; }
     a       { font-size: <?=FONT_SIZE?>pt; color: white; text-decoration: none; }
-    a:hover { font-size: <?=FONT_SIZE?>pt; background: #FF0000; }
+    a:hover { font-size: <?=FONT_SIZE?>pt; background: #880000; }
     div     { font-size: <?=FONT_SIZE?>pt; color: #46d0f0; }
     th      { font-size: <?=FONT_SIZE?>pt; color: white;   }
     td      { font-size: <?=FONT_SIZE?>pt; color: white;   }
