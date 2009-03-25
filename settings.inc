@@ -17,8 +17,12 @@
 #   USERNAME: 147; PASSWORD: 741
 #   USERNAME: 148; PASSWORD: 841
 #   USERNAME: 149; PASSWORD: 941
+
 define("USERNAME", "148");
 define("PASSWORD", "841");
+
+# defines time zone offset (in hours) for this region
+define("TIME_ZONE", "+1");
 
 # set this flag to TRUE if you want the adult channels to be available
 define("ALLOW_EROTIC", TRUE);
@@ -55,15 +59,18 @@ define("CL_SHOW_DETAILS_PANEL", FALSE);
 define("CL_CHANNEL_RED",    21);
 define("CL_CHANNEL_GREEN",  29);
 define("CL_CHANNEL_YELLOW", 39);
-define("CL_CHANNEL_BLUE",   46);
+define("CL_CHANNEL_BLUE",   69);
 
 # size of video window on open channel page
-define("OC_VIDEO_WIDTH",  352);
-define("OC_VIDEO_HEIGHT", 288);
+define("OC_VIDEO_WIDTH",  704);
+define("OC_VIDEO_HEIGHT", 576);
 
 # delay in seconds between slides change.
 # value = 0 means no slide show is wished.
 define("OC_SLIDE_SHOW_DELAY", 10);
+
+# so much programs should be displayed per page in program list
+define("PR_ITEMS_PER_PAGE",  17);
 
 # detection of used browser: normal or PCH-specific one
 define("EMBEDDED_BROWSER", 
