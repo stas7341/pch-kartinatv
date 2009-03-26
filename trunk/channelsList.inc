@@ -136,15 +136,16 @@ function displayChannel($channel, $firstChannelNumber,
     print "<td class=\"logo\"><img src=\"$logo\" /></td>\n";
     print "<td class=\"name\">$name</td>\n";
 
+    if (CL_SHOW_PROGRESS) {
+        $offset = TIME_ZONE * 60 * 60;
+        $full = ($channel->endTime - $channel->beginTime);
+        $curr = time() + $offset - $channel->beginTime;
+        $percent = 0 == $full ? 0 : (int) ($curr * 100 / $full);
+        $num = round($percent / 10.0);
+        $progressbar = "background=\"img/progress-${num}0.PNG\"";
+    }
 
-    $offset = TIME_ZONE * 60 * 60;
-    $full = ($channel->endTime - $channel->beginTime);
-    $curr = time() + $offset - $channel->beginTime;
-    $percent = 0 == $full ? 0 : (int) ($curr * 100 / $full);
-    $rest = 100 - $percent;
-
-    $num = round($percent / 10.0);
-    print "<td class=\"program\" background=\"img/progress-${num}0.PNG\">$program</td>\n";
+    print "<td class=\"program\" $progressbar>$program</td>\n";    
     print "<td class=\"time\" align=\"right\" nowrap>$time</td>\n";
     print "</tr>\n";
 }

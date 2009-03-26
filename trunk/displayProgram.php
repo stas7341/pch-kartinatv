@@ -6,7 +6,6 @@
 #############################################################################
 
 require_once "settings.inc";
-require_once "tools.inc";
 require_once "ktvFunctions.inc";
 require_once "channelsParser.inc";
 
@@ -43,12 +42,11 @@ function getArraySlice($array, $selIndex, $wndWidth) {
     <meta http-equiv="refresh" content="60" />
     <? displayCommonStyles(); ?>
     <style type="text/css">
-        tr.past    { background-color: #4d6080; }
-        tr.current { background-color: #99a1bd; font-size: 16pt; font-weight: bold; }
-        tr.future  { background-color: #6d80a0; }
+        td.past    { background-color: #4d6080; }
+        td.current { background-color: #99a1bd; font-size: 16pt; font-weight: bold; }
+        td.future  { background-color: #6d80a0; }
         td.title   { width: 1000px; font-weight: bold; background-color: #005B95; }
         td.time    { width:  100px; font-weight: bold; background-color: #005B95; }
-        td.name    { } 
         td.details { font-size: 10pt; }
     </style>
 </head>
@@ -84,18 +82,20 @@ function getArraySlice($array, $selIndex, $wndWidth) {
 
     $programs = getArraySlice($parser->programs, $currentIndex, PR_ITEMS_PER_PAGE);
     foreach ($programs as $program) {
-        if ($program === $currentProgram) {
-            print "<tr class=\"current\">\n";
-        } else if ($program->beginTime <= $currentTime) {
-            print "<tr class=\"past\">\n";
-        } else {
-            print "<tr class=\"future\">\n";
-        }
+        print "<tr>\n";
         print '<td class="time" align="center">' . date('H:i', $program->beginTime) . "</td>\n";
-        print "<td colspan=\"2\"><table><tr>\n";
-        print '<td class="name">' . $program->name. "</td>\n";
+        if ($program === $currentProgram) {
+            print "<td class=\"current\" colspan=\"2\">\n";
+        } else if ($program->beginTime <= $currentTime) {
+            print "<td class=\"past\" colspan=\"2\">\n";
+        } else {
+            print "<td class=\"future\" colspan=\"2\">\n";
+        }
+        print "<table><tr>\n";
+        print '<td>' . $program->name. "</td>\n";
         print '<td class="details">' . $program->details . "</td>\n";
-        print "</tr></table></td></tr>\n";
+        print "</tr></table></td>\n";
+        print "</tr>\n";
     }
 ?>
 </table>

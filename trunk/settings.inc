@@ -25,10 +25,14 @@ define("PASSWORD", "841");
 define("TIME_ZONE", "+1");
 
 # set this flag to TRUE if you want the adult channels to be available
+# and to FALSE if you want to disable it
 define("ALLOW_EROTIC", TRUE);
 
 # default font size used in plugin
 define("FONT_SIZE", 16);
+
+# height of page by default
+define("DEFAULT_PAGE_HEIGHT", 650);
 
 # so often in seconds the channels list should be reloaded 
 define("CL_UPDATE_INTERVAL", 60*1);
@@ -37,9 +41,6 @@ define("CL_UPDATE_INTERVAL", 60*1);
 # channel groups (headers) are also counted as channels
 # if details panel is shown then this value will be less on two
 define("CL_ITEMS_PER_PAGE",  23);
-
-# height of page by default
-define("DEFAULT_PAGE_HEIGHT", 650);
 
 # following constants define column widths of channels list table
 define("CL_WIDTH_NUMBER",    30);
@@ -60,6 +61,9 @@ define("CL_CHANNEL_RED",    21);
 define("CL_CHANNEL_GREEN",  29);
 define("CL_CHANNEL_YELLOW", 39);
 define("CL_CHANNEL_BLUE",   69);
+
+# show progress bar in channel list (TRUE for yes and FALSE for no)
+define("CL_SHOW_PROGRESS", TRUE);
 
 # size of video window on open channel page
 define("OC_VIDEO_WIDTH",  704);
