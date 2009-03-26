@@ -7,6 +7,11 @@ the IP-TV channels broadcasted by katrina.tv provider.
 
 Changes
 -------
+Changes in version 0.7.1:
+- Progress bars for programs in channel list
+- Detailed programs list for a desired channel improved
+- Small design changes
+
 Changes in version 0.7.0:
 - Finally support of HD mode - I've bought a new 52" TV.
 
