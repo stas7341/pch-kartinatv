@@ -125,7 +125,15 @@ function displayChannel($channel, $firstChannelNumber,
         $program = "<a href=\"$linkUrl\" $linkExt>$program</a>";
     }
 
-
+    # decide whether to show progress bars or not
+    if (CL_SHOW_PROGRESS) {
+        $offset = TIME_ZONE * 60 * 60;
+        $full = ($channel->endTime - $channel->beginTime);
+        $curr = time() + $offset - $channel->beginTime;
+        $percent = 0 == $full ? 0 : (int) ($curr * 100 / $full);
+        $num = round($percent / 10.0);
+        $progressbar = "background=\"img/progress-${num}0.PNG\"";
+    }
 
     # now the entry itself 
     print "<tr>\n";
@@ -135,15 +143,6 @@ function displayChannel($channel, $firstChannelNumber,
     print "</td>\n";
     print "<td class=\"logo\"><img src=\"$logo\" /></td>\n";
     print "<td class=\"name\">$name</td>\n";
-
-    if (CL_SHOW_PROGRESS) {
-        $offset = TIME_ZONE * 60 * 60;
-        $full = ($channel->endTime - $channel->beginTime);
-        $curr = time() + $offset - $channel->beginTime;
-        $percent = 0 == $full ? 0 : (int) ($curr * 100 / $full);
-        $num = round($percent / 10.0);
-        $progressbar = "background=\"img/progress-${num}0.PNG\"";
-    }
 
     print "<td class=\"program\" $progressbar>$program</td>\n";    
     print "<td class=\"time\" align=\"right\" nowrap>$time</td>\n";
