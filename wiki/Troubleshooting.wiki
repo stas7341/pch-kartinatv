@@ -11,6 +11,7 @@
     * Casgle Client
 
 *Q2*: Can't watch any channel. I see the channels list but when I'm trying to start the playback I see the PCH logo for several seconds and then I'm returned back to programs list.
+
 *A2*: Please make sure you are not using one of following firmware: 
     * PCH-A100: from 21 January 2009, 03 March 2009 or 02 April 2009
     * PCH-A110: from 26 February 2009 or 02 April 2009
