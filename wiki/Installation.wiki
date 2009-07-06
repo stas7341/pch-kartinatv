@@ -1,9 +1,9 @@
 #summary How to install the plugin.
 #labels Phase-Deploy,Featured
 
-*Please note that last two versions of firmware are not supported due to famous resume "feature" which tries to resume the old stream instead of getting the new one.*
- * Release Date : 03 March 2009 *Not supported!*
- * Release Date : 21 January 2009 *Not supported!*
+*Please note that following versions of firmware are not supported!*
+ * PCH-A100: from 21 January 2009, 03 March 2009 or 02 April 2009 *Not supported!*
+ * PCH-A110: from 26 February 2009 or 02 April 2009 *Not supported!*
 
 == Installation ==
  * Copy the *katrina.tv* folder to the root of the internal hard disk. If you want to install it to any other location you will have to update your MSP URL accordingly.
@@ -14,7 +14,6 @@
 
 == Notes ==
  * Check the URL against the path where you've put the katrina.tv folder.
- * Please note that the equal sign "=" can be entered only via USB-Keyboard.
  * As an alternative to a Web Service you can simply go to *kartina.tv* folder via HDD browser and open there the *index.htm* file.
  * Please make sure at least one of following services is running:
    * Torrent
