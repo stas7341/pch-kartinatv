@@ -15,6 +15,7 @@
 == Notes ==
  * Check the URL against the path where you've put the katrina.tv folder.
  * As an alternative to a Web Service you can simply go to *kartina.tv* folder via HDD browser and open there the *index.htm* file.
+ * Please make sure myiHome service is running.
  * Please make sure at least one of following services is running:
    * Torrent
    * Usenet Client
