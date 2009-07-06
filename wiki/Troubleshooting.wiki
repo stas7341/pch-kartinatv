@@ -16,3 +16,7 @@
     * PCH-A100: from 21 January 2009, 03 March 2009 or 02 April 2009
     * PCH-A110: from 26 February 2009 or 02 April 2009
 These firmware officially doesn't support KartinaTV. All others (before and after) are compatible with KartinaTV.
+
+*Q3*: If I press ZOOM during playback then instead of zooming the playback hangs and only reboot can help. 
+
+*A3*: Try to change in PCH video options the colorspace. In my case the 16-235 was the right value.
