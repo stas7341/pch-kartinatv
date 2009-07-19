@@ -27,10 +27,11 @@ class KtvFunctions {
 
     function authorize() {
         $this->trace("Authorization started");
-        $request  = "act=login";
-        $request .= "&code_login=" . USERNAME;
-        $request .= "&code_pass="  . PASSWORD;
-        $this->cookie = getCookies("http://iptv.kartina.tv", $request);
+        $params  = "act=login";
+        $params .= "&code_login=" . USERNAME;
+        $params .= "&code_pass="  . PASSWORD;
+        $html = getPageContentByPut("http://iptv.kartina.tv", $params);
+        $this->cookie = parseOutCookies($html);
         strpos($this->cookie, "SSID") or 
             die (USERNAME . ": Authorization of user failed!");
         strpos($this->cookie, "=deleted") and 
@@ -49,11 +50,11 @@ class KtvFunctions {
 
     function getData($url, $name) {
         $this->trace("Getting $name");
-        $reply = getPageContent($url, $this->cookie);
+        $reply = getPageContentByGet($url, $this->cookie);
         if (! $this->isAuthorized($reply)) {
             $this->authorize(); 
             $this->trace("Second try to get $name");
-            $reply = getPageContent($url, $this->cookie);
+            $reply = getPageContentByGet($url, $this->cookie);
             $this->isAuthorized($reply) or 
                 die ("Failed to get $name:\n$reply");
         }

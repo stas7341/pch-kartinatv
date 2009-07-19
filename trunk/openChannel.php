@@ -57,7 +57,7 @@ function displayAudioPlaylist($name, $url) {
 <head>
 <title>NMT playing a channel from Kartina.TV</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <? displayCommonStyles(); ?>
+    <? displayCommonStyles(FONT_SIZE); ?>
     <style type="text/css">
         a       { color: #46d0f0; }
         div     { color: white;   }

@@ -5,7 +5,7 @@
 # Author: consros 2008                                                      #
 #############################################################################
 
-require_once "tools.inc";
+$content = require_once "tools.inc";
 
 function getBackgrounds() {
     $images = array_merge(
@@ -22,8 +22,9 @@ function getDeviantArtBackgrounds() {
 
     # parse deviant art
     $offset = rand(1, 4000);
-    $content = getCompactedPageContent(
+    $content = getPageContentByGet(
         "http://browse.deviantart.com/photography/?order=9&offset=$offset", "");
+    $content = compactHtml($content);
     $content = preg_replace('|You are viewing.*|', '', $content);
     if (preg_match_all('|"http://th\d\d\.deviantart\..../[^"]*\.jpg"|i', 
             $content, $matches)) 
@@ -40,8 +41,9 @@ function getDeviantArtBackgrounds() {
 function getPhotoDomBackgrounds() {
     $images = array();
 
-    $content = getCompactedPageContent(
+    $content = getPageContentByGet(
         "http://www.photodom.com/bestofweek.php", "");
+    $content = compactHtml($content);
     if (preg_match_all('|"\.\./new_fotos/\d\d\d\d/\d\d/\d\d?/thumb_\d*\.jpg"|i', 
             $content, $matches)) 
     {
