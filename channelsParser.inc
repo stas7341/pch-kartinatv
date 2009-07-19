@@ -168,6 +168,8 @@ class ProgramsParser extends AbstractParser {
     }
 
     function parse($string) {
+        $this->programs = array();
+
         $xmlParser = xml_parser_create();
         xml_parse_into_struct($xmlParser, $string, &$elements, &$index);
         xml_parser_free($xmlParser);

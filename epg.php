@@ -10,6 +10,62 @@ require_once "uft8_tools.inc";
 require_once "settings.inc";
 require_once "tools.inc";
 require_once "channelsParser.inc";
+require_once "ktvFunctions.inc";
+
+define("CURRENT_TIME", time() + (TIME_ZONE * 60 * 60));
+define("EPG_WIDTH_PROGRAMS", 800);
+define("EPG_BEGIN", (int) (CURRENT_TIME / 3600) * 3600);
+define("EPG_END", EPG_BEGIN + 4 * 30 * 60);
+
+session_start();
+
+# decide whether chanels list update is needed
+if (! isset($_SESSION['lastUpdate']) || 
+    time() - $_SESSION['lastUpdate'] > CL_UPDATE_INTERVAL ||
+    ! isset($_SESSION['channelsList'])) 
+{
+    # renew the list using existing cookie
+    $ktvFunctions = new KtvFunctions($_SESSION['cookie'], false);
+    $rawList = $ktvFunctions->getChannelsList();
+
+    # remember new state
+    $_SESSION['channelsList'] = $rawList;
+    $_SESSION['cookie'] = $ktvFunctions->cookie;
+    $_SESSION['lastUpdate'] = time();
+} else {
+
+    # use remembered list
+    $rawList = $_SESSION['channelsList'];
+}
+
+# decide which channel is now the active one
+$selectedChannel = isset($HTTP_GET_VARS['selectedChannel']) ? 
+    $HTTP_GET_VARS['selectedChannel'] : $_SESSION['selectedChannel'];
+if (! isset($selectedChannel)) {
+    $selectedChannel = 1;
+}
+$_SESSION['selectedChannel'] = $selectedChannel;
+
+# parse raw list into prepared class hierarchy
+$channelsParser = new ChannelsParser();
+$channelsParser->parse($rawList);
+# DEBUG: use local file instead of remote response
+# $channelsParser->parseFile('channels.xml');
+$channelsParser->selectedChannel = $selectedChannel;
+
+# decide whether to show the details panel
+$showDetailsPanel = isset($HTTP_GET_VARS['showDetailsPanel']) ?
+    $HTTP_GET_VARS['showDetailsPanel'] : $_SESSION['showDetailsPanel'];
+if (! isset($showDetailsPanel)) {
+    $showDetailsPanel = CL_SHOW_DETAILS_PANEL;
+}
+$_SESSION['showDetailsPanel'] = $showDetailsPanel;
+
+# show channels list to user
+displayChannelsList($channelsParser, $showDetailsPanel);
+
+
+
 
 function displayHtmlHeader() {
 ?>
@@ -23,17 +79,23 @@ function displayCustomStyles() {
 ?>
 <style type="text/css">
     td             { font-weight: bold; }
-    table.channels { width: <?=CL_WIDTH_TABLE?>px; }
-    td.number      { width: <?=CL_WIDTH_NUMBER?>px; }
-    td.logo        { width: <?=CL_WIDTH_LOGO?>px; }
-    td.name        { width: <?=CL_WIDTH_NAME?>px; background-color: #005B95; }
-    th.longName    { width: <?=CL_WIDTH_LONGNAME?>px; background-color: #005B95; }
-    td.program     { width: <?=CL_WIDTH_PROGRAM?>px; font-weight: normal; }
-    td.time        { width: <?=CL_WIDTH_TIME?>px; }
-    th.details     { width: <?=CL_WIDTH_TABLE?>px; height: 70px; background-color: #005B95; }
-    td.progress    { background-color: #79a1bd; height: 3px; }
+    table.channels { width: 1090px; }
+    td.number      { width: 30px; }
+    td.logo        { width: 25px; }
+    td.name        { width: 235px; background-color: #005B95; }
+    td.program     { width: 800px; font-weight: normal; }
+    th.details     { width: 1090px; height: 70px; background-color: #005B95; }
     
+    td.time        { width: 200px; font-weight: normal; background-color: #005B95; color: #46d0f0; }
+    td.nowTime     { width: 200px; font-weight: normal; background-color: #005B95; color: white; }
+
+    td.past    { background-color: #4d6080; font-weight: normal; color: #88a1bd; }
+    td.current { background-color: #5c8db1; font-weight: normal; }
+    td.future  { background-color: #4d6080; font-weight: normal; color: #88a1bd; }
+    td.separator { width: 5px; background-color: #27699B; color: #27699B; }
+
 </style>
+<link rel="shortcut icon" href="img/favicon.ico" />
 <?php
 }
 
@@ -55,12 +117,67 @@ function displayCredits() {
 <?php
 }       
 
+
+function displayTime($top) {
+    $full = EPG_END - EPG_BEGIN;
+    $curr = CURRENT_TIME - EPG_BEGIN;
+    $percent = 0 == $full ? 0 : (int) ($curr * 100 / $full);
+
+    $width = (int) (EPG_WIDTH_PROGRAMS * $percent / 100);
+    $time = EPG_BEGIN;
+
+    if (true === $top) {
+        print "<tr>\n";
+        print "<td colspan=\"3\"></td>\n";
+        print "<td colspan=\"4\">\n";
+        print '<table border="0" cellspacing="0" cellpadding="0"><tr>';
+        print "<td width=\"$width\"></td>\n";
+        print "<td><img src=\"img/pointer-up.png\" /></td>\n";
+        print "</tr></table>\n";
+        print "</tr>\n";
+    }
+
+    print "<tr>\n";
+    print "<td class=\"nowTime\" colspan=\"3\" align=\"center\">" . date('H:i', CURRENT_TIME) . "</td>\n";
+    print "<td class=\"time\">" . date('H:i', $time) . "</td>\n";
+    $time += 30 * 60;
+    print "<td class=\"time\">" . date('H:i', $time) . "</td>\n";
+    $time += 30 * 60;
+    print "<td class=\"time\">" . date('H:i', $time) . "</td>\n";
+    $time += 30 * 60;
+    print "<td class=\"time\">" . date('H:i', $time) . "</td>\n";
+    print "</tr>\n";
+
+    if (true !== $top) {
+        print "<tr>\n";
+        print "<td colspan=\"3\"></td>\n";
+        print "<td colspan=\"4\">\n";
+        print '<table border="0" cellspacing="0" cellpadding="0"><tr>';
+        print "<td width=\"$width\"></td>\n";
+        print "<td><img src=\"img/pointer-down.png\" /></td>\n";
+        print "</tr></table>\n";
+        print "</tr>\n";
+    }    
+}
+
+
 function displayCategory($category) {
     $name = ($category->color == "#efefef") ? 
         "<font color=\"gray\">$category->name</font>" : $category->name;
     print "\n<tr bgcolor=\"$category->color\">\n";
     print "<th colspan=\"7\" align=\"center\">$name</th>\n";
     print "</tr>\n";
+}
+
+
+function getParsedPrograms($id) {
+    $fileName = EPG_TODAY . "/epg-" . $id . ".xml";
+    $program = readLocalFile($fileName);    
+    
+    $parser = new ProgramsParser();
+    $parser->parse($program);
+
+    return $parser->programs;
 }
 
 function displayChannel($channel, $firstChannelNumber, 
@@ -103,31 +220,36 @@ function displayChannel($channel, $firstChannelNumber,
         $linkExt .= "\nonMouseOver=\"updateDetails('$text')\"";
         $linkExt .= "\nonMouseOut=\"updateDetails('')\"";
     }
+    
+    $allPrograms = getParsedPrograms($channel->id);
+    $programs = array();
+    $starts = array();
+    $ends = array();
+    $currentProgram = null;
 
-    # add time stamps only if they are provided
-    if (isset($channel->beginTime) && isset($channel->endTime)) {
-        $start = date('H:i', $channel->beginTime);
-        $stop  = date('H:i', $channel->endTime);
-        $time  = "$start - $stop";
+    for ($i = 0; $i < count($allPrograms); $i++) {
+        $start = $allPrograms[$i]->beginTime;
+        $end = $i == count($allPrograms) - 1 ? 
+            EPG_END : $allPrograms[$i+1]->beginTime;
+        if ($start >= EPG_END || $end <= EPG_BEGIN) {
+            continue;
+        }
+        
+        $programs[] = $allPrograms[$i];
+        $starts[] = max($start, EPG_BEGIN);
+        $ends[] = min($end, EPG_END);
+
+        if (CURRENT_TIME >= $start && CURRENT_TIME <= $end) {
+            $currentProgram = $allPrograms[$i];
+        }
     }
 
     # decide how to display the program
-    if ("" == $channel->program) {
-        $name = EMBEDDED_BROWSER ? 
-            '<marquee behavior="focus">'.$channel->name.'</marquee>':
-            utf8_cutByPixel($channel->name, CL_WIDTH_LONGNAME, true);    
+    $name = utf8_cutByPixel($channel->name, 200, true);    
+    if (0 == count($programs)) {
         $name = "<a href=\"$linkUrl\" $linkExt>$name</a>";
-        $program = "";
-    } else {
-        $name = utf8_cutByPixel($channel->name, CL_WIDTH_NAME, true);
-        $program = EMBEDDED_BROWSER ? 
-            '<marquee behavior="focus">'.$channel->program.'</marquee>':
-            utf8_cutByPixel($channel->program, CL_WIDTH_PROGRAM, false);
-        $program = "<a href=\"$linkUrl\" $linkExt>$program</a>";
     }
-
-
-
+    
     # now the entry itself 
     print "<tr>\n";
     print "<td class=\"number\">";
@@ -137,18 +259,54 @@ function displayChannel($channel, $firstChannelNumber,
     print "<td class=\"logo\"><img src=\"$logo\" /></td>\n";
     print "<td class=\"name\">$name</td>\n";
 
-    if (CL_SHOW_PROGRESS) {
-        $offset = TIME_ZONE * 60 * 60;
-        $full = ($channel->endTime - $channel->beginTime);
-        $curr = time() + $offset - $channel->beginTime;
-        $percent = 0 == $full ? 0 : (int) ($curr * 100 / $full);
-        $num = round($percent / 10.0);
-        $progressbar = "background=\"img/progress-${num}0.PNG\"";
+    print "<td class=\"program\" colspan=\"4\">";
+
+    if (0 == count($programs)) {
+        print "</td>\n";
+        print "</tr>\n";
+        return;
     }
 
-    print "<td class=\"program\" $progressbar>$program</td>\n";    
-    print "<td class=\"time\" align=\"right\" nowrap>$time</td>\n";
+    print '<table border="0" cellspacing="0" cellpadding="0"><tr>';
+
+    $currentWidth = 0;
+    for ($i = 0; $i < count($programs); $i++) {
+        $full  = EPG_END - EPG_BEGIN;
+        $right = $ends[$i] - EPG_BEGIN;
+
+        $width = ($i == count($programs) - 1) ? 
+            EPG_WIDTH_PROGRAMS - $currentWidth : 
+            (int) round(EPG_WIDTH_PROGRAMS / $full * $right) - $currentWidth;
+        $width -= 5;
+        
+        if ($width < 20) {
+            continue;
+        }
+
+
+        $currentWidth += $width;
+
+        $program = EMBEDDED_BROWSER ? 
+            '<marquee behavior="focus">'.$programs[$i]->name.'</marquee>':            
+            utf8_cutByPixel($programs[$i]->name, $width, false);
+
+        print "<td width=\"$width\" ";
+        if ($programs[$i] === $currentProgram) {
+            print 'class="current"';
+            $program = "<a href=\"$linkUrl\" $linkExt>$program</a>";
+        } else if ($programs[$i]->beginTime <= CURRENT_TIME) {
+            print 'class="past"';
+        } else {
+            print 'class="future"';
+        }
+
+        print ">$program</td><td class=\"separator\">.</td>\n";
+    }
+
+    print "</tr></table>\n";    
+    print "</td>\n";
     print "</tr>\n";
+
 }
 
 function addShortcuts(
@@ -233,6 +391,7 @@ function displayChannelsList($channelsParser, $showDetailsPanel) {
     $currentEntry       = 0;
     $foundSelected      = false;
     $limit = $showDetailsPanel ? CL_ITEMS_PER_PAGE - 2 : CL_ITEMS_PER_PAGE; 
+    $limit -= 4;
     foreach ($channelsParser->categories as $category) {
         if ($currentEntry % $limit == 0) {
             if ($foundSelected) {
@@ -266,6 +425,8 @@ function displayChannelsList($channelsParser, $showDetailsPanel) {
         }
     }
 
+    displayTime(true);
+
     # display collected items
     foreach ($itemsToDisplay as $item) {
         if (is_a($item, 'Category')) {
@@ -275,6 +436,8 @@ function displayChannelsList($channelsParser, $showDetailsPanel) {
                 $lastChannelNumber, $showDetailsPanel);
         }
     }
+
+    displayTime(false);
 
     # time for shortcuts
     print "<tr><th colspan=\"7\" align=\"center\">\n";

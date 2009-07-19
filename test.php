@@ -30,7 +30,7 @@ function toggleBooleanOption($filename, $optionName) {
 <head>
     <title>NMT check of KtvFunctions class</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <? displayCommonStyles(); ?>
+    <? displayCommonStyles(FONT_SIZE); ?>
     <style type="text/css">
         td.page        { width: 620px; height: 480px; }
     </style>
@@ -51,7 +51,9 @@ function toggleBooleanOption($filename, $optionName) {
 
     $ktvFunctions = new KtvFunctions("", true);
     # print $ktvFunctions->getChannelsList() . "\n\n\n";
-   
+
+    print("REFERER: " . $_SERVER['HTTP_REFERER'] . "\n");
+
     $id = isset($HTTP_GET_VARS['id']) ? $HTTP_GET_VARS['id'] : 7;
     #$content = $ktvFunctions->getStreamUrl($id);
     $content = $ktvFunctions->getEpg($id);

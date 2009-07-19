@@ -40,7 +40,7 @@ function getArraySlice($array, $selIndex, $wndWidth) {
     <title>NMT detailed programs list for desired channel</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta http-equiv="refresh" content="60" />
-    <? displayCommonStyles(); ?>
+    <? displayCommonStyles(FONT_SIZE); ?>
     <style type="text/css">
         td.past    { background-color: #4d6080; }
         td.current { background-color: #99a1bd; font-size: 16pt; font-weight: bold; }

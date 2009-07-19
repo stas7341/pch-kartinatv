@@ -1,61 +1,47 @@
 <?php
 #############################################################################
-# Set of tools helping to display local pages and to perform diverse        #
-# operations with remote content.                                           #
+# Set of tools helping to perform diverse operations with remote content.   #
 #                                                                           #
-# Author: consros 2008                                                      #
+# Author: consros 2009                                                      #
 #############################################################################
 
-require_once "settings.inc";
+function compactHtml($html) {
+    # compact all to a single line
+    $html = preg_replace('|\n|', '', $html);
 
-function getBodyStyles() {
-    return 'focusColor="#880000" focusText="#000000" background="img/bg.jpg"';
+    # no spaces between tags
+    $html = preg_replace('|>\s+|', '>', $html);
+    $html = preg_replace('|\s+<|', '<', $html);
+
+    return $html;
 }
 
-function displayCommonStyles() {
-?>
-<style type="text/css">
-    body { 
-        color             : white; 
-        background-color  : #27699B; 
-        background-repeat : no-repeat;
-        margin-top        : 40px;
-        margin-bottom     : 40px;
-        margin-right      : 48px;
-        margin-left       : 48px;           
-        font-family       : arial,helvetica,verdana,sans-serif;
-        font-size         : <?=FONT_SIZE?>pt;
-        text-align        : left;
+function parseOutCookies($html) {
+    preg_match_all("/Set-Cookie: .*?;/", $html, $matches);
+    foreach ($matches[0] as $cookie) {
+        $cookies .= substr($cookie, 4, strlen($cookie) - 5) . "\r\n";
     }
-    img     { font-size: <?=FONT_SIZE?>pt; color: #46d0f0; }
-    a       { font-size: <?=FONT_SIZE?>pt; color: white; text-decoration: none; }
-    a:hover { font-size: <?=FONT_SIZE?>pt; background: #880000; }
-    div     { font-size: <?=FONT_SIZE?>pt; color: #46d0f0; }
-    th      { font-size: <?=FONT_SIZE?>pt; color: white;   }
-    td      { font-size: <?=FONT_SIZE?>pt; color: white;   }
-</style>
-<?php
+    return $cookies;
 }
 
-function writeLocalFile($filename, $content) {
-    $fh = fopen($filename, 'w') or die("Cannot write file: " . $filename);
-    fwrite($fh, $content);
-    fclose($fh);
+function getHostIp($host) {
+    exec("ping -c1 -q $host", &$ip);
+    $ip = implode("", $ip);
+    $ip = preg_replace('/.*\((\d+\.\d+\.\d+\.\d+)\).*/', '$1', $ip);
+    return $ip;
 }
 
-function getPageContent($url, $cookie) {
-    # support for broken DNS in PCH version of PHP
+function getPageContentByGet($url, $headerExt) {
     $parsedUrl = parse_url($url);
     $host = $parsedUrl['host'];
-    exec("ping -c1 -q $host", &$ip);
-    $ip  = implode("", $ip);
-    $ip  = preg_replace('/.*\((\d+\.\d+\.\d+\.\d+)\).*/', '$1', $ip);
-    $url = preg_replace("/$host/", "$ip", $url);
+    
+    # support for broken DNS in PCH version of PHP
+    $url = preg_replace("/$host/", getHostIp($host), $url);
     
     $opts = array(
         'http' => array(
             'method'=> 'GET',
-            'header'=> "User-Agent: Mozilla/5.0\r\nHost: $host\r\n$cookie")
+            'header'=> "User-Agent: Mozilla/5.0\r\nHost: $host\r\n$headerExt")
     );
 
     $context = stream_context_create($opts);
@@ -84,32 +70,17 @@ function getPageContent($url, $cookie) {
     while($data = fread($f, 1024)) {
         $content .= $data;
     }
+    fclose($f);
     return $content;
 }
 
-function getCompactedPageContent($url, $cookie) {
-    # get the page content
-    $html = getPageContent($url, $cookie);
-
-    # compact all to a single line
-    $html = preg_replace('|\n|', '', $html);
-
-    # no spaces between tags
-    $html = preg_replace('|>\s+|', '>', $html);
-    $html = preg_replace('|\s+<|', '<', $html);
-
-    return $html;
-}
-
-function getCookies($url, $request, $headerExt = "") {
+function getPageContentByPut($url, $params, $headerExt = "") {
     $parsedUrl = parse_url($url);
     $host = $parsedUrl['host'];
     $path = $parsedUrl['path'];
     
     # support for broken DNS in PCH version of PHP
-    exec("ping -c1 -q $host", &$ip);
-    $ip = implode("", $ip);
-    $ip = preg_replace('/.*\((\d+\.\d+\.\d+\.\d+)\).*/', '$1', $ip);
+    $ip  = getHostIp($host);
     if ("" == $path) {
         $path = "/";
     }
@@ -118,7 +89,7 @@ function getCookies($url, $request, $headerExt = "") {
     $header .= "Host: $host\r\n";
     $header .= "User-Agent: Mozilla/5.0\r\n";
     $header .= "Content-Type: application/x-www-form-urlencoded\r\n";
-    $header .= "Content-Length: " . strlen($request) . "\r\n";
+    $header .= "Content-Length: " . strlen($params) . "\r\n";
     $header .= $headerExt;
     $header .= "\r\n";
 
@@ -127,76 +98,49 @@ function getCookies($url, $request, $headerExt = "") {
         die ("Cannot open $host");
     }
 
-    fputs($fp, $header . $request);
+    fputs($fp, $header . $params);
     while (! feof($fp)) {
-        $reply .= fgets($fp, 1024);
+        $content .= fgets($fp, 1024);
     }
     fclose($fp);
-
-    preg_match_all("/Set-Cookie: .*?;/", $reply, $matches);
-    foreach ($matches[0] as $cookie) {
-        $cookies .= substr($cookie, 4, strlen($cookie) - 5) . "\r\n";
-    }
-
-    return $cookies;
+    return $content;
 }
 
-function ut8_strlen($str) {
-    return preg_match_all('/./uSs', $str, $out);
+
+function writeLocalFile($filename, $content) {
+    $fh = fopen($filename, 'w') or die("Cannot write file: " . $filename);
+    fwrite($fh, $content);
+    fclose($fh);
 }
 
-function ut8_substr($str, $start, $length = null) {    
-    if (! isset($length)) {
-        return preg_replace('/^.{'.$start.'}(.*)$/uSs', '$1', $str);
-    } else if ($length <= 0) {
-        return "";
-    }
-    return preg_replace('/^.{'.$start.'}(.{'.$length.'}).*$/uSs', '$1', $str);
+
+function getBodyStyles() {
+    return 'focusColor="#880000" focusText="#000000" background="img/bg.jpg"';
 }
 
-function utf8_getAllowedLength($str, $pixels, $bold = false) {
-    $cyrUp = "[\x{0410}-\x{042F}]";
-    $cyrLo = "[\x{0430}-\x{044F}]";
-    
-    $length = preg_match_all(
-        "/([A-Z])|([a-z])|($cyrUp)|($cyrLo)|(.)/uSs", $str, $out);
-
-    $curr = 0;
-    for ($i = 0; $i < $length && $curr <= $pixels; $i++) {
-        $val = 0;
-        $val += $out[1][$i] == "" ? 0 : 11.5;     # mean capital latin
-        $val += $out[2][$i] == "" ? 0 :  7.5;     # mean normal  latin
-        $val += $out[3][$i] == "" ? 0 : 12.0;     # mean capital cyrilic
-        $val += $out[4][$i] == "" ? 0 :  7.5;     # mean normal  cyrilic
-        $val += $out[5][$i] == "" ? 0 :  7.0;     # mean others
-        $val = $val * (FONT_SIZE - 4) / (12 - 4); # default font size is 12
-        $curr += $bold ? ($val * 1.2) : $val;     # bold font difference
+function displayCommonStyles($fontSize) {
+?>
+<style type="text/css">
+    body { 
+        color             : white; 
+        background-color  : #27699B; 
+        background-repeat : no-repeat;
+        margin-top        : 40px;
+        margin-bottom     : 40px;
+        margin-right      : 48px;
+        margin-left       : 48px;           
+        font-family       : arial,helvetica,verdana,sans-serif;
+        font-size         : <?=$fontSize?>pt;
+        text-align        : left;
     }
-
-    # TRUE means length is OK, string should not be cut
-    return $i == $length ? TRUE : $i;
-}
-
-function utf8_cutByPixel($str, $pixels, $bold = false) {  
-    $colors = array("#dde5f8", "#bbbed9", "#99a1bd", "#6d80a0");
-    $limit = utf8_getAllowedLength($str, $pixels, $bold);
-    if (TRUE === $limit) {
-        return $str;
-    } else if (0 === $limit) {
-        return "";
-    }
-
-    $wishedStart = $limit - count($colors);
-    for ($start = $wishedStart; $start < 0; $start++);
-    
-    $res = ut8_substr($str, 0, $start);
-    for ($i = $start; $i < $limit; $i++) {
-        $char = ut8_substr($str, $i, 1);
-        $res .= '<font color="' . $colors[$i - $wishedStart] . '">';
-        $res .= ($char == " " ? "&nbsp;" : $char) . "</font>";
-    }
-
-    return $res;
+    img     { font-size: <?=$fontSize?>pt; color: #46d0f0; }
+    a       { font-size: <?=$fontSize?>pt; color: white; text-decoration: none; }
+    a:hover { font-size: <?=$fontSize?>pt; background: #880000; }
+    div     { font-size: <?=$fontSize?>pt; color: #46d0f0; }
+    th      { font-size: <?=$fontSize?>pt; color: white;   }
+    td      { font-size: <?=$fontSize?>pt; color: white;   }
+</style>
+<?php
 }
 
 ?>

@@ -76,6 +76,11 @@ define("OC_SLIDE_SHOW_DELAY", 10);
 # so much programs should be displayed per page in program list
 define("PR_ITEMS_PER_PAGE",  17);
 
+
+define("EPG_DIR",   "/tmp/epg");
+define("EPG_TODAY", "/tmp/epg/" . USERNAME . "-" . date('Y-m-d'));
+
+
 # detection of used browser: normal or PCH-specific one
 define("EMBEDDED_BROWSER", 
     FALSE !== strpos($_SERVER['HTTP_USER_AGENT'], 'Syabas'));
