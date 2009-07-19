@@ -9,7 +9,7 @@ require_once "tools.inc";
 
 function getBackgrounds() {
     return array_merge(
-        getDeviantArtBackgrounds(),
+        getPhotoDomBackgrounds(),
         getDeviantArtBackgrounds(),
         getDeviantArtBackgrounds(),
         getDeviantArtBackgrounds());
@@ -33,5 +33,23 @@ function getDeviantArtBackgrounds() {
     }
     return $images;
 }
+
+
+function getPhotoDomBackgrounds() {
+    $images = array();
+
+    $content = getCompactedPageContent(
+        "http://www.photodom.com/bestofweek.php", "");
+    if (preg_match_all('|"\.\./new_fotos/\d\d\d\d/\d\d/\d\d?/thumb_\d*\.jpg"|i', 
+            $content, $matches)) 
+    {
+        foreach ($matches[0] as $thumb) {
+            $images[] = preg_replace('|"\.\./(.*?)/thumb_(.*?\.jpg)"$|', 
+                'http://www.photodom.com/$1/$2', $thumb);
+        }
+    }
+    return $images;
+}
+
 
 ?>
