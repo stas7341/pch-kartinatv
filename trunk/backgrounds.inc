@@ -8,11 +8,13 @@
 require_once "tools.inc";
 
 function getBackgrounds() {
-    return array_merge(
+    $images = array_merge(
         getPhotoDomBackgrounds(),
         getDeviantArtBackgrounds(),
         getDeviantArtBackgrounds(),
         getDeviantArtBackgrounds());
+    shuffle($images);
+    return $images;    
 }
 
 function getDeviantArtBackgrounds() {
