@@ -112,14 +112,15 @@ function displayChannel($channel, $firstChannelNumber,
     }
 
     # decide how to display the program
+    $name = preg_replace('/ -\d+$/', '', $channel->name);
     if ("" == $channel->program) {
         $name = EMBEDDED_BROWSER ? 
-            '<marquee behavior="focus">'.$channel->name.'</marquee>':
-            utf8_cutByPixel($channel->name, CL_WIDTH_LONGNAME, true);    
+            '<marquee behavior="focus">'.$name.'</marquee>':
+            utf8_cutByPixel($name, CL_WIDTH_LONGNAME, true);    
         $name = "<a href=\"$linkUrl\" $linkExt>$name</a>";
         $program = "";
     } else {
-        $name = utf8_cutByPixel($channel->name, CL_WIDTH_NAME, true);
+        $name = utf8_cutByPixel($name, CL_WIDTH_NAME, true);
         $program = EMBEDDED_BROWSER ? 
             '<marquee behavior="focus">'.$channel->program.'</marquee>':
             utf8_cutByPixel($channel->program, CL_WIDTH_PROGRAM, false);

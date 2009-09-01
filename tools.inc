@@ -107,6 +107,15 @@ function getPageContentByPut($url, $params, $headerExt = "") {
 }
 
 
+function readLocalFile($filename) {
+    $fh = fopen($filename, 'r') or die("Cannot read file: " . $filename);
+    while($data = fread($fh, 1024)) {
+        $content .= $data;
+    }
+    fclose($fh);
+    return $content;
+}
+
 function writeLocalFile($filename, $content) {
     $fh = fopen($filename, 'w') or die("Cannot write file: " . $filename);
     fwrite($fh, $content);

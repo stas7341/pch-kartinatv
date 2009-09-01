@@ -15,6 +15,8 @@ define("FILE_REF", "http://localhost:8088/stream/file=");
 define("TMP_CHANNEL", "/tmp/channel.jsp");
 define("TMP_BACKGROUND", "/tmp/bg.jsp");
 
+define("PREBUF_SIZE", 32);
+
 session_start();
 
 function playMedia($url = null) {
@@ -89,7 +91,11 @@ function displayAudioPlaylist($name, $url) {
 
         # video and audio have different extensions
         if ($vid) {
-            print "href=\"$url\" vod>";
+            print "href=\"$url\" vod";
+            if (PREBUF_SIZE > 0) {
+                print " prebuf=\"" . (PREBUF_SIZE * 1048576) . "\"";
+            }
+            print ">";
         } else {
             displayAudioPlaylist($name, $url);
         }
