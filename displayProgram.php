@@ -17,6 +17,20 @@ $vid = $HTTP_GET_VARS['vid'];
 $currentTime = time() + (TIME_ZONE * 60 * 60);
 
 function getArraySlice($array, $selIndex, $wndWidth) {
+    return getBottomArraySlice($array, $selIndex, $wndWidth);
+}
+
+function getBottomArraySlice($array, $selIndex, $wndWidth) {    
+    $backStep = 2;
+    $A = max(0, $selIndex - $backStep - 1);
+    $B = min(count($array), $A + $wndWidth);
+    while ($B - $A < $wndWidth && $A > 0) {
+        $A--;
+    }
+    return array_slice($array, $A, $B - $A); 
+}
+
+function getMiddleArraySlice($array, $selIndex, $wndWidth) {    
     $lastIndex = count($array) - 1;
 
     $leftWidth  = (int) ($wndWidth / 2);
@@ -34,20 +48,35 @@ function getArraySlice($array, $selIndex, $wndWidth) {
     return array_slice($array, $A, $B - $A + 1); 
 }
 
+function calcWndWidth($programs, $defaultWidth) {    
+    if (count($programs) == 0) {
+        return $defaultWidth;
+    }
+    foreach ($programs as $program) {
+        if (isset($program->details) && "" != $program->details) {
+            $detailed++;
+        }
+    }
+    return $defaultWidth - $detailed * 0.5 * $defaultWidth / count($programs);
+}
+
 ?>
 <html>
 <head>
     <title>NMT detailed programs list for desired channel</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta http-equiv="refresh" content="60" />
+    <meta http-equiv="refresh" content="20" />
     <? displayCommonStyles(FONT_SIZE); ?>
     <style type="text/css">
+        td.no-data { font-weight: bold; background-color: #005B95; }
         td.past    { background-color: #4d6080; }
         td.current { background-color: #99a1bd; font-size: 16pt; font-weight: bold; }
         td.future  { background-color: #6d80a0; }
         td.title   { width: 1000px; font-weight: bold; background-color: #005B95; }
         td.time    { width:  100px; font-weight: bold; background-color: #005B95; }
-        td.details { font-size: 10pt; }
+        td.current-details { font-size: 11pt; }
+        td.past-details    { font-size: 10pt; color: #888888; }
+        td.future-details  { font-size: 10pt; color: #AAAAAA; }
     </style>
 </head>
 <body <?=getBodyStyles() ?>>
@@ -80,22 +109,35 @@ function getArraySlice($array, $selIndex, $wndWidth) {
         $currentIndex++;
     }
 
-    $programs = getArraySlice($parser->programs, $currentIndex, PR_ITEMS_PER_PAGE);
+    if (count($parser->programs) == 0) {
+        print '<tr><td class="no-data" colspan="3" align="center">- - -</td></tr>';
+        return;
+    }
+
+    $wndWidth = calcWndWidth($parser->programs, PR_ITEMS_PER_PAGE);
+    $programs = getArraySlice($parser->programs, $currentIndex, $wndWidth);
     foreach ($programs as $program) {
         print "<tr>\n";
         print '<td class="time" align="center">' . date('H:i', $program->beginTime) . "</td>\n";
+
+        $class = "";
         if ($program === $currentProgram) {
-            print "<td class=\"current\" colspan=\"2\">\n";
+            $class="current";
         } else if ($program->beginTime <= $currentTime) {
-            print "<td class=\"past\" colspan=\"2\">\n";
+            $class="past";
         } else {
-            print "<td class=\"future\" colspan=\"2\">\n";
+            $class="future";
         }
-        print "<table><tr>\n";
+
+        print "<td class=\"$class\" colspan=\"2\">\n";
+        print "<table width=\"100%\"><tr>\n";
         print '<td>' . $program->name. "</td>\n";
-        print '<td class="details">' . $program->details . "</td>\n";
-        print "</tr></table></td>\n";
-        print "</tr>\n";
+        if (isset($program->details) && "" != $program->details) {
+            print '</tr><tr>';
+            print '<td class="' . $class . '-details">' . $program->details . "</td>\n";
+        }
+        print "</tr></table>\n";
+        print "</td></tr>\n";
     }
 ?>
 </table>
