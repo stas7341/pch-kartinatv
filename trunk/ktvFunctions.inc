@@ -83,5 +83,30 @@ class KtvFunctions {
         $url .= "?m=epg&act=show_day_xml&day=$date&cid=$id";
         return $this->getData($url, "EPG for channel $id");
     }
+
+    function getTimeShift() {
+        $url  = "http://iptv.kartina.tv/";
+        $url .= "?m=clients&act=form_tshift";
+        return $this->getData($url, "time shift");
+    }
+
+    function setTimeShift($timeShift) {
+        $url  = "http://iptv.kartina.tv/";
+        $url .= "?act=x_set_timeshift&m=clients&ts=$timeShift";
+        return $this->getData($url, "(setting) time shift $timeShift");
+    }    
+
+    function getBroadcastingServer() {
+        $url  = "http://iptv.kartina.tv/";
+        $url .= "?m=clients&act=form_sserv";
+        return $this->getData($url, "broadcasting server");
+    }
+
+    function setBroadcastingServer($first = true) {
+        $server = true === $first ? 1 : 3;
+        $url  = "http://iptv.kartina.tv/";
+        $url .= "?act=x_set_sserv&m=clients&ssrv=$server";
+        return $this->getData($url, "(selecting) server $server");
+    }    
 }
 ?>
