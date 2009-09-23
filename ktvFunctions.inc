@@ -22,6 +22,11 @@ class KtvFunctions {
             $_SESSION[COOKIE_NAME] : "";
     }
 
+    function forgetCookie() {
+        $_SESSION[COOKIE_NAME] = "";
+        $this->cookie = "";
+    }
+
     function trace($msg) {
         if ($this->traces) {
             print "DEBUG: " . USERNAME . ": $msg\n";
