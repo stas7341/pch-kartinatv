@@ -105,7 +105,7 @@ foreach ($options as $option) {
 <tr>
 <td colspan="3" class="separator"></td>
 <td align="center" class="separator">
-    <input type="submit" value="<?=SAVE_CHANGES?>" name="SubmitBtn" 
+    <input type="submit" value="<?=LANG_SAVE_CHANGES?>" name="SubmitBtn" 
         onKeyLeftSet="value1" onKeyRightSet="#self" onKeyUpSet="value<?=$number-1?>" />
 </td></tr>
 </form>

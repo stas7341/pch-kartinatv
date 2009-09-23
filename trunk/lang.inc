@@ -6,7 +6,8 @@
 # Author: consros 2008                                                      #
 #############################################################################
 
-define("SAVE_CHANGES", "Сохранить изменения");
+define("LANG_NOT_IMPLEMENTED", "<br /><b>Опция временно не работает!</b>");
+define("LANG_SAVE_CHANGES", "Сохранить изменения");
 
 define("LANG_USERNAME", "Имя пользователя");
 define("LANG_USERNAME_DETAILS", "Введите номер аккаунта, полученный от Kartina.TV");
