@@ -52,12 +52,11 @@ function deleteDirectory($dirname) {
     print "Getting channels list\n";
 
     # renew the list using existing cookie
-    $ktvFunctions = new KtvFunctions($_SESSION['cookie'], true);
+    $ktvFunctions = new KtvFunctions(true);
     $rawList = $ktvFunctions->getChannelsList();
 
     # remember new state
     $_SESSION['channelsList'] = $rawList;
-    $_SESSION['cookie'] = $ktvFunctions->cookie;
     $_SESSION['lastUpdate'] = time();
 
     # parse raw list into prepared class hierarchy

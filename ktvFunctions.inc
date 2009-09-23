@@ -10,13 +10,16 @@
 require_once "settings.inc";
 require_once "tools.inc";
 
-class KtvFunctions {
-    var $cookie;
-    var $traces;
+define("COOKIE_NAME", "KtvCookie");
 
-    function KtvFunctions($cookie = "", $traces = false) {
-        $this->cookie   = $cookie;
-        $this->traces   = $traces;
+class KtvFunctions {
+    var $traces;
+    var $cookie;
+
+    function KtvFunctions($traces = false) {
+        $this->traces = $traces;
+        $this->cookie = isset($_SESSION[COOKIE_NAME]) ? 
+            $_SESSION[COOKIE_NAME] : "";
     }
 
     function trace($msg) {
@@ -37,6 +40,7 @@ class KtvFunctions {
         strpos($this->cookie, "=deleted") and 
             die (USERNAME . ": Wrong authorization request");
         $this->trace("Authorization returned: $this->cookie");
+        $_SESSION[COOKIE_NAME] = $this->cookie;
     }
 
     function isAuthorized($reply) {
