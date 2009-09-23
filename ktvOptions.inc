@@ -31,15 +31,6 @@ class TextOption extends Option {
     }    
 }
 
-class CheckOption extends Option {
-    function getControlHtml($number) {
-        $control  = '<input type="checkbox" name="value' . $number . '" ';
-        $control .= true === $this->value ? 'checked="yes"' : '';
-        $control .= SC_KEYS . " />\n";
-        return $control;
-    }    
-}
-
 class ListOption extends Option {
     var $optionsList;
 
@@ -65,15 +56,6 @@ class ListOption extends Option {
                 }
             }
         }
-    }
-
-    function findValueIndex($value) {
-        for ($i = 0; $i < count($this->optionsList); $i++) {
-            if ($this->optionsList[$i] == $value) {
-                return $i;
-            }
-        }
-        return -1;        
     }
 }
 
@@ -186,6 +168,15 @@ class KtvBroadcastingServerOption extends ListOption {
         $this->ktvFunctions->setBroadcastingServer(
             $this->findValueIndex($newValue));
     }
+    
+    function findValueIndex($value) {
+        for ($i = 0; $i < count($this->optionsList); $i++) {
+            if ($this->optionsList[$i] == $value) {
+                return $i;
+            }
+        }
+        return -1;        
+    }    
 }
 
 
@@ -226,22 +217,24 @@ class CfgPasswordOption extends TextOption {
     }
 }
 
-class CfgAdultOption extends CheckOption {
+class CfgAdultOption extends ListOption {
     var $param;
     function CfgAdultOption() {
         $this->name = LANG_ADULT;
         $this->description = LANG_ADULT_DETAILS;
         $this->icon = OPT_ICONS_PATH . 'adult.jpg';
+        $this->optionsList = array(LANG_YES, LANG_NO);
         $this->param = new CfgParameter(CFG_FILE, "ALLOW_EROTIC");
         $this->init();
     }
     function init() {
-        $this->value = "TRUE" === strtoupper($this->param->read());
+        $this->value = "TRUE" === $this->param->read() ? 
+            $this->optionsList[0] : $this->optionsList[1]; 
     }
     function save($newValue) {
-        $this->value = strtoupper($newValue) === "TRUE" ||
-            strtoupper($newValue) === "ON";
-        $this->param->write($this->value);
+        $this->value = $newValue;
+        $this->param->write($newValue === $this->optionsList[0] ?
+            "TRUE" : "FALSE");
     }
 }
 
