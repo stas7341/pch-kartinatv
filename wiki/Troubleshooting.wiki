@@ -15,7 +15,7 @@
 *A2*: Please make sure you are *NOT* using one of following firmwares: 
     * PCH-A100: from 21 January 2009, 03 March 2009 or 02 April 2009
     * PCH-A110: from 26 February 2009 or 02 April 2009
-These firmware officially doesn't support KartinaTV. All others (before and after) are compatible with KartinaTV.
+These firmwares officially doesn't support KartinaTV. All others (before and after) are compatible with KartinaTV.
 
 *Q3*: If I press ZOOM during playback then instead of zooming the playback hangs and only reboot can help. 
 
