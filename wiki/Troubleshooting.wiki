@@ -25,7 +25,7 @@ These firmwares officially doesn't support KartinaTV. All others (before and aft
 
 *A4*: Please make sure you are *NOT* using the KartinaTV-broadcasting server *number 2*. It's not supported at the moment.
 
-*Q5*: You see following error message after changing the settings:
+*Q5*: After changing of settings some options disappear *or* you see following error message :
     Warning: fopen(settings.inc): failed to open stream: Permission denied in
     /opt/sybhttpd/localhost.drives/HARD_DISK/kartina.tv/ktvOptions.inc 
     on line 129 Unable to write settings.inc!
