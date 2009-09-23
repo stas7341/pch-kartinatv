@@ -69,7 +69,7 @@ function displayAudioPlaylist($name, $url) {
 <body <?=getBodyStyles()?>>
 <div align="center"><table><tr><td class="page" align="center">
 <?php
-    $ktvFunctions = new KtvFunctions($_SESSION['cookie'], false);
+    $ktvFunctions = new KtvFunctions();
 
     $id     = $HTTP_GET_VARS['id'];
     $number = $HTTP_GET_VARS['number'];
@@ -103,7 +103,18 @@ function displayAudioPlaylist($name, $url) {
         # display channel logo
         $imgUrl="http://www.kartina.tv/images/icons/channels/$id.gif";
         print "<img src=\"$imgUrl\" />\n";
+        #print "$url";
         print "</a>\n";
+
+#        print "<br><br><a href=\"http://pch-a100:8088/stream/file=";
+#        print TMP_URL . "\">GO TO URL</a>";
+
+#        $content  = "<html><head></head><body bgcolor=\"220066\">";
+#        $content .= "\n<a href=\"$url\" vod>Video</a>\n";
+#        $content .= "\n<!--\n$url\n-->\n";
+#        $content .= "</body></html>";
+#
+#        writeLocalFile(TMP_URL, $content);
 
         print "<br><b>$name</b><br><br>";
 

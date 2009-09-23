@@ -50,7 +50,7 @@ function toggleBooleanOption($filename, $optionName) {
     # or die('Cannot create image'); 
     # $yellow = imagecolorallocate($im, 255, 255, 0);
 
-    $ktvFunctions = new KtvFunctions("", true);
+    $ktvFunctions = new KtvFunctions(true);
     # print $ktvFunctions->getChannelsList() . "\n\n\n";
 
     print("REFERER: " . $_SERVER['HTTP_REFERER'] . "\n");

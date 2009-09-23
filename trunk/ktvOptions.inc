@@ -13,6 +13,14 @@ class Option {
     var $optionsList;
     var $content;
 
+    function init() {
+        unset($this->name);
+        unset($this->description);
+        unset($this->value);
+        unset($this->optionsList);
+        unset($this->content);
+    }
+    
     function isList() {
         return isset($this->optionsList) && count($this->optionsList) > 0;
     }
@@ -33,9 +41,19 @@ class ListOption extends Option {
 
     }
 
+    function getControlHtml($number) {
+        $control = '<select name="value' . $number . "\">\n";
+        foreach ($this->optionsList as $opt) {
+            $sel = $this->value == $opt ? "selected" : "";
+            $control .= "<option value=\"$opt\" $sel>$opt</option>\n";
+        }
+        $control .= "</select>\n";
+        return $control;
+    }
+
     function findValueIndex($value) {
-        for ($i = 0; $i < count($optionsList); $i++) {
-            if ($optionsList[$i] == $value) {
+        for ($i = 0; $i < count($this->optionsList); $i++) {
+            if ($this->optionsList[$i] == $value) {
                 return $i;
             }
         }
@@ -47,30 +65,32 @@ class TimeShiftOption extends ListOption {
     var $ktvFunctions;
 
     function TimeShiftOption($ktvFunctions) {
-        $this->ktvFunctions = $ktvFunctions;
+        $this->ktvFunctions = &$ktvFunctions;
+        $this->init();
     }
 
     function getIcon() {
         return 'http://russianremote.tv/images/icon-timezone.png';
     }
 
-    function update() {
+    function init() {
+        parent::init();
         $this->content = $this->ktvFunctions->getTimeShift();
         $this->parseOptions();
         if (preg_match('|<h3>(.*?)</h3>|', $this->content, $matches)) {
             $this->name = $matches[1];
         }
 
-    if (preg_match('|<td width="50%">(.*?)</td>|', 
-        $this->content, $matches))
-    {
+        if (preg_match('|<td width="50%">(.*?)</td>|', 
+            $this->content, $matches))
+        {
             $this->description = $matches[1];
         }
     }
 
     function save($newValue) {
-        $this->ktvFunctions->setTimeShift(
-            findValueIndex($newValue));
+        $this->ktvFunctions->setTimeShift($newValue);
+        unset($_SESSION['channelsList']);
     }
 }
 
@@ -78,14 +98,16 @@ class BroadcastingServerOption extends ListOption {
     var $ktvFunctions;
 
     function BroadcastingServerOption($ktvFunctions) {
-        $this->ktvFunctions = $ktvFunctions;
+        $this->ktvFunctions = &$ktvFunctions;
+        $this->init();
     }
 
     function getIcon() {
         return 'http://s3.iconfinder.net//data/icons/Futurosoft%20Icons%200.5.2/48x48/apps/krfb.png';
     }
 
-    function update() {
+    function init() {
+        parent::init();
         $this->content = $this->ktvFunctions->getBroadcastingServer();
         $this->parseOptions();
 
@@ -100,7 +122,7 @@ class BroadcastingServerOption extends ListOption {
 
     function save($newValue) {
         $this->ktvFunctions->setBroadcastingServer(
-            findValueIndex($newValue));
+            $this->findValueIndex($newValue));
     }
 }
 

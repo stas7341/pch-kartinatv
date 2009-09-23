@@ -20,12 +20,11 @@ if (! isset($_SESSION['lastUpdate']) ||
     ! isset($_SESSION['channelsList'])) 
 {
     # renew the list using existing cookie
-    $ktvFunctions = new KtvFunctions($_SESSION['cookie'], false);
+    $ktvFunctions = new KtvFunctions();
     $rawList = $ktvFunctions->getChannelsList();
 
     # remember new state
     $_SESSION['channelsList'] = $rawList;
-    $_SESSION['cookie'] = $ktvFunctions->cookie;
     $_SESSION['lastUpdate'] = time();
 } else {
 

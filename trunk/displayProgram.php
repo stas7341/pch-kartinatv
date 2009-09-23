@@ -92,9 +92,8 @@ function calcWndWidth($programs, $defaultWidth) {
 
 <?php
     # renew the list using existing cookie
-    $ktvFunctions = new KtvFunctions($_SESSION['cookie'], false);
+    $ktvFunctions = new KtvFunctions();
     $program = $ktvFunctions->getEpg($id);
-    $_SESSION['cookie'] = $ktvFunctions->cookie;    
     
     $parser = new ProgramsParser();
     $parser->parse($program);
