@@ -23,7 +23,7 @@ function displayOption($number, $option) {
     <tr>
     <td class="number" align="center"><?=$number?></td>
     <td class="logo" align="center">
-        <img width="48" height="48" src="<?=$option->getIcon()?>"/>
+        <img width="48" height="48" src="<?=$option->icon?>" />
     </td>
     <td class="name">
         <table width="100%"><tr>
@@ -49,7 +49,7 @@ function displayOption($number, $option) {
         td.logo        { width:  60px; }
         td.name        { width: 600px; }
         td.descr       { font-size: 11pt; color: #BBBBBB; }
-        td.value       { width: 200px; }
+        td.value       { width: 300px; }
         td.submit      { width:  70px; }
         td.separator   { background-color: transparent; } 
     </style>
@@ -73,8 +73,8 @@ if (isset($number)) {
 # initialize connection and options
 $ktvFunctions = new KtvFunctions();
 $options = array(
-    new TimeShiftOption(&$ktvFunctions),
-    new BroadcastingServerOption(&$ktvFunctions)
+    new KtvTimeShiftOption(&$ktvFunctions),
+    new KtvBroadcastingServerOption(&$ktvFunctions)
 );
 
 # display Kartina.TV options
@@ -88,14 +88,22 @@ foreach ($options as $option) {
 <tr><th colspan="4" align="center">Plugin</th></tr>
 <?
 
+$options = array(
+    new CfgUsernameOption(),
+    new CfgPasswordOption(),
+    new CfgAdultOption()
+);
 # display Plugin options
 foreach ($options as $option) {
-#    displayOption($number++, $option);
+    displayOption($number++, $option);
 }
 
 ?>
 <tr><td class="separator">&nbsp;</td></tr>
-<tr><td colspan="4" align="center"><input type="submit" value="OK" /></td></tr>
+<tr><td colspan="4" align="center">
+    <input type="submit" value="OK" name="SubmitBtn" 
+        onKeyLeftSet="value1" onKeyRightSet="#self" onKeyUpSet="value<?=$number-1?>" />
+</td></tr>
 </form>
 </table>
 </div>
