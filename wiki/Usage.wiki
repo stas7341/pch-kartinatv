@@ -34,3 +34,7 @@ Just usual short-cuts, no extensions
 
 ==== On program list page ====
 Just usual short-cuts, no extensions
+
+
+==== On configuration page ====
+Just usual short-cuts, no extensions
