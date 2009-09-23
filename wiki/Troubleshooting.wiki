@@ -19,7 +19,7 @@ These firmwares officially doesn't support KartinaTV. All others (before and aft
 
 *Q3*: If I press ZOOM during playback then instead of zooming the playback hangs and only reboot can help. 
 
-*A3*: Try to change in PCH video options the colorspace. In my case the 16-235 was the right value.
+*A3*: Try to change in PCH video options the colorspace. In my case the 16-235 was the right value. I don't know why it's some internal PCH problem.
 
 *Q4*: Can't watch any channel. I see the channels list but when I'm trying to start the playback I see the PCH is buffering something and then I'm returned back to programs list.
 
