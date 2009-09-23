@@ -100,6 +100,7 @@ foreach ($options as $option) {
     displayOption($number++, $option);
 }
 
+$ktvFunctions->forgetCookie();
 ?>
 <tr><td class="separator">&nbsp;</td></tr>
 <tr>
