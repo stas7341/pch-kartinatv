@@ -91,7 +91,8 @@ foreach ($options as $option) {
 $options = array(
     new CfgUsernameOption(),
     new CfgPasswordOption(),
-    new CfgAdultOption()
+    new CfgAdultOption(),
+    new CfgTimeZoneOption()
 );
 # display Plugin options
 foreach ($options as $option) {
@@ -100,8 +101,10 @@ foreach ($options as $option) {
 
 ?>
 <tr><td class="separator">&nbsp;</td></tr>
-<tr><td colspan="4" align="center">
-    <input type="submit" value="OK" name="SubmitBtn" 
+<tr>
+<td colspan="3" class="separator"></td>
+<td align="center" class="separator">
+    <input type="submit" value="<?=SAVE_CHANGES?>" name="SubmitBtn" 
         onKeyLeftSet="value1" onKeyRightSet="#self" onKeyUpSet="value<?=$number-1?>" />
 </td></tr>
 </form>

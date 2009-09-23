@@ -94,7 +94,6 @@ function displayCustomStyles() {
     td.separator { width: 5px; background-color: #27699B; color: #27699B; }
 
 </style>
-<link rel="shortcut icon" href="img/favicon.ico" />
 <?php
 }
 
