@@ -187,7 +187,10 @@ Q4: Can't watch any channel. I see the channels list but when I'm trying
 A4: Please make sure you are NOT using the KartinaTV-broadcasting 
     server number 2. It's not supported at the moment.
 
-Q5: You see an error message after changing the settings.
+Q5: You see following error message after changing the settings:
+    Warning: fopen(settings.inc): failed to open stream: Permission denied in
+    /opt/sybhttpd/localhost.drives/HARD_DISK/kartina.tv/ktvOptions.inc 
+    on line 129 Unable to write settings.inc!
 
 A5: Make sure the permissions of settings.inc file are set to 0666 or 0777 
     (writing allowed to everyone). 
