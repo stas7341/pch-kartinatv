@@ -21,6 +21,10 @@ These firmware officially doesn't support KartinaTV. All others (before and afte
 
 *A3*: Try to change in PCH video options the colorspace. In my case the 16-235 was the right value.
 
-*Q4*: You see an error message after changing the settings. 
+*Q4*: Can't watch any channel. I see the channels list but when I'm trying to start the playback I see the PCH is buffering something and then I'm returned back to programs list.
 
-*A3*: Make sure the permissions of settings.inc file are set to 0666 or 0777 (writing allowed to everyone).
+*A4*: Please make sure you are *NOT* using the KartinaTV-broadcasting server *number 2*. It's not supported at the moment.
+
+*Q5*: You see an error message after changing the settings. 
+
+*A5*: Make sure the permissions of settings.inc file are set to 0666 or 0777 (writing allowed to everyone).
