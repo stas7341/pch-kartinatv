@@ -7,6 +7,10 @@ the IP-TV channels broadcasted by katrina.tv provider.
 
 Changes
 -------
+Changes in version 0.7.2:
+- Improved detailed channel program
+- Options page available via <SETUP> key
+
 Changes in version 0.7.1:
 - Progress bars for programs in channel list
 - Detailed programs list for a desired channel improved
@@ -92,6 +96,7 @@ Installation
    your MSP URL accordingly.
 
 2. Edit settings.inc and write there your account settings obtained from kartina.tv
+   (It's also possible to edit them later via configuration page)
 
 3. Add a new MSP entry for this plugin. 
    To do that enter the NMT->Web Services->Add/Edit and write there following:
@@ -100,13 +105,14 @@ Installation
 
 4. Notes
    Check the URL against the path where you've put the katrina.tv folder.
-   Please note that the equal sign "=" can be entered only via USB-Keyboard.
    As an alternative to a Web Service you can simply go to kartina.tv folder 
    via HDD browser and open there the index.htm file.
    Please make sure at least one of following services is running:
       - Torrent
       - Usenet Client
       - Casgle Client 
+   In order to use configuration page make sure the permissions of 
+   settings.inc file are set to 0666 or 0777 (writing allowed to everyone).
 
 Usage
 -----
@@ -135,6 +141,7 @@ Keyboard Assignment
     ENTER  = Play the channel
     SOURCE = Leave the plugin
     RETURN = Go back to web services list
+    SETUP  = Configuration page with diverse KartinaTV and Plugin options
     
 - During playback
     Just usual short-cuts, no extensions
@@ -142,16 +149,48 @@ Keyboard Assignment
 - On program list page
     Just usual short-cuts, no extensions
 
+- On configuration page
+    Just usual short-cuts, no extensions
+
 Troubleshooting
 ---------------
 Q1: I'm getting set of following error messages above the channels list:
-   Warning: session_start(): open(/tmp/sess_67097718925a02165591a622f2641d91, 
-   O_RDWR) failed: Permission denied (13) in 
-   /opt/sybhttpd/localhost.drives/HARD_DISK/kartina.tv/index.php on line 15
+    Warning: session_start(): open(/tmp/sess_67097718925a02165591a622f2641d91, 
+    O_RDWR) failed: Permission denied (13) in 
+    /opt/sybhttpd/localhost.drives/HARD_DISK/kartina.tv/index.php on line 15
+
 A1: Please make sure at least one of following services is running:
-    - Torrent
-    - Usenet Client
-    - Casgle Client
+    * Torrent
+    * Usenet Client
+    * Casgle Client 
+
+Q2: Can't watch any channel. I see the channels list but when I'm trying 
+    to start the playback I see the PCH logo for several seconds and then 
+    I'm returned back to programs list.
+
+A2: Please make sure you are NOT using one of following firmwares:
+    * PCH-A100: from 21 January 2009, 03 March 2009 or 02 April 2009
+    * PCH-A110: from 26 February 2009 or 02 April 2009 
+    These firmwares officially doesn't support KartinaTV. All others 
+    (before and after) are compatible with KartinaTV.
+
+Q3: If I press ZOOM during playback then instead of zooming the playback 
+    hangs and only reboot can help.
+
+A3: Try to change in PCH video options the colorspace. In my case the 16-235 
+    was the right value. I don't know why it's some internal PCH problem.
+
+Q4: Can't watch any channel. I see the channels list but when I'm trying 
+    to start the playback I see the PCH is buffering something and then 
+    I'm returned back to programs list.
+
+A4: Please make sure you are NOT using the KartinaTV-broadcasting 
+    server number 2. It's not supported at the moment.
+
+Q5: You see an error message after changing the settings.
+
+A5: Make sure the permissions of settings.inc file are set to 0666 or 0777 
+    (writing allowed to everyone). 
 
 Credits
 -------

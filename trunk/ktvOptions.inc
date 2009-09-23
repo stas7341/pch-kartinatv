@@ -4,6 +4,7 @@
 # Author: consros 2008                                                      #
 #############################################################################
 
+require_once "tools.inc";
 require_once "ktvFunctions.inc";
 require_once "lang.inc";
 
@@ -77,6 +78,62 @@ class ListOption extends Option {
 }
 
 
+class CfgParameter {
+    var $cfgFilename;
+    var $name;
+    var $searchPattern;    
+    var $value;
+    var $isQuoted;
+
+    function CfgParameter($cfgFilename, $name) {
+        $this->cfgFilename = $cfgFilename;
+        $this->name = $name;
+        $this->searchPattern  = '/^\s*define\s*\(\s*"';
+        $this->searchPattern .= $this->name;
+        $this->searchPattern .= '"\s*,\s*(.*?)\s*\)\s*;$/';
+    }
+
+    function read() {
+        $file = fopen($this->cfgFilename, "r") or 
+            exit("Unable to read $this->cfgFilename!");
+        while (! feof($file)) {
+            $line = fgets($file);
+            if (preg_match($this->searchPattern, $line, $matches)) {
+                $this->value = $matches[1];
+                if (preg_match('/^"(.*)"$/', $this->value, $matches)) {
+                    $this->isQuoted = true;
+                    $this->value = $matches[1];
+                } else {
+                    $this->isQuoted = false;
+                }
+                break;
+            }
+        }
+        fclose($file);
+        return $this->value;
+    }
+
+    function write($newValue) {
+        $file = fopen($this->cfgFilename, "r") or 
+            exit("Unable to read $this->cfgFilename!");
+        if ($this->isQuoted) {
+            $newValue = '"' . $newValue . '"';
+        }
+        $newValue = 'define("' . $this->name . '", ' . $newValue . ');';
+        while (! feof($file)) {
+            $line = fgets($file);
+            $line = preg_replace($this->searchPattern, $newValue, $line);
+            $content .= $line;
+        }
+        fclose($file);
+        $file = fopen($this->cfgFilename, "w") or 
+            exit("Unable to write $this->cfgFilename!");
+        fputs($file, $content);
+        fclose($file);
+    } 
+}
+
+
 class KtvTimeShiftOption extends ListOption {
     var $ktvFunctions;
 
@@ -85,7 +142,6 @@ class KtvTimeShiftOption extends ListOption {
         $this->ktvFunctions = &$ktvFunctions;
         $this->init();
     }
-
     function init() {
         $content = $this->ktvFunctions->getTimeShift();
         $this->parseHtmlOptions($content);
@@ -99,7 +155,6 @@ class KtvTimeShiftOption extends ListOption {
             $this->description = $matches[1];
         }
     }
-
     function save($newValue) {
         $this->ktvFunctions->setTimeShift($newValue);
         unset($_SESSION['channelsList']);
@@ -114,7 +169,6 @@ class KtvBroadcastingServerOption extends ListOption {
         $this->ktvFunctions = &$ktvFunctions;
         $this->init();
     }
-
     function init() {
         $content = $this->ktvFunctions->getBroadcastingServer();
         $this->parseHtmlOptions($content);
@@ -127,87 +181,76 @@ class KtvBroadcastingServerOption extends ListOption {
             $this->description = $matches[1];
         }
     }
-
     function save($newValue) {
         $this->ktvFunctions->setBroadcastingServer(
             $this->findValueIndex($newValue));
     }
 }
 
+
 class CfgUsernameOption extends TextOption {
+    var $param;
     function CfgUsernameOption() {
         $this->name = LANG_USERNAME;
         $this->description = LANG_USERNAME_DETAILS;
         $this->icon = OPT_ICONS_PATH . 'username.png';
+        $this->param = new CfgParameter(CFG_FILE, "USERNAME");
         $this->init();
     }
-
     function init() {
-        $this->value = findOption(CFG_FILE, "USERNAME");
+        $this->value = $this->param->read();
     }
-
     function save($newValue) {
+        $this->value = $newValue;
+        $this->param->write($newValue);
     }
 }
 
 class CfgPasswordOption extends TextOption {
+    var $param;
     function CfgPasswordOption() {
         $this->name = LANG_PASSWORD;
         $this->description = LANG_PASSWORD_DETAILS;
         $this->icon = OPT_ICONS_PATH . 'password.png';
+        $this->param = new CfgParameter(CFG_FILE, "PASSWORD");
         $this->isPassword = true;
         $this->init();
     }
-
     function init() {
-        $this->value = findOption(CFG_FILE, "PASSWORD");
+        $this->value = $this->param->read();
     }
-
     function save($newValue) {
+        $this->value = $newValue;
+        $this->param->write($newValue);
     }
-}
-
-
-function findOption($filename, $optionName) {
-    $file = fopen($filename, "r") or exit("Unable to read $filename!");
-    while(! feof($file)) {
-        $line = fgets($file);
-        if (preg_match('/^\s*define\s*\(\s*"' . $optionName . '"\s*,\s*(.*?)\s*\)\s*;$/', $line, $matches)) {
-            $value = $matches[1];
-            $value = preg_replace('/"(.*)"/', '$1', $value);
-            break;
-        }
-    }
-    fclose($file);
-    return $value;
-}
-
-class CfgFileOption {
-    var $optionName;
 }
 
 class CfgAdultOption extends CheckOption {
+    var $param;
     function CfgAdultOption() {
         $this->name = LANG_ADULT;
         $this->description = LANG_ADULT_DETAILS;
         $this->icon = OPT_ICONS_PATH . 'adult.jpg';
+        $this->param = new CfgParameter(CFG_FILE, "ALLOW_EROTIC");
         $this->init();
     }
-
     function init() {
-        $this->value = "TRUE" === strtoupper(findOption(CFG_FILE, "ALLOW_EROTIC"));
+        $this->value = "TRUE" === strtoupper($this->param->read());
     }
-
     function save($newValue) {
-        # $newValue === "on";
+        $this->value = strtoupper($newValue) === "TRUE" ||
+            strtoupper($newValue) === "ON";
+        $this->param->write($this->value);
     }
 }
 
 class CfgTimeZoneOption extends ListOption {
+    var $param;
     function CfgTimeZoneOption() {
         $this->name = LANG_TIME_ZONE;
         $this->description = LANG_TIME_ZONE_DETAILS;
         $this->icon = OPT_ICONS_PATH . 'time-zone.png';
+        $this->param = new CfgParameter(CFG_FILE, "TIME_ZONE");
         $this->optionsList = array();
         for ($i = -12; $i < 0; $i++) {
             $this->optionsList[] = $i;
@@ -218,13 +261,31 @@ class CfgTimeZoneOption extends ListOption {
         }
         $this->init();
     }
-
     function init() {
-        $this->value = findOption(CFG_FILE, "TIME_ZONE");
+        $this->value = $this->param->read();
     }
-
     function save($newValue) {
-        # $newValue === "on";
+        $this->value = $newValue;
+        $this->param->write($newValue);
+    }
+}
+
+class CfgBufferSizeOption extends ListOption {
+    var $param;
+    function CfgBufferSizeOption() {
+        $this->name = LANG_BUFFER_SIZE;
+        $this->description = LANG_BUFFER_SIZE_DETAILS;
+        $this->param = new CfgParameter(CFG_FILE, "BUFFER_SIZE");
+        $this->icon = OPT_ICONS_PATH . 'buffer-size.png';
+        $this->optionsList = array(1, 2, 4, 8, 16, 20, 32, 64, 128);
+        $this->init();
+    }
+    function init() {
+        $this->value = $this->param->read();
+    }
+    function save($newValue) {
+        $this->value = $newValue;
+        $this->param->write($newValue);
     }
 }
 

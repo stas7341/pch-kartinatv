@@ -92,7 +92,8 @@ $options = array(
     new CfgUsernameOption(),
     new CfgPasswordOption(),
     new CfgAdultOption(),
-    new CfgTimeZoneOption()
+    new CfgTimeZoneOption(),
+    new CfgBufferSizeOption()
 );
 # display Plugin options
 foreach ($options as $option) {
