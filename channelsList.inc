@@ -144,7 +144,7 @@ function displayChannel($channel, $firstChannelNumber,
         $curr = time() + $offset - $channel->beginTime;
         $percent = 0 == $full ? 0 : (int) ($curr * 100 / $full);
         $num = round($percent / 10.0);
-        $progressbar = "background=\"img/progress-${num}0.PNG\"";
+        $progressbar = "background=\"img/progress/progress-${num}0.PNG\"";
     }
 
     print "<td class=\"program\" $progressbar>$program</td>\n";    
