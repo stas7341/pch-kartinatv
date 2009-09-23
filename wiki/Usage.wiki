@@ -25,6 +25,7 @@ forwarded to channels list automatically.
 || *ENTER*  || Play the channel ||
 || *SOURCE* || Leave the plugin ||
 || *RETURN* || Go back to web services list ||
+|| *SETUP*  || Show configuration page with diverse KartinaTV and Plugin options ||
     
 
 ==== During playback ====
