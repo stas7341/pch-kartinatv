@@ -30,3 +30,4 @@
    * Usenet: off
    * Casgle: off
  * To connect to server from your PC and see output in browser use this link: http://pch-a100:8088/stream/file=/share/kartina.tv/index.php
+ * In order to use configuration page make sure the permissions of *settings.inc* file are set to *0666* or *0777* (writing allowed to everyone).
