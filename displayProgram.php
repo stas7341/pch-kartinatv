@@ -1,8 +1,8 @@
 <?php
 #############################################################################
-# Test page used to check whether the ktvFunctions class acts properly.     #
+# Detailed program for a desired channel.                                   #
 #                                                                           #
-# Author: consros 2008                                                      #
+# Author: consros 2009                                                      #
 #############################################################################
 
 require_once "settings.inc";
@@ -65,7 +65,7 @@ function calcWndWidth($programs, $defaultWidth) {
 <head>
     <title>NMT detailed programs list for desired channel</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta http-equiv="refresh" content="20" />
+    <meta http-equiv="refresh" content="60" />
     <? displayCommonStyles(FONT_SIZE); ?>
     <style type="text/css">
         td.no-data { font-weight: bold; background-color: #005B95; }
@@ -74,9 +74,9 @@ function calcWndWidth($programs, $defaultWidth) {
         td.future  { background-color: #6d80a0; }
         td.title   { width: 1000px; font-weight: bold; background-color: #005B95; }
         td.time    { width:  100px; font-weight: bold; background-color: #005B95; }
-        td.current-details { font-size: 11pt; }
-        td.past-details    { font-size: 10pt; color: #888888; }
-        td.future-details  { font-size: 10pt; color: #AAAAAA; }
+        td.current-details { font-size: 12pt; }
+        td.past-details    { font-size: 11pt; color: #888888; }
+        td.future-details  { font-size: 11pt; color: #AAAAAA; }
     </style>
 </head>
 <body <?=getBodyStyles() ?>>

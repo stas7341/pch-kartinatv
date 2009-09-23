@@ -8,9 +8,10 @@ require_once "ktvFunctions.inc";
 
 class Option {
     var $name;
-    var $details;
+    var $description;
     var $value;
     var $optionsList;
+    var $content;
 
     function isList() {
         return isset($this->optionsList) && count($this->optionsList) > 0;
@@ -18,9 +19,9 @@ class Option {
 }
 
 class ListOption extends Option {
-    function parseOptions($content) {
+    function parseOptions() {
         if (preg_match_all('|<option value="\d+\".*?>(.*?)</option>|', 
-            $content, $matches)) 
+            $this->content, $matches)) 
         {
             for ($i = 0; $i < count($matches[0]); $i++) {
                 $this->optionsList[] = $matches[1][$i];
@@ -49,18 +50,21 @@ class TimeShiftOption extends ListOption {
         $this->ktvFunctions = $ktvFunctions;
     }
 
-    function update() {
-        $this->optionsList = array();
-        $this->value = "";
+    function getIcon() {
+        return 'http://russianremote.tv/images/icon-timezone.png';
+    }
 
-        $content = $this->ktvFunctions->getTimeShift();
-        $this->parseOptions($content);
-        if (preg_match('|<h3>(.*?)</h3>|', $content, $matches)) {
+    function update() {
+        $this->content = $this->ktvFunctions->getTimeShift();
+        $this->parseOptions();
+        if (preg_match('|<h3>(.*?)</h3>|', $this->content, $matches)) {
             $this->name = $matches[1];
         }
 
-        if (preg_match('|<td width="50%">(.*?)</td>|', $content, $matches)) {
-            $this->details = $matches[1];
+    if (preg_match('|<td width="50%">(.*?)</td>|', 
+        $this->content, $matches))
+    {
+            $this->description = $matches[1];
         }
     }
 
@@ -77,16 +81,20 @@ class BroadcastingServerOption extends ListOption {
         $this->ktvFunctions = $ktvFunctions;
     }
 
-    function update() {
-        $content = $this->ktvFunctions->getBroadcastingServer();
-        $this->parseOptions($content);
+    function getIcon() {
+        return 'http://s3.iconfinder.net//data/icons/Futurosoft%20Icons%200.5.2/48x48/apps/krfb.png';
+    }
 
-        if (preg_match('|<h3>(.*?)</h3>|', $content, $matches)) {
+    function update() {
+        $this->content = $this->ktvFunctions->getBroadcastingServer();
+        $this->parseOptions();
+
+        if (preg_match('|<td>(.*?)</td>|', $this->content, $matches)) {
             $this->name = $matches[1];
         }
 
-        if (preg_match('|<div>(.*?)</div>|', $content, $matches)) {
-            $this->details = $matches[1];
+        if (preg_match('|<div>(.*?)</div>|', $this->content, $matches)) {
+            $this->description = $matches[1];
         }
     }
 

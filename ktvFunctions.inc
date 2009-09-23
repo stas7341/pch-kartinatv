@@ -102,8 +102,8 @@ class KtvFunctions {
         return $this->getData($url, "broadcasting server");
     }
 
-    function setBroadcastingServer($first = true) {
-        $server = true === $first ? 1 : 3;
+    function setBroadcastingServer($server) {
+        $server = $server == 1 ? 3 : 1;
         $url  = "http://iptv.kartina.tv/";
         $url .= "?act=x_set_sserv&m=clients&ssrv=$server";
         return $this->getData($url, "(selecting) server $server");

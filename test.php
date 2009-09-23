@@ -8,6 +8,7 @@
 require_once "settings.inc";
 require_once "tools.inc";
 require_once "ktvFunctions.inc";
+require_once "ktvOptions.inc";
 
 function toggleBooleanOption($filename, $optionName) {
     $file = fopen($filename, "r") or exit("Unable to read $filename!");
@@ -56,8 +57,18 @@ function toggleBooleanOption($filename, $optionName) {
 
     $id = isset($HTTP_GET_VARS['id']) ? $HTTP_GET_VARS['id'] : 7;
     #$content = $ktvFunctions->getStreamUrl($id);
-    $content = $ktvFunctions->getEpg($id);
-    print $content . "\n\n\n";
+    #$content = $ktvFunctions->getEpg($id);
+    #$content = $ktvFunctions->getTimeShift();
+    #$content = $ktvFunctions->getBroadcastingServer();
+    #$content = $ktvFunctions->setTimeShift(2);
+    
+    # $option = new TimeShiftOption($ktvFunctions);
+    $option = new BroadcastingServerOption($ktvFunctions);
+
+    $option->update();
+    print_r($option);
+
+    #print $content . "\n\n\n";
     
     #$url = preg_replace('/.*url="http(\/ts|)([^ "]*).*/', 'http$2', $content);
     #print $url . "\n";
