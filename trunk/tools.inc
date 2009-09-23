@@ -149,6 +149,7 @@ function displayCommonStyles($fontSize) {
     th      { font-size: <?=$fontSize?>pt; color: white;   }
     td      { font-size: <?=$fontSize?>pt; color: white;   }
 </style>
+<link rel="shortcut icon" href="img/favicon.ico" />
 <?php
 }
 

@@ -7,8 +7,9 @@
 require_once "ktvFunctions.inc";
 require_once "lang.inc";
 
+define("CFG_FILE", "settings.inc");
+define("OPT_ICONS_PATH", "img/options/");
 define("SC_KEYS", ' onKeyLeftSet="value1" onKeyRightSet="SubmitBtn"');
-
 
 class Option {
     var $name;
@@ -80,7 +81,7 @@ class KtvTimeShiftOption extends ListOption {
     var $ktvFunctions;
 
     function KtvTimeShiftOption($ktvFunctions) {
-        $this->icon = 'http://russianremote.tv/images/icon-timezone.png';
+        $this->icon = OPT_ICONS_PATH . 'time-shift.png';
         $this->ktvFunctions = &$ktvFunctions;
         $this->init();
     }
@@ -109,7 +110,7 @@ class KtvBroadcastingServerOption extends ListOption {
     var $ktvFunctions;
 
     function KtvBroadcastingServerOption($ktvFunctions) {
-        $this->icon = 'http://s3.iconfinder.net//data/icons/Futurosoft%20Icons%200.5.2/48x48/apps/krfb.png';
+        $this->icon = OPT_ICONS_PATH . 'broadcasting-server.png';
         $this->ktvFunctions = &$ktvFunctions;
         $this->init();
     }
@@ -137,12 +138,12 @@ class CfgUsernameOption extends TextOption {
     function CfgUsernameOption() {
         $this->name = LANG_USERNAME;
         $this->description = LANG_USERNAME_DETAILS;
-        $this->icon = 'http://s3.iconfinder.net//data/icons/humano2/48x48/apps/config-users.png';
+        $this->icon = OPT_ICONS_PATH . 'username.png';
         $this->init();
     }
 
     function init() {
-        $this->value = findOption("settings.inc", "USERNAME");
+        $this->value = findOption(CFG_FILE, "USERNAME");
     }
 
     function save($newValue) {
@@ -153,13 +154,13 @@ class CfgPasswordOption extends TextOption {
     function CfgPasswordOption() {
         $this->name = LANG_PASSWORD;
         $this->description = LANG_PASSWORD_DETAILS;
-        $this->icon = 'http://s3.iconfinder.net//data/icons/basicset/key_48.png';
+        $this->icon = OPT_ICONS_PATH . 'password.png';
         $this->isPassword = true;
         $this->init();
     }
 
     function init() {
-        $this->value = findOption("settings.inc", "PASSWORD");
+        $this->value = findOption(CFG_FILE, "PASSWORD");
     }
 
     function save($newValue) {
@@ -189,12 +190,12 @@ class CfgAdultOption extends CheckOption {
     function CfgAdultOption() {
         $this->name = LANG_ADULT;
         $this->description = LANG_ADULT_DETAILS;
-        $this->icon = 'http://www.xbox.com/NR/rdonlyres/C23A2BBC-9095-4AC7-A1AF-4D4A30B75C97/0/Rating18.jpg';
+        $this->icon = OPT_ICONS_PATH . 'adult.jpg';
         $this->init();
     }
 
     function init() {
-        $this->value = "TRUE" === strtoupper(findOption("settings.inc", "ALLOW_EROTIC"));
+        $this->value = "TRUE" === strtoupper(findOption(CFG_FILE, "ALLOW_EROTIC"));
     }
 
     function save($newValue) {
@@ -202,5 +203,29 @@ class CfgAdultOption extends CheckOption {
     }
 }
 
+class CfgTimeZoneOption extends ListOption {
+    function CfgTimeZoneOption() {
+        $this->name = LANG_TIME_ZONE;
+        $this->description = LANG_TIME_ZONE_DETAILS;
+        $this->icon = OPT_ICONS_PATH . 'time-zone.png';
+        $this->optionsList = array();
+        for ($i = -12; $i < 0; $i++) {
+            $this->optionsList[] = $i;
+        }
+        $this->optionsList[] = '0';
+        for ($i = 1; $i <= 13; $i++) {
+            $this->optionsList[] = '+' . $i;
+        }
+        $this->init();
+    }
+
+    function init() {
+        $this->value = findOption(CFG_FILE, "TIME_ZONE");
+    }
+
+    function save($newValue) {
+        # $newValue === "on";
+    }
+}
 
 ?>
