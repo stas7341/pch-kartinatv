@@ -28,6 +28,9 @@ define("TIME_ZONE", "+1");
 # and to FALSE if you want to disable it
 define("ALLOW_EROTIC", TRUE);
 
+# video stream pre-bufferring size in Mb
+define("BUFFER_SIZE", 20);
+
 # default font size used in plugin
 define("FONT_SIZE", 16);
 
