@@ -6,14 +6,14 @@
  * PCH-A110: from 26 February 2009 or 02 April 2009 *Not supported!*
 
 == Installation ==
- * Copy the *katrina.tv* folder to the root of the internal hard disk. If you want to install it to any other location you will have to update your MSP URL accordingly. Please check that folder is named correctly - *kartina.tv*. Not katrina.tv, not kartina.tv-0.7.2 or something else.
+ * Copy the *kartina.tv* folder to the root of the internal hard disk. If you want to install it to any other location you will have to update your MSP URL accordingly. Please check that folder is named correctly - *kartina.tv*. Not katrina.tv, not kartina.tv-0.7.2 or something else.
  * Edit *settings.inc* and write there your account settings obtained from *kartina.tv*
  * Add a new MSP entry for this plugin. To do that enter the *NMT->Web Services->Add/Edit* and write there following:
    * Service Name: Kartina.TV
    * Service URL: http://localhost:8088/stream/file=/share/kartina.tv/index.php
 
 == Notes ==
- * Check the URL against the path where you've put the katrina.tv folder.
+ * Check the URL against the path where you've put the kartina.tv folder.
  * As an alternative to a Web Service you can simply go to *kartina.tv* folder via HDD browser and open there the *index.htm* file.
  * Please make sure myiHome service is running.
  * Please make sure at least one of following services is running:
