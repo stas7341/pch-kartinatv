@@ -6,7 +6,7 @@
  * PCH-A110: from 26 February 2009 or 02 April 2009 *Not supported!*
 
 == Installation ==
- * Copy the *katrina.tv* folder to the root of the internal hard disk. If you want to install it to any other location you will have to update your MSP URL accordingly.
+ * Copy the *katrina.tv* folder to the root of the internal hard disk. If you want to install it to any other location you will have to update your MSP URL accordingly. Please check that folder is named correctly - *kartina.tv*. Not katrina.tv, not kartina.tv-0.7.2 or something else.
  * Edit *settings.inc* and write there your account settings obtained from *kartina.tv*
  * Add a new MSP entry for this plugin. To do that enter the *NMT->Web Services->Add/Edit* and write there following:
    * Service Name: Kartina.TV
