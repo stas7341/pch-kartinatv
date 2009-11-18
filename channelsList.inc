@@ -175,7 +175,7 @@ function addShortcuts(
     print ($hideNames ? "" : " HOME ") . "</a>\n";
 
     # support for direct channel selection
-    for ($i = 10; $i < $channelsAmount; $i += 10) {
+    for ($i = 10; $i < 100 && $i < $channelsAmount; $i += 10) {
         print '<a href="' . $_SERVER['PHP_SELF'] . '?selectedChannel=';
         print $i . '" TVID="' . ($i / 10) . "\">";
         print ($hideNames ? "" : " $i ") . "</a>\n";
