@@ -38,7 +38,7 @@ class KtvFunctions {
         $params  = "act=login";
         $params .= "&code_login=" . USERNAME;
         $params .= "&code_pass="  . PASSWORD;
-        $html = getPageContentByPut("http://iptv.kartina.tv", $params);
+        $html = getPageContentByPost("http://iptv.kartina.tv", $params);
         $this->cookie = parseOutCookies($html);
         strpos($this->cookie, "SSID") or 
             die (USERNAME . ": Authorization of user failed!");
