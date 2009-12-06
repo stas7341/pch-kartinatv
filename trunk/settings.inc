@@ -68,6 +68,9 @@ define("CL_CHANNEL_BLUE",   69);
 # show progress bar in channel list (TRUE for yes and FALSE for no)
 define("CL_SHOW_PROGRESS", TRUE);
 
+# allow custom sorting using sorting.txt (TRUE for yes and FALSE for no)
+define("CL_CUSTOM_SORTING", FALSE);
+
 # size of video window on open channel page
 define("OC_VIDEO_WIDTH",  704);
 define("OC_VIDEO_HEIGHT", 576);

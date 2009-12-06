@@ -7,6 +7,8 @@
 # Author: consros 2008                                                      #
 #############################################################################
 
+require_once("settings.inc");
+require_once("sorter.inc");
 
 class Program {
     var $name;
@@ -156,6 +158,10 @@ class ChannelsParser extends AbstractParser {
                     $this->categories[$last]->addChannel($channel);
                 }
             }
+        }
+
+        if (CL_CUSTOM_SORTING) {            
+            $this->categories = Sorter::sortCategories($this->categories);
         }
     }        
 }

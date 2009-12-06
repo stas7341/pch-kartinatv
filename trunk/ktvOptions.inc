@@ -284,4 +284,25 @@ class CfgBufferSizeOption extends ListOption {
     }
 }
 
+class CfgSortingOption extends ListOption {
+    var $param;
+    function CfgSortingOption() {
+        $this->name = LANG_SORTING;
+        $this->description = LANG_SORTING_DETAILS;
+        $this->icon = OPT_ICONS_PATH . 'sorting.png';
+        $this->optionsList = array(LANG_YES, LANG_NO);
+        $this->param = new CfgParameter(CFG_FILE, "CL_CUSTOM_SORTING");
+        $this->init();
+    }
+    function init() {
+        $this->value = "TRUE" === $this->param->read() ? 
+            $this->optionsList[0] : $this->optionsList[1]; 
+    }
+    function save($newValue) {
+        $this->value = $newValue;
+        $this->param->write($newValue === $this->optionsList[0] ?
+            "TRUE" : "FALSE");
+    }
+}
+
 ?>
