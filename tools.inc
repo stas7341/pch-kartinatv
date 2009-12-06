@@ -74,7 +74,7 @@ function getPageContentByGet($url, $headerExt) {
     return $content;
 }
 
-function getPageContentByPut($url, $params, $headerExt = "") {
+function getPageContentByPost($url, $params, $headerExt = "") {
     $parsedUrl = parse_url($url);
     $host = $parsedUrl['host'];
     $path = $parsedUrl['path'];
