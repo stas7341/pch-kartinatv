@@ -14,6 +14,9 @@ class Sorter {
         $defaultColors = array("blue", "orange", "red", 
             "green", "yellow", "gray", "pink", "black");
 
+        // trace complete original channels list if needed
+        // Sorter::traceCategories($categories);
+
         // sorting file should exist
         if (! is_readable($rulesFilename)) {
             return $categories;
@@ -112,5 +115,21 @@ class Sorter {
         }
     }
 
+    function traceCategories($categories) {
+        $filename = "channels.txt";
+        $fh = fopen($filename, 'w') or die("Can't open file $filename");
+        fwrite($fh, "# Current channels state (" . date("r") .  ")\r\n");
+        $channelNumber = 1;
+        foreach ($categories as $category) {
+            fwrite($fh, "!" . $category->color . ":" . $category->name . "\r\n");
+            foreach ($category->channels as $channel) {
+                // channel name may contain time shift information
+                $channelName = preg_replace('/ -\d+$/', '', $channel->name);
+                fwrite($fh, $channelNumber++ . ". " . $channelName . "\r\n");
+            }
+            fwrite($fh, "\r\n");
+        }
+        fclose($fh);
+    }
 }
 ?>
