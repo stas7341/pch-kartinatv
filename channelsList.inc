@@ -198,7 +198,8 @@ function addShortcuts(
     print '<a href="displayProgram.php?ref=" TVID="_TAB"></a>' . "\n";
 
     # support for configurable options
-    print '<a href="editOptions.php?ref=" TVID="_SETUP"></a>' . "\n";
+    print '<a href="editOptions.php?ref=" TVID="_SETUP">';
+    print ($hideNames ? "" : " SETUP ") . "</a>\n";
 
     # return to web services
     print '<a href="file:///opt/sybhttpd/default/webservices_list.html" ';

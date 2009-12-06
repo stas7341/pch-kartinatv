@@ -7,6 +7,10 @@ the IP-TV channels broadcasted by katrina.tv provider.
 
 Changes
 -------
+Changes in version 0.7.3:
+- Custom channels sorting feature added
+- Options page extended + added SETUP link in browser mode
+
 Changes in version 0.7.2:
 - Improved detailed channel program
 - Options page available via <SETUP> key
