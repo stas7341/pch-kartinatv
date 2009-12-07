@@ -39,12 +39,12 @@ function deleteDirectory($dirname) {
 <head>
     <title>NMT EPG Updater</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <? displayCommonStyles(FONT_SIZE); ?>
+    <?php displayCommonStyles(FONT_SIZE); ?>
     <style type="text/css">
         td.page        { width: 620px; height: 480px; }
     </style>
 </head>
-<body <?=getBodyStyles() ?>>
+<body <?php echo getBodyStyles() ?>>
 <table><tr><td class="page" align="center">
 <textarea cols="110" rows="27">
 <?php

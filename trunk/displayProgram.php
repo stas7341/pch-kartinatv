@@ -12,8 +12,8 @@ require_once "channelsParser.inc";
 session_start();
 
 # id transmitted as a part of ref parameter at the very end
-$id  = preg_replace('/.*\?id=/', '', $HTTP_GET_VARS['ref']);
-$vid = $HTTP_GET_VARS['vid'];
+$id  = preg_replace('/.*\?id=/', '', $_GET['ref']);
+$vid = $_GET['vid'];
 $currentTime = time() + (TIME_ZONE * 60 * 60);
 
 function getArraySlice($array, $selIndex, $wndWidth) {
@@ -66,7 +66,7 @@ function calcWndWidth($programs, $defaultWidth) {
     <title>NMT detailed programs list for desired channel</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta http-equiv="refresh" content="60" />
-    <? displayCommonStyles(FONT_SIZE); ?>
+    <?php displayCommonStyles(FONT_SIZE); ?>
     <style type="text/css">
         td.no-data { font-weight: bold; background-color: #005B95; }
         td.past    { background-color: #4d6080; }
@@ -79,15 +79,15 @@ function calcWndWidth($programs, $defaultWidth) {
         td.future-details  { font-size: 11pt; color: #AAAAAA; }
     </style>
 </head>
-<body <?=getBodyStyles() ?>>
+<body <?php echo getBodyStyles() ?>>
 <div align="center">
 <table>
 <tr>
 <td class="time" align="center">
-    <img src="http://www.kartina.tv/images/icons/channels/<?=$id?>.gif" />
+    <img src="http://www.kartina.tv/images/icons/channels/<?php echo $id?>.gif" />
 </td>
-<td class="title" align="center"><?=$HTTP_GET_VARS['title']?></td>
-<td class="time" align="center"><?=date('H:i', $currentTime)?></td>
+<td class="title" align="center"><?php echo $_GET['title']?></td>
+<td class="time" align="center"><?php echo date('H:i', $currentTime)?></td>
 </tr>
 
 <?php

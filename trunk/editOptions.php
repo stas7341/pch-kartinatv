@@ -21,27 +21,27 @@ function displayOption($number, $option) {
     }
 ?>
     <tr>
-    <td class="number" align="center"><?=$number?></td>
+    <td class="number" align="center"><?php echo $number?></td>
     <td class="logo" align="center">
-        <img width="48" height="48" src="<?=$option->icon?>" />
+        <img width="48" height="48" src="<?php echo $option->icon?>" />
     </td>
     <td class="name">
         <table width="100%"><tr>
-            <td><?=$option->name?></td>
+            <td><?php echo $option->name?></td>
         </tr><tr>
-            <td class="descr"><?=$option->description?></td>
+            <td class="descr"><?php echo $option->description?></td>
         </tr></table>
     </td>
-    <td class="value" align="center"><?=$option->getControlHtml($number)?></td>
+    <td class="value" align="center"><?php echo $option->getControlHtml($number)?></td>
     </tr>
-<?
+<?php
 }
 ?>
 <html>
 <head>
     <title>NMT detailed programs list for desired channel</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <? displayCommonStyles(FONT_SIZE); ?>
+    <?php displayCommonStyles(FONT_SIZE); ?>
     <style type="text/css">
         th             { background-color: #6d80a0; }
         td             { background-color: #005B95; }
@@ -60,12 +60,12 @@ function displayOption($number, $option) {
 <a href="index.php" TVID="BACK"></a>
 
 <table>
-<form method="post" action="<?=$_SERVER['PHP_SELF']?>">
+<form method="post" action="<?php echo $_SERVER['PHP_SELF']?>">
 <tr><th colspan="4" align="center">Kartina.TV</th></tr>
-<?
+<?php
 
 # channel number should be restored to handle properly "return" button
-$number = $HTTP_GET_VARS['number'];
+$number = $_GET['number'];
 if (isset($number)) {
     $_SESSION['selectedChannel'] = $number;
 }
@@ -86,7 +86,7 @@ foreach ($options as $option) {
 ?>
 <tr><td class="separator">&nbsp;</td></tr>
 <tr><th colspan="4" align="center">Plugin</th></tr>
-<?
+<?php
 
 $options = array(
     new CfgUsernameOption(),
@@ -107,13 +107,16 @@ $ktvFunctions->forgetCookie();
 <tr>
 <td colspan="2" class="separator"></td>
 <td class="separator">
-<?if (! EMBEDDED_BROWSER) {?>
-    <a href="index.php">&lt;&lt;&nbsp;<?=LANG_CHANNELS_LIST?></a>
-<?}?>
+<?php 
+    if (! EMBEDDED_BROWSER) { 
+        print '<a href="index.php">&lt;&lt;&nbsp;';
+        print LANG_CHANNELS_LIST . "</a>\n";
+    } 
+?>
 </td>
 <td align="center" class="separator">
-    <input type="submit" value="<?=LANG_SAVE_CHANGES?>" name="SubmitBtn" 
-        onKeyLeftSet="value1" onKeyRightSet="#self" onKeyUpSet="value<?=$number-1?>" />
+    <input type="submit" value="<?php echo LANG_SAVE_CHANGES?>" name="SubmitBtn" 
+        onKeyLeftSet="value1" onKeyRightSet="#self" onKeyUpSet="value<?php echo $number-1?>" />
 </td></tr>
 </form>
 </table>

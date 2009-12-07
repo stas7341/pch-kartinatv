@@ -31,12 +31,12 @@ function toggleBooleanOption($filename, $optionName) {
 <head>
     <title>NMT check of KtvFunctions class</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <? displayCommonStyles(FONT_SIZE); ?>
+    <?php displayCommonStyles(FONT_SIZE); ?>
     <style type="text/css">
         td.page        { width: 620px; height: 480px; }
     </style>
 </head>
-<body <?=getBodyStyles() ?>>
+<body <?php echo getBodyStyles() ?>>
 <table><tr><td class="page" align="center">
 <textarea cols="110" rows="27">
 <?php
@@ -55,7 +55,7 @@ function toggleBooleanOption($filename, $optionName) {
 
     print("REFERER: " . $_SERVER['HTTP_REFERER'] . "\n");
 
-    $id = isset($HTTP_GET_VARS['id']) ? $HTTP_GET_VARS['id'] : 7;
+    $id = isset($_GET['id']) ? $_GET['id'] : 7;
     #$content = $ktvFunctions->getStreamUrl($id);
     #$content = $ktvFunctions->getEpg($id);
     #$content = $ktvFunctions->getTimeShift();

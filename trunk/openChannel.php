@@ -57,22 +57,22 @@ function displayAudioPlaylist($name, $url) {
 <head>
 <title>NMT playing a channel from Kartina.TV</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <? displayCommonStyles(FONT_SIZE); ?>
+    <?php displayCommonStyles(FONT_SIZE); ?>
     <style type="text/css">
         a       { color: #46d0f0; }
         div     { color: white;   }
-        td.page { height:<?=DEFAULT_PAGE_HEIGHT?>px; }
+        td.page { height:<?php echo DEFAULT_PAGE_HEIGHT?>px; }
     </style>
 </head>
-<body <?=getBodyStyles()?>>
+<body <?php echo getBodyStyles()?>>
 <div align="center"><table><tr><td class="page" align="center">
 <?php
     $ktvFunctions = new KtvFunctions();
 
-    $id     = $HTTP_GET_VARS['id'];
-    $number = $HTTP_GET_VARS['number'];
-    $name   = $HTTP_GET_VARS['title'];
-    $vid    = $HTTP_GET_VARS['vid'];
+    $id     = $_GET['id'];
+    $number = $_GET['number'];
+    $name   = $_GET['title'];
+    $vid    = $_GET['vid'];
     $_SESSION['selectedChannel'] = $number;
 
     $content = $ktvFunctions->getStreamUrl($id);

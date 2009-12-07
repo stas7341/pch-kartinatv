@@ -23,14 +23,14 @@ function displayCustomStyles() {
 ?>
 <style type="text/css">
     td             { font-weight: bold; }
-    table.channels { width: <?=CL_WIDTH_TABLE?>px; }
-    td.number      { width: <?=CL_WIDTH_NUMBER?>px; }
-    td.logo        { width: <?=CL_WIDTH_LOGO?>px; }
-    td.name        { width: <?=CL_WIDTH_NAME?>px; background-color: #005B95; }
-    th.longName    { width: <?=CL_WIDTH_LONGNAME?>px; background-color: #005B95; }
-    td.program     { width: <?=CL_WIDTH_PROGRAM?>px; font-weight: normal; }
-    td.time        { width: <?=CL_WIDTH_TIME?>px; }
-    th.details     { width: <?=CL_WIDTH_TABLE?>px; height: 70px; background-color: #005B95; }
+    table.channels { width: <?php echo CL_WIDTH_TABLE?>px; }
+    td.number      { width: <?php echo CL_WIDTH_NUMBER?>px; }
+    td.logo        { width: <?php echo CL_WIDTH_LOGO?>px; }
+    td.name        { width: <?php echo CL_WIDTH_NAME?>px; background-color: #005B95; }
+    th.longName    { width: <?php echo CL_WIDTH_LONGNAME?>px; background-color: #005B95; }
+    td.program     { width: <?php echo CL_WIDTH_PROGRAM?>px; font-weight: normal; }
+    td.time        { width: <?php echo CL_WIDTH_TIME?>px; }
+    th.details     { width: <?php echo CL_WIDTH_TABLE?>px; height: 70px; background-color: #005B95; }
     td.progress    { background-color: #79a1bd; height: 3px; }
     
 </style>
@@ -210,9 +210,9 @@ function displayChannelsList($channelsParser, $showDetailsPanel) {
 ?>
 <html>
 <head>
-<? displayHtmlHeader();   ?>
-<? displayCommonStyles(FONT_SIZE); ?>
-<? displayCustomStyles(); ?>
+<?php displayHtmlHeader();   ?>
+<?php displayCommonStyles(FONT_SIZE); ?>
+<?php displayCustomStyles(); ?>
 
 <script type="text/javascript">
     function updateDetails(text) {
@@ -222,7 +222,7 @@ function displayChannelsList($channelsParser, $showDetailsPanel) {
 </script>
 
 </head>
-<body <?=getBodyStyles() . 
+<body <?php echo getBodyStyles() . 
     " onLoadSet=\"channel-$channelsParser->selectedChannel\""?>>
 <div align="center">
 <table class="channels">

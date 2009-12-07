@@ -7,6 +7,9 @@ the IP-TV channels broadcasted by katrina.tv provider.
 
 Changes
 -------
+Changes in version 0.8.0:
+- Installation now goes via NMT Community Software Installer - http://www.nmtinstaller.com
+
 Changes in version 0.7.3:
 - Custom channels sorting feature added
 - Options page extended + added SETUP link in browser mode
@@ -95,28 +98,10 @@ installed and activated NMT services (e.g. torrent).
 
 Installation
 ------------
-1. Copy the katrina.tv folder to the root of the internal harddisk. 
-   If you want to install it to any other location you will have to update 
-   your MSP URL accordingly.
 
-2. Edit settings.inc and write there your account settings obtained from kartina.tv
-   (It's also possible to edit them later via configuration page)
-
-3. Add a new MSP entry for this plugin. 
-   To do that enter the NMT->Web Services->Add/Edit and write there following:
-      Service Name: Kartina.TV
-      Service URL: http://localhost:8088/stream/file=/share/kartina.tv/index.php
-
-4. Notes
-   Check the URL against the path where you've put the katrina.tv folder.
-   As an alternative to a Web Service you can simply go to kartina.tv folder 
-   via HDD browser and open there the index.htm file.
-   Please make sure at least one of following services is running:
-      - Torrent
-      - Usenet Client
-      - Casgle Client 
-   In order to use configuration page make sure the permissions of 
-   settings.inc file are set to 0666 or 0777 (writing allowed to everyone).
+Installation now goes via NMT Community Software Installer - http://www.nmtinstaller.com
+After installation configure your account using following script:
+http://<PCH-ADDRESS>:9999/KartinaTV_gaya/editOptions.php
 
 Usage
 -----
