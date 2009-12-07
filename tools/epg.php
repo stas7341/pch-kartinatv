@@ -38,8 +38,8 @@ if (! isset($_SESSION['lastUpdate']) ||
 }
 
 # decide which channel is now the active one
-$selectedChannel = isset($HTTP_GET_VARS['selectedChannel']) ? 
-    $HTTP_GET_VARS['selectedChannel'] : $_SESSION['selectedChannel'];
+$selectedChannel = isset($_GET['selectedChannel']) ? 
+    $_GET['selectedChannel'] : $_SESSION['selectedChannel'];
 if (! isset($selectedChannel)) {
     $selectedChannel = 1;
 }
@@ -53,8 +53,8 @@ $channelsParser->parse($rawList);
 $channelsParser->selectedChannel = $selectedChannel;
 
 # decide whether to show the details panel
-$showDetailsPanel = isset($HTTP_GET_VARS['showDetailsPanel']) ?
-    $HTTP_GET_VARS['showDetailsPanel'] : $_SESSION['showDetailsPanel'];
+$showDetailsPanel = isset($_GET['showDetailsPanel']) ?
+    $_GET['showDetailsPanel'] : $_SESSION['showDetailsPanel'];
 if (! isset($showDetailsPanel)) {
     $showDetailsPanel = CL_SHOW_DETAILS_PANEL;
 }
@@ -361,9 +361,9 @@ function displayChannelsList($channelsParser, $showDetailsPanel) {
 ?>
 <html>
 <head>
-<? displayHtmlHeader();   ?>
-<? displayCommonStyles(FONT_SIZE); ?>
-<? displayCustomStyles(); ?>
+<?php displayHtmlHeader();   ?>
+<?php displayCommonStyles(FONT_SIZE); ?>
+<?php displayCustomStyles(); ?>
 
 <script type="text/javascript">
     function updateDetails(text) {
@@ -373,7 +373,7 @@ function displayChannelsList($channelsParser, $showDetailsPanel) {
 </script>
 
 </head>
-<body <?=getBodyStyles() . 
+<body <?php echo getBodyStyles() . 
     " onLoadSet=\"channel-$channelsParser->selectedChannel\""?>>
 <div align="center">
 <table class="channels">

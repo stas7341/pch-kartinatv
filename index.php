@@ -33,8 +33,8 @@ if (! isset($_SESSION['lastUpdate']) ||
 }
 
 # decide which channel is now the active one
-$selectedChannel = isset($HTTP_GET_VARS['selectedChannel']) ? 
-    $HTTP_GET_VARS['selectedChannel'] : $_SESSION['selectedChannel'];
+$selectedChannel = isset($_GET['selectedChannel']) ? 
+    $_GET['selectedChannel'] : $_SESSION['selectedChannel'];
 if (! isset($selectedChannel)) {
     $selectedChannel = 1;
 }
@@ -48,8 +48,8 @@ $channelsParser->parse($rawList);
 $channelsParser->selectedChannel = $selectedChannel;
 
 # decide whether to show the details panel
-$showDetailsPanel = isset($HTTP_GET_VARS['showDetailsPanel']) ?
-    $HTTP_GET_VARS['showDetailsPanel'] : $_SESSION['showDetailsPanel'];
+$showDetailsPanel = isset($_GET['showDetailsPanel']) ?
+    $_GET['showDetailsPanel'] : $_SESSION['showDetailsPanel'];
 if (! isset($showDetailsPanel)) {
     $showDetailsPanel = CL_SHOW_DETAILS_PANEL;
 }

@@ -139,15 +139,15 @@ function displayCommonStyles($fontSize) {
         margin-right      : 48px;
         margin-left       : 48px;           
         font-family       : arial,helvetica,verdana,sans-serif;
-        font-size         : <?=$fontSize?>pt;
+        font-size         : <?php echo $fontSize?>pt;
         text-align        : left;
     }
-    img     { font-size: <?=$fontSize?>pt; color: #46d0f0; }
-    a       { font-size: <?=$fontSize?>pt; color: white; text-decoration: none; }
-    a:hover { font-size: <?=$fontSize?>pt; background: #880000; }
-    div     { font-size: <?=$fontSize?>pt; color: #46d0f0; }
-    th      { font-size: <?=$fontSize?>pt; color: white;   }
-    td      { font-size: <?=$fontSize?>pt; color: white;   }
+    img     { font-size: <?php echo $fontSize?>pt; color: #46d0f0; }
+    a       { font-size: <?php echo $fontSize?>pt; color: white; text-decoration: none; }
+    a:hover { font-size: <?php echo $fontSize?>pt; background: #880000; }
+    div     { font-size: <?php echo $fontSize?>pt; color: #46d0f0; }
+    th      { font-size: <?php echo $fontSize?>pt; color: white;   }
+    td      { font-size: <?php echo $fontSize?>pt; color: white;   }
 </style>
 <link rel="shortcut icon" href="img/favicon.ico" />
 <?php
