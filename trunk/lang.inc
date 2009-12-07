@@ -3,8 +3,10 @@
 # Language depended translations of diverse messages and labels used        #
 # overall in this plugin.                                                   #
 #                                                                           #
-# Author: consros 2008                                                      #
+# Author: consros 2009                                                      #
 #############################################################################
+
+define("LANG_CHANNELS_LIST", "Список каналов");
 
 define("LANG_NOT_IMPLEMENTED", "<br /><b>Опция временно не работает!</b>");
 define("LANG_SAVE_CHANGES", "Сохранить изменения");

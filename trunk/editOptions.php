@@ -105,7 +105,12 @@ $ktvFunctions->forgetCookie();
 ?>
 <tr><td class="separator">&nbsp;</td></tr>
 <tr>
-<td colspan="3" class="separator"></td>
+<td colspan="2" class="separator"></td>
+<td class="separator">
+<?if (! EMBEDDED_BROWSER) {?>
+    <a href="index.php">&lt;&lt;&nbsp;<?=LANG_CHANNELS_LIST?></a>
+<?}?>
+</td>
 <td align="center" class="separator">
     <input type="submit" value="<?=LANG_SAVE_CHANGES?>" name="SubmitBtn" 
         onKeyLeftSet="value1" onKeyRightSet="#self" onKeyUpSet="value<?=$number-1?>" />
