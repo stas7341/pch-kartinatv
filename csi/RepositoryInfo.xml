@@ -1,0 +1,162 @@
+<?xml version="1.0"?>
+<Repository>
+    <DistributedRepositories>
+        <Repository>
+            <Name>consros</Name>
+            <URL>http://pch-kartinatv.googlecode.com/svn/trunk/csi/RepositoryInfo.zip</URL>
+        </Repository>
+    </DistributedRepositories>
+    <DistributedRepositories />
+    <Applications>
+        <Application>
+            <Name>KartinaTV</Name>
+            <Version>0.8.0</Version>
+            <DownloadURL>http://pch-kartinatv.googlecode.com/svn/trunk/csi/KartinaTV-installer.zip</DownloadURL>
+            <Author>consros</Author>
+            <Maintainer>consros</Maintainer>
+            <Description>
+                This plugin (set of scripts) allows to view on Popcorn Hour family the IP-TV channels broadcast by Katrina.TV provider. 
+                Plugin was tested on A-100, A-110 and C-200, but should probably work on other models and clones. 
+            </Description>
+            <Homepage>http://code.google.com/p/pch-kartinatv/</Homepage>
+            <InstallScript>Apps/AppInit/appinit.cgi?install&amp;KartinaTV.tar</InstallScript>
+            <WebInterfaceURL>http://[NMT_IP]:9999/KartinaTV_web/editOptions.php</WebInterfaceURL>
+            <GayaInterfaceURL>http://[NMT_IP]:9999/KartinaTV_gaya/</GayaInterfaceURL>
+            <Screenshots>
+                <URL>http://pch-kartinatv.googlecode.com/svn/trunk/screenshots/channels-list.PNG</URL>
+                <URL>http://pch-kartinatv.googlecode.com/svn/trunk/screenshots/detailed-program.PNG</URL>
+                <URL>http://pch-kartinatv.googlecode.com/svn/trunk/screenshots/options-page.PNG</URL>
+            </Screenshots>
+            <UsageInstructions>
+                After installation configure your account using following script:
+                http://[NMT_IP]:9999/KartinaTV_web/editOptions.php
+
+                Pickup wished channel in the channels list and press ENTER to play it.
+                To quit playing press STOP. When the channel is closing you can see
+                for a couple of seconds a kartina.tv logo. Simply wait and you will be
+                forwarded to channels list automatically.
+
+                Keyboard Assignment
+                ------------------
+                - During Channel selection
+                UP     = Go one channel up
+                DOWN   = Go one channel down
+                LEFT   = Go to first channel displayed on the screen
+                On first channel = PGUP
+                RIGHT  = Go to last channel displayed on the screen
+                On last channel = PGDOWN
+                PGUP   = Go one page up
+                PGDOWN = Go one page down
+                HOME   = Go to channel 1
+                MENU   = Show detailed programs list for desired channel
+                1-7    = Go to channel 10, 20, 30, 40, 50, 60 or 70
+                RED,GREEN,YELLOW,BLUE = Go to favourite channels defined in settings.inc
+                REPEAT = Toggle details panel
+                INFO   = Show full program name in popup
+                ENTER  = Play the channel
+                SOURCE = Leave the plugin
+                RETURN = Go back to web services list
+                SETUP  = Configuration page with diverse KartinaTV and Plugin options
+
+                - During playback
+                Just usual short-cuts, no extensions
+
+                - On program list page
+                Just usual short-cuts, no extensions
+
+                - On configuration page
+                Just usual short-cuts, no extensions             
+            </UsageInstructions>
+            <Forum>http://www.pristavka.de/index.php/topic,4386.new.html#new</Forum>
+            <Changelog>
+                Changes in version 0.8.0:
+                - Installation now goes via NMT Community Software Installer - http://www.nmtinstaller.com
+
+                Changes in version 0.7.3:
+                - Custom channels sorting feature added
+                - Options page extended + added SETUP link in browser mode
+
+                Changes in version 0.7.2:
+                - Improved detailed channel program
+                - Options page available via &lt;SETUP&gt; key
+
+                Changes in version 0.7.1:
+                - Progress bars for programs in channel list
+                - Detailed programs list for a desired channel improved
+                - Small design changes
+
+                Changes in version 0.7.0:
+                - Finally support of HD mode - I've bought a new 52" TV.
+
+                Changes in version 0.6.6:
+                - Detailed programs list for a desired channel, activated with &lt;MENU&gt; key.
+                In external browser mode it can be activated by click on channel number.
+                - Instant transition to the first channel in now mapped on &lt;HOME&gt; key.
+
+                Changes in version 0.6.5:
+                - Channel type detection (video/audio) improved
+                - Font selection via settings.inc bug is fixed
+                - Slide show support for music channels.
+                Created lists can be observed via these links:
+                http://pch-a100:8088/stream/file=/tmp/channel.jsp
+                http://pch-a100:8088/stream/file=/tmp/bg.jsp
+                At the moment the list is created basing on works published 
+                on http://www.deviantart.com/ under photography category.
+                Slide show delay can be configured via OC_SLIDE_SHOW_DELAY parameter.
+
+                Changes in version 0.6.4:
+                - Scrollable program
+                - Selection cursor goes now over programs not channels
+                - Short-cut for RETURN key
+
+                Changes in version 0.6.3:
+                - Details panel feature for full program name display
+                Switched off by default because of substantive slow down of browsing
+                - Details panel can be switched on/off via REPEAT button
+                - INFO button shows full program name in popup
+                - Colored buttons RED,GREEN,YELLOW and BLUE can now be assigned 
+                to channels via settings.inc file
+
+                Changes in version 0.6.2:
+                - New string trancation with gradiental ending
+                - Functions to get channel EPG xml
+                - Non-gaya browser support
+                - VLC-plugin support on openChannel.php page
+                - Left/Right on first/last channel act as PgUp/PgDn
+                - index.htm to open plugin via HDD browser not only via Web Services
+                - all configuration is now performed via settings.inc
+                - auth.inc removed as unused
+
+                Changes in version 0.6.1:
+                - Support of adult channels
+                - Better detection of wrong responses and closed channels
+
+                Changes in version 0.6.0:
+                - Code is completely rewritten on PHP
+                - Pages support for faster channels browsing
+                - Optimization of channles list loading
+                Now loading is performed only once in a minute
+                - Optimization of session authorization
+                Now authorization cookie is kept between page refreshes
+                - New keyboard behaviour
+                - Comments in code are partially lost
+
+                Changes in version 0.5.0:
+                - This README.txt provided
+                - Short-cuts support:
+                1. Key LEFT:  10 channels up
+                2. Key RIGHT: 10 channels down
+                3. Channel number: move cursor to this channel
+                - Single step channel openning/closing. 
+                Now to go back to Web Services page use the SOURCE key not RETURN
+                - It's not important anymore where in NMT this plugin will be stored
+                - Better functions split between scripts
+                - Comments are over all the code now.             
+            </Changelog>
+        </Application>
+    </Applications>
+    <Themes />
+    <Indexes />
+    <WaitImageSets />
+    <Webservices />
+</Repository>
