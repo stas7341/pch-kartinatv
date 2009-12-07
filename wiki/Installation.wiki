@@ -6,28 +6,7 @@
  * PCH-A110: from 26 February 2009 or 02 April 2009 *Not supported!*
 
 == Installation ==
- * Copy the *kartina.tv* folder to the root of the internal hard disk. If you want to install it to any other location you will have to update your MSP URL accordingly. Please check that folder is named correctly - *kartina.tv*. Not katrina.tv, not kartina.tv-0.7.2 or something else.
- * Edit *settings.inc* and write there your account settings obtained from *kartina.tv*
- * Add a new MSP entry for this plugin. To do that enter the *NMT->Web Services->Add/Edit* and write there following:
-   * Service Name: Kartina.TV
-   * Service URL: http://localhost:8088/stream/file=/share/kartina.tv/index.php
+Installation now goes via NMT Community Software Installer - http://www.nmtinstaller.com
+Simply download it, find KartinaTV there and install it using provided wizard!
 
-== Notes ==
- * Check the URL against the path where you've put the kartina.tv folder.
- * As an alternative to a Web Service you can simply go to *kartina.tv* folder via HDD browser and open there the *index.htm* file.
- * Please make sure myiHome service is running.
- * Please make sure at least one of following services is running:
-   * Torrent
-   * Usenet
-   * Casgle
- * My configuration of services (not required): 
-   * UPnP AV: on
-   * myiHome: on
-   * FTP: off
-   * SMB: on
-   * NFS: off
-   * Torrent: on
-   * Usenet: off
-   * Casgle: off
- * To connect to server from your PC and see output in browser use this link: http://pch-a100:8088/stream/file=/share/kartina.tv/index.php
- * In order to use configuration page make sure the permissions of *settings.inc* file are set to *0666* or *0777* (writing allowed to everyone).
+If you cannot find it in the list, install this repository - http://pch-kartinatv.googlecode.com/svn/trunk/csi/RepositoryInfo.zip - via Extra->Advanced->Manage repositories.
