@@ -1,11 +1,5 @@
 <?xml version="1.0"?>
 <Repository>
-    <DistributedRepositories>
-        <Repository>
-            <Name>consros</Name>
-            <URL>http://pch-kartinatv.googlecode.com/svn/trunk/csi/RepositoryInfo.xml</URL>
-        </Repository>
-    </DistributedRepositories>
     <DistributedRepositories />
     <Applications>
         <Application>
