@@ -35,7 +35,7 @@ class Sorter {
             $line = trim($line);
 
             // delete comments
-            $line = preg_replace('/#.*$/', '', $line);
+            $line = preg_replace('/^\s*#.*$/', '', $line);
 
             // ignore blank lines        
             if (preg_match('/^\s*$/', $line)) {
