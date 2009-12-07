@@ -3,7 +3,7 @@
     <DistributedRepositories>
         <Repository>
             <Name>consros</Name>
-            <URL>http://pch-kartinatv.googlecode.com/svn/trunk/csi/RepositoryInfo.zip</URL>
+            <URL>http://pch-kartinatv.googlecode.com/svn/trunk/csi/RepositoryInfo.xml</URL>
         </Repository>
     </DistributedRepositories>
     <DistributedRepositories />
