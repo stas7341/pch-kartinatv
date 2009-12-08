@@ -162,6 +162,7 @@ class ChannelsParser extends AbstractParser {
 
         if (CL_CUSTOM_SORTING) {            
             $this->categories = Sorter::sortCategories($this->categories);
+            $this->channelsAmount = Sorter::getChannelsAmount($this->categories);
         }
     }        
 }
