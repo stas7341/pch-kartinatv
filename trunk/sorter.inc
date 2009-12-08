@@ -83,8 +83,7 @@ class Sorter {
             $newCategories = array_merge($newCategories, $categories);
         } 
 
-        // hide special and empty groups and renumber channels
-        $channelNumber = 1;
+        // hide special and empty groups
         foreach ($newCategories as $key => $newCategory) {
             if ($newCategory->name == "HIDDEN" || 
                 $newCategory->name == "REST" ||
@@ -92,6 +91,11 @@ class Sorter {
             {
                 unset($newCategories[$key]);
             }
+        }
+        
+        // renumber channels
+        $channelNumber = 1;
+        foreach ($newCategories as $key => $newCategory) {
             foreach ($newCategory->channels as $channelKey => $channel) {
                 $newCategories[$key]->channels[$channelKey]->number = 
                     $channelNumber++;
@@ -113,6 +117,16 @@ class Sorter {
                 }
             }
         }
+    }
+
+    function getChannelsAmount($categories) {
+        $channelsAmount = 0;
+        foreach ($categories as $category) {
+            foreach ($category->channels as $channel) {
+                $channelsAmount++;
+            }
+        }
+        return $channelsAmount;
     }
 
     function traceCategories($categories) {
