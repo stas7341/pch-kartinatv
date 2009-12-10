@@ -64,10 +64,20 @@ for /F "tokens=1-8 delims=.-" %%A in ("%2" ) do (
 set newVersion=%major%.%minor%.%build%
 if "%newVersion%" EQU ".." goto :EOF
 
+rem Multiple occurence support: only the wished one should be changed
+set entryNumber=%3
+if "%entryNumber%" EQU "" set entryNumber=1
+
 echo Version update %2 to %newVersion% in %1
 for /F "tokens=* delims=" %%A in (%1) do (
     set str=%%A
-    echo !str:%2=%newVersion%!>> temp.tmp
+    set newStr=!str:%2=%newVersion%!
+    if "!newStr!" NEQ "!str!" set /A entryNumber=!entryNumber!-1
+    if "!entryNumber!" EQU "0" (
+        set entryNumber=-1
+        set str=!newStr!
+    )
+    echo !str!>> temp.tmp
 )
 move temp.tmp %1
 goto :EOF
