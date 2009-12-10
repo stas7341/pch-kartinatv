@@ -1,8 +1,11 @@
 @echo off
+rem Script to update version numbers and pack everything together
+rem in accepted by NMT Community Software Installer format
+rem
+rem Author: consros 2009
 
 set IZARC="C:\Program Files\IZArc\IZARCC.exe"
 set TEMP=tmp
-set CFG=%TEMP%\appinfo.json
 
 mkdir %TEMP%
 mkdir %TEMP%\web
@@ -35,6 +38,7 @@ goto :EOF
 
 
 :UPDATE_APP_INFO_VERSION
+rem Parse out current Version: should be in form major.minor.build
 set oldVersion=
 for /F "tokens=2 delims==," %%A in ('findstr /c:%2 %1') do (
     set oldVersion=%%~A
@@ -44,6 +48,7 @@ goto :EOF
 
 
 :UPDATE_REPOSITORY_VERSION
+rem Parse out current Version: should be in form major.minor.build
 set oldVersion=
 for /F "tokens=2 delims=<> " %%A in ('findstr /c:%2 %1') do (
     set oldVersion=%%A
