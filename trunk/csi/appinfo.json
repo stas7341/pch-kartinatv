@@ -3,6 +3,7 @@
     name="KartinaTV",
     version="0.8.1",
     enabled="1",
+    daemon_script="daemon.sh",
     gayaui_path="#PATH#/web",
     webui_path="#PATH#/web"
 }

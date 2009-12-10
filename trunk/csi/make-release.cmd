@@ -17,6 +17,7 @@ set ZIP=KartinaTV-installer.zip
 
 mkdir %TEMP%
 mkdir %TEMP%\web
+mkdir %TEMP%\web\cfg
 
 setLocal
 setLocal EnableDelayedExpansion
@@ -30,6 +31,10 @@ xcopy /Q /I ..\*.inc %TEMP%\web
 xcopy /Q /I ..\*.php %TEMP%\web
 xcopy /Q /I ..\*.txt %TEMP%\web
 xcopy /Q /I appinfo.json %TEMP%
+xcopy /Q /I daemon.sh %TEMP%
+
+rem Special handling for config files
+move %TEMP%\web\settings.inc %TMP\web\cfg\
 
 echo Packing files...
 %IZARC% -a -p -r -w .\%TAR% %TEMP% > nul
