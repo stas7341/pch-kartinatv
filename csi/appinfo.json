@@ -1,0 +1,8 @@
+{
+    appinfo_format="1",
+    name="KartinaTV",
+    version="0.8.1",
+    enabled="1",
+    gayaui_path="#PATH#/web",
+    webui_path="#PATH#/web"
+}
