@@ -7,6 +7,12 @@ the IP-TV channels broadcasted by katrina.tv provider.
 
 Changes
 -------
+Changes in version 0.8.2:
+- Config file survival support
+
+Changes in version 0.8.1:
+- Custom channels sorting improved
+
 Changes in version 0.8.0:
 - Installation now goes via NMT Community Software Installer - http://www.nmtinstaller.com
 
