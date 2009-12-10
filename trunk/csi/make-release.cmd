@@ -1,11 +1,17 @@
 @echo off
 rem Script to update version numbers and pack everything together
-rem in accepted by NMT Community Software Installer format
+rem in accepted by NMT Community Software Installer format.
+rem
+rem PLEASE NOTE: 
+rem     In files you update all the blank lines will be DELETED!
+rem     That's a nice feature of MS find command.
 rem
 rem Author: consros 2009
 
 set IZARC="C:\Program Files\IZArc\IZARCC.exe"
 set TEMP=tmp
+set TAR=KartinaTV.tar
+set ZIP=KartinaTV-installer.zip
 
 mkdir %TEMP%
 mkdir %TEMP%\web
@@ -24,9 +30,9 @@ xcopy /Q /I ..\*.txt %TEMP%\web
 xcopy /Q /I appinfo.json %TEMP%
 
 echo Packing files...
-%IZARC% -a -p -r -w .\KartinaTV.tar %TEMP% > nul
+%IZARC% -a -p -r -w .\%TAR% %TEMP% > nul
 del KartinaTV-installer.zip
-%IZARC% -a -cx .\KartinaTV-installer.zip .\KartinaTV.tar > nul
+%IZARC% -a -cx .\%ZIP% .\%TAR% > nul
 
 echo Cleaning...
 del KartinaTV.tar
@@ -38,21 +44,23 @@ goto :EOF
 
 
 :UPDATE_APP_INFO_VERSION
-rem Parse out current Version: should be in form major.minor.build
+rem Parse out old version: should be in form major.minor.build
 set oldVersion=
 for /F "tokens=2 delims==," %%A in ('findstr /c:%2 %1') do (
     set oldVersion=%%~A
 )
+rem Increase old version and write it to file
 if "%oldVersion%" NEQ "" call :INCREASE_VERSION %1 %oldVersion%
 goto :EOF
 
 
 :UPDATE_REPOSITORY_VERSION
-rem Parse out current Version: should be in form major.minor.build
+rem Parse out old version: should be in form major.minor.build
 set oldVersion=
 for /F "tokens=2 delims=<> " %%A in ('findstr /c:%2 %1') do (
     set oldVersion=%%A
 )
+rem Increase old version and write it to file
 if "%oldVersion%" NEQ "" call :INCREASE_VERSION %1 %oldVersion%
 goto :EOF
 
