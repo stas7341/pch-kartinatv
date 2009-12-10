@@ -3,7 +3,8 @@ rem Script to update version numbers and pack everything together
 rem in accepted by NMT Community Software Installer format.
 rem
 rem PLEASE NOTE: 
-rem     In files you update all the blank lines will be DELETED!
+rem     In files where you update the version number all the 
+rem     blank lines will be DELETED!
 rem     That's a nice feature of MS find command.
 rem
 rem Author: consros 2009
@@ -81,6 +82,7 @@ rem Multiple occurence support: only the wished one should be changed
 set entryNumber=%3
 if "%entryNumber%" EQU "" set entryNumber=1
 
+rem NOTE: This eliminates all the blank lines!
 echo Version update %2 to %newVersion% in %1
 for /F "tokens=* delims=" %%A in (%1) do (
     set str=%%A
