@@ -4,8 +4,9 @@ rem in accepted by NMT Community Software Installer format.
 rem
 rem PLEASE NOTE: 
 rem     In files where you update the version number all the 
-rem     blank lines will be DELETED!
-rem     That's a nice feature of MS find command.
+rem     blank lines will be DELETED! But That makes almost 
+rem     no harm since they are in any case ignored by CSI.
+rem     A nice feature of MS find command!
 rem
 rem Author: consros 2009
 
