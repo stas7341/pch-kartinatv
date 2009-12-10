@@ -4,7 +4,7 @@
     <Applications>
         <Application>
             <Name>KartinaTV</Name>
-            <Version>0.8.0</Version>
+            <Version>0.8.1</Version>
             <DownloadURL>http://pch-kartinatv.googlecode.com/svn/trunk/csi/KartinaTV-installer.zip</DownloadURL>
             <Author>consros</Author>
             <Maintainer>consros</Maintainer>
@@ -24,12 +24,10 @@
             <UsageInstructions>
                 After installation configure your account using following script:
                 http://[NMT_IP]:9999/KartinaTV_web/editOptions.php
-
                 Pickup wished channel in the channels list and press ENTER to play it.
                 To quit playing press STOP. When the channel is closing you can see
                 for a couple of seconds a kartina.tv logo. Simply wait and you will be
                 forwarded to channels list automatically.
-
                 Keyboard Assignment
                 ------------------
                 - During Channel selection
@@ -51,42 +49,33 @@
                 SOURCE = Leave the plugin
                 RETURN = Go back to web services list
                 SETUP  = Configuration page with diverse KartinaTV and Plugin options
-
                 - During playback
                 Just usual short-cuts, no extensions
-
                 - On program list page
                 Just usual short-cuts, no extensions
-
                 - On configuration page
                 Just usual short-cuts, no extensions             
             </UsageInstructions>
             <Forum>http://www.pristavka.de/index.php/topic,4386.new.html#new</Forum>
             <Changelog>
-                Changes in version 0.8.0:
+                Changes in version 0.8.1:
                 - Installation now goes via NMT Community Software Installer - http://www.nmtinstaller.com
-
                 Changes in version 0.7.3:
                 - Custom channels sorting feature added
                 - Options page extended + added SETUP link in browser mode
-
                 Changes in version 0.7.2:
                 - Improved detailed channel program
                 - Options page available via &lt;SETUP&gt; key
-
                 Changes in version 0.7.1:
                 - Progress bars for programs in channel list
                 - Detailed programs list for a desired channel improved
                 - Small design changes
-
                 Changes in version 0.7.0:
                 - Finally support of HD mode - I've bought a new 52" TV.
-
                 Changes in version 0.6.6:
                 - Detailed programs list for a desired channel, activated with &lt;MENU&gt; key.
                 In external browser mode it can be activated by click on channel number.
                 - Instant transition to the first channel in now mapped on &lt;HOME&gt; key.
-
                 Changes in version 0.6.5:
                 - Channel type detection (video/audio) improved
                 - Font selection via settings.inc bug is fixed
@@ -97,12 +86,10 @@
                 At the moment the list is created basing on works published 
                 on http://www.deviantart.com/ under photography category.
                 Slide show delay can be configured via OC_SLIDE_SHOW_DELAY parameter.
-
                 Changes in version 0.6.4:
                 - Scrollable program
                 - Selection cursor goes now over programs not channels
                 - Short-cut for RETURN key
-
                 Changes in version 0.6.3:
                 - Details panel feature for full program name display
                 Switched off by default because of substantive slow down of browsing
@@ -110,7 +97,6 @@
                 - INFO button shows full program name in popup
                 - Colored buttons RED,GREEN,YELLOW and BLUE can now be assigned 
                 to channels via settings.inc file
-
                 Changes in version 0.6.2:
                 - New string trancation with gradiental ending
                 - Functions to get channel EPG xml
@@ -120,11 +106,9 @@
                 - index.htm to open plugin via HDD browser not only via Web Services
                 - all configuration is now performed via settings.inc
                 - auth.inc removed as unused
-
                 Changes in version 0.6.1:
                 - Support of adult channels
                 - Better detection of wrong responses and closed channels
-
                 Changes in version 0.6.0:
                 - Code is completely rewritten on PHP
                 - Pages support for faster channels browsing
@@ -134,7 +118,6 @@
                 Now authorization cookie is kept between page refreshes
                 - New keyboard behaviour
                 - Comments in code are partially lost
-
                 Changes in version 0.5.0:
                 - This README.txt provided
                 - Short-cuts support:
