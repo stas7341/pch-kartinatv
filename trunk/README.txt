@@ -7,6 +7,9 @@ the IP-TV channels broadcasted by katrina.tv provider.
 
 Changes
 -------
+Changes in version 0.8.3:
+- Support of newly broken KartinaTV's nginx server config (can I say word "fuckers" here?)
+
 Changes in version 0.8.2:
 - Config file survival support
 

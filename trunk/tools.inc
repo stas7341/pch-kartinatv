@@ -90,6 +90,7 @@ function getPageContentByPost($url, $params, $headerExt = "") {
     $header .= "User-Agent: Mozilla/5.0\r\n";
     $header .= "Content-Type: application/x-www-form-urlencoded\r\n";
     $header .= "Content-Length: " . strlen($params) . "\r\n";
+    $header .= "Connection: Close\r\n";
     $header .= $headerExt;
     $header .= "\r\n";
 
