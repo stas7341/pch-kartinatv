@@ -9,7 +9,7 @@
             <Author>consros</Author>
             <Maintainer>consros</Maintainer>
             <Description>
-                This plugin (set of scripts) allows to view on Popcorn Hour family the IP-TV channels broadcast by Katrina.TV provider. 
+                This plugin (set of scripts) allows to watch on Popcorn Hour family the IP-TV channels broadcast by Katrina.TV provider. 
                 Plugin was tested on A-100, A-110 and C-200, but should probably work on other models and clones. 
             </Description>
             <Homepage>http://code.google.com/p/pch-kartinatv/</Homepage>
