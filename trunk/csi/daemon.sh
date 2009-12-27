@@ -39,8 +39,12 @@ checkConfig() {
 
 cd web
 case "$1" in
-    start) 
-        checkConfig settings.inc 
+    start)
+        # check whether the config is up to date
+        checkConfig settings.inc
+
+        # set right permissions on /tmp
+        chmod go+w /tmp
     ;;
 esac
 

@@ -4,7 +4,7 @@
     <Applications>
         <Application>
             <Name>KartinaTV</Name>
-            <Version>0.8.3</Version>
+            <Version>0.8.4</Version>
             <DownloadURL>http://pch-kartinatv.googlecode.com/svn/trunk/csi/KartinaTV-installer.zip</DownloadURL>
             <Author>consros</Author>
             <Maintainer>consros</Maintainer>
@@ -58,6 +58,8 @@
             </UsageInstructions>
             <Forum>http://www.pristavka.de/index.php/topic,4386.new.html#new</Forum>
             <Changelog>
+                Changes in version 0.8.4:
+                - Workaround for broken PHP sessions on A-100
                 Changes in version 0.8.3:
                 - Support of newly broken KartinaTV's nginx server config (can I say "fuckers" on TV?)
                 Changes in version 0.8.2:
