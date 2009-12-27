@@ -7,6 +7,9 @@ the IP-TV channels broadcasted by katrina.tv provider.
 
 Changes
 -------
+Changes in version 0.8.4:
+- Workaround for broken PHP sessions on A-100
+
 Changes in version 0.8.3:
 - Support of newly broken KartinaTV's nginx server config (can I say "fuckers" on TV?)
 
