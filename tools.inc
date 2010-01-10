@@ -41,7 +41,10 @@ function getPageContentByGet($url, $headerExt) {
     $opts = array(
         'http' => array(
             'method'=> 'GET',
-            'header'=> "User-Agent: Mozilla/5.0\r\nHost: $host\r\n$headerExt")
+            'header'=> "User-Agent: Mozilla/5.0\r\n" .
+                       "Connection: Close\r\n" .
+                       "Host: $host\r\n" .
+                       $headerExt)
     );
 
     $context = stream_context_create($opts);
@@ -134,11 +137,6 @@ function displayCommonStyles($fontSize) {
     body { 
         color             : white; 
         background-color  : #27699B; 
-        background-repeat : no-repeat;
-        margin-top        : 40px;
-        margin-bottom     : 40px;
-        margin-right      : 48px;
-        margin-left       : 48px;           
         font-family       : arial,helvetica,verdana,sans-serif;
         font-size         : <?php echo $fontSize?>pt;
         text-align        : left;
