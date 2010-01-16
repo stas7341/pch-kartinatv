@@ -76,13 +76,28 @@ class KtvFunctions {
         return $this->getData($url, "channels list");
     }
 
-    function getStreamUrl($id) {
+    function getStreamUrl($id, $time = null) {
         $url  = "http://iptv.kartina.tv/";
         $url .= "?m=channels&act=get_stream_url&cid=$id";
+        if (isset($time) && null != $time) {
+            $url .= "&gmt=$time";
+        }
         if (ALLOW_EROTIC) {
             $url .= "&protect_code=" . PASSWORD;
         }
         return $this->getData($url, "URL of stream $id");
+    }
+    
+    function getChannelsInfo($ids) {
+        $param = "";
+        foreach($ids as $id) {
+            $param .= "" == $param ? "" : ",";
+            $param .= $id;
+        }
+        $url  = "http://iptv.kartina.tv/";
+        $url .= "?m=channels&act=get_info_xml&cids=";
+        $url .= urlencode($param);
+        return $this->getData($url, "info of streams");
     }
 
     function getEpg($id, $date = null) {
