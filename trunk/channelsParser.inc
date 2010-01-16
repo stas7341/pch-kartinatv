@@ -18,7 +18,7 @@ class Program {
     function Program($name, $details, $beginTime) {
         $this->name = $name;
         $this->details = $details;
-        $this->beginTime = strtotime($beginTime);
+        $this->beginTime = $beginTime;
     }
 }
 
