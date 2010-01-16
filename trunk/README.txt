@@ -7,6 +7,9 @@ the IP-TV channels broadcasted by katrina.tv provider.
 
 Changes
 -------
+Changes in version 0.8.5:
+- Support of new time format in programs list
+
 Changes in version 0.8.4:
 - Workaround for broken PHP sessions on A-100
 
