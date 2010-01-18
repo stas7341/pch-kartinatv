@@ -13,8 +13,10 @@ session_start();
 
 # id transmitted as a part of ref parameter at the very end
 $id  = preg_replace('/.*\?id=/', '', $_GET['ref']);
-$vid = $_GET['vid'];
 $currentTime = time() + (TIME_ZONE * 60 * 60);
+# $ref = isset($_GET['ref']) ? $_GET['ref'] : "index.php";
+$ref = "index.php";
+
 
 function getArraySlice($array, $selIndex, $wndWidth) {
     return getBottomArraySlice($array, $selIndex, $wndWidth);
@@ -68,12 +70,13 @@ function calcWndWidth($programs, $defaultWidth) {
     <meta http-equiv="refresh" content="60" />
     <?php displayCommonStyles(FONT_SIZE); ?>
     <style type="text/css">
-        td.no-data { font-weight: bold; background-color: #005B95; }
-        td.past    { background-color: #4d6080; }
-        td.current { background-color: #99a1bd; font-size: 16pt; font-weight: bold; }
-        td.future  { background-color: #6d80a0; }
-        td.title   { width: 1000px; font-weight: bold; background-color: #005B95; }
-        td.time    { width:  100px; font-weight: bold; background-color: #005B95; }
+        td.no-data   { font-weight: bold; background-color: #005B95; }
+        td.past      { background-color: #4d6080; }
+        td.current   { background-color: #99a1bd; font-size: 16pt; font-weight: bold; }
+        td.future    { background-color: #6d80a0; }
+        td.title     { width: 800px; font-weight: bold; background-color: #005B95; }
+        td.titleTime { width: 200px; font-weight: bold; background-color: #005B95; }
+        td.time      { width: 100px; font-weight: bold; background-color: #005B95; }
         td.current-details { font-size: 12pt; }
         td.past-details    { font-size: 11pt; color: #888888; }
         td.future-details  { font-size: 11pt; color: #AAAAAA; }
@@ -86,8 +89,8 @@ function calcWndWidth($programs, $defaultWidth) {
 <td class="time" align="center">
     <img src="http://www.kartina.tv/images/icons/channels/<?php echo $id?>.gif" />
 </td>
-<td class="title" align="center"><?php echo $_GET['title']?></td>
-<td class="time" align="center"><?php echo date('H:i', $currentTime)?></td>
+<td class="title" align="center"><?php echo $_GET['title'] ?></td>
+<td class="titleTime" align="center"><?php echo date('d.m H:i', $currentTime)?></td>
 </tr>
 
 <?php
@@ -119,18 +122,34 @@ function calcWndWidth($programs, $defaultWidth) {
         print "<tr>\n";
         print '<td class="time" align="center">' . date('H:i', $program->beginTime) . "</td>\n";
 
+        $linkUrl  = "openChannel.php?id=$id";
+        $linkUrl .= "&number=" . $_GET['number'];
+        $linkUrl .= "&title=" . $_GET['title'];
+        $linkUrl .= "&vid=" . $_GET['vid'];
+        $linkUrl .= "&ref=" . urlencode($_SERVER['REQUEST_URI']);
+    
         $class = "";
+        $name = $program->name;
         if ($program === $currentProgram) {
             $class="current";
+            
+            $name = EMBEDDED_BROWSER ? 
+                '<marquee behavior="focus">'.$name.'</marquee>': $name;
+            $name = "<a href=\"$linkUrl\" $linkExt>$name</a>";
         } else if ($program->beginTime <= $currentTime) {
             $class="past";
+
+            $linkUrl .= "&gmt=" . $program->beginTime;
+            $name = EMBEDDED_BROWSER ? 
+                '<marquee behavior="focus">'.$name.'</marquee>': $name;
+            $name = "<a href=\"$linkUrl\" $linkExt>$name</a>";
         } else {
             $class="future";
         }
 
         print "<td class=\"$class\" colspan=\"2\">\n";
         print "<table width=\"100%\"><tr>\n";
-        print '<td>' . $program->name. "</td>\n";
+        print '<td>' . $name . "</td>\n";
         if (isset($program->details) && "" != $program->details) {
             print '</tr><tr>';
             print '<td class="' . $class . '-details">' . $program->details . "</td>\n";
@@ -140,6 +159,7 @@ function calcWndWidth($programs, $defaultWidth) {
     }
 ?>
 </table>
+<a href="<?php print $ref ?>" TVID="BACK"></a>
 </div>
 </body>
 </html>

@@ -73,12 +73,14 @@ function displayAudioPlaylist($name, $url) {
     $number = $_GET['number'];
     $name   = $_GET['title'];
     $vid    = $_GET['vid'];
+    $gmt    = $_GET['gmt'];
+    $ref    = isset($_GET['ref']) ? urldecode($_GET['ref']) : "index.php";
     $_SESSION['selectedChannel'] = $number;
 
-    $content = $ktvFunctions->getStreamUrl($id);
-    $url = preg_replace('/.*url="http(\/ts|)([^ "]*).*/', 'http$2', $content);
+    $content = $ktvFunctions->getStreamUrl($id, $gmt);
+    $url = preg_replace('/.*url="(rtsp|http)(\/ts|)([^ "]*).*/', '$1$3', $content);
 
-    if (0 === strpos($url, "http://")) {
+    if (0 === strpos($url, "http://") || 0 === strpos($url, "rtsp://")) {
         # show kartina.tv logo or video via vlc
         playMedia(EMBEDDED_BROWSER ? null : $url);
 
@@ -117,7 +119,7 @@ function displayAudioPlaylist($name, $url) {
         print "<br><b>$name</b><br><br>";
 
         # this onFocusLoad will be activated when the video will be stopped
-        print '<a href="index.php" name="returnToIndex" onFocusLoad>';
+        print '<a href="' . $ref . '" name="returnToIndex" onFocusLoad>';
         print "Returning to channel selection...</a><br>\n";
     } else {
         # show kartina.tv logo
