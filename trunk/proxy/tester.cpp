@@ -11,6 +11,7 @@
 
 using namespace std;
 
+// to skip socket output which can be ignored
 void readSocket(int sockfd, FILE* out = NULL, int bytesLimit = 0) {
     char buffer[2048];
     int totalRead = 0;
@@ -27,6 +28,7 @@ void readSocket(int sockfd, FILE* out = NULL, int bytesLimit = 0) {
     }
 }
 
+// send HTTP header and TS file on socket, used for ignored connections
 void sendFile(int sockfd, const char* filename, int minLength = 0) {
     printf("Sending HTTP header and %s ... ", filename);
     fflush(stdout);
@@ -66,7 +68,7 @@ void sendFile(int sockfd, const char* filename, int minLength = 0) {
     fclose(infile);
 }
 
-
+// reads HTTP header of PCH client connection
 void getHeader(int sockfd, char *headerBuffer, int length) {
     int size = length - 1;
     int bytesRead = read(sockfd, headerBuffer, size);
@@ -81,6 +83,7 @@ void getHeader(int sockfd, char *headerBuffer, int length) {
     }
 }
 
+// open socket connection to given host
 int connectToHost(const char *host, int port) {
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0) {
@@ -111,15 +114,17 @@ int connectToHost(const char *host, int port) {
     return sockfd;
 }
 
-
+// checks whether it's the first request in the sequence
 bool isInitialRequest(char *header) {
     return header == strstr(header, "HEAD ");
 }
 
+// checks whether it's a request for further data (connection brake)
 bool isStreamRequest(char *header) {
     return NULL != strstr(header, "Range: bytes=");
 }
 
+// dummy: sends some special file to PCH 
 void handleClient12(char *header, int clientSockFd) {
     char host[512] = "";
     int port = 80;
@@ -137,7 +142,7 @@ void handleClient12(char *header, int clientSockFd) {
     sendFile(clientSockFd, "real-movie1.mpg");
 }
 
-
+// proxy implementation start
 void handleClient(char *host, int port, char *path, int clientFd) {
     int serverFd = connectToHost(host, port);
     if (-1 == serverFd) {
@@ -201,7 +206,7 @@ void handleClient(char *host, int port, char *path, int clientFd) {
     close(serverFd);
 }
 
-
+// connections managing server
 int main(const int argc, const char *argv[]) {
 
     int videoConnectionNumber = 9;
