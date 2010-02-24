@@ -43,14 +43,14 @@ define("CL_UPDATE_INTERVAL", 60*1);
 # so much channels should be displayed per page in channels list
 # channel groups (headers) are also counted as channels
 # if details panel is shown then this value will be less on two
-define("CL_ITEMS_PER_PAGE",  23);
+define("CL_ITEMS_PER_PAGE",  22);
 
 # following constants define column widths of channels list table
 define("CL_WIDTH_NUMBER",    30);
 define("CL_WIDTH_LOGO",      25);
 define("CL_WIDTH_NAME",     230);
 define("CL_WIDTH_PROGRAM",  670);
-define("CL_WIDTH_TIME",     135);
+define("CL_WIDTH_TIME",     145);
 
 # these widths are calculated and should not be changed manually
 define("CL_WIDTH_LONGNAME", CL_WIDTH_NAME+CL_WIDTH_PROGRAM+CL_WIDTH_TIME);
@@ -90,6 +90,9 @@ define("EPG_TODAY", "/tmp/epg/" . USERNAME . "-" . date('Y-m-d'));
 # detection of used browser: normal or PCH-specific one
 define("EMBEDDED_BROWSER", 
     FALSE !== strpos($_SERVER['HTTP_USER_AGENT'], 'Syabas'));
+
+# detection of current platform
+define("PLATFORM", php_uname("n"));
 
 # date format accepted by EPG
 define("EPG_DATE_FORMAT", 'dmy');
