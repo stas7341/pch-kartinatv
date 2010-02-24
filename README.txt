@@ -199,6 +199,30 @@ Q5: You see following error message after changing the settings:
 A5: Make sure the permissions of settings.inc file are set to 0666 or 0777 
     (writing allowed to everyone). 
 
+Q6: I'm using component connector/ aka 480p mode / aka SD mode. 
+    How to make the channels list looking nice?
+
+A6: Try to set following values in your settings.inc:
+
+    # so much channels should be displayed per page in channels list
+    # channel groups (headers) are also counted as channels
+    # if details panel is shown then this value will be less on two
+    define("CL_ITEMS_PER_PAGE",  15);
+
+    # following constants define column widths of channels list table
+    define("CL_WIDTH_NUMBER",    20);
+    define("CL_WIDTH_LOGO",      25);
+    define("CL_WIDTH_NAME",     105);
+    define("CL_WIDTH_PROGRAM",  350);
+    define("CL_WIDTH_TIME",     105);
+
+
+    # show progress bar in channel list (TRUE for yes and FALSE for no)
+    define("CL_SHOW_PROGRESS", FALSE);
+
+    This patch will never be included in official release since 
+    the SD mode is de facto dead.
+
 Credits
 -------
 This plugin is written by consros with assistance of Stalker and Kostix
