@@ -65,6 +65,7 @@ void sendFile(int sockfd, const char* filename, int minLength = 0) {
         }
     }
     printf("%dKb was sent\n", counter / 1024);
+    fflush(stdout);
     fclose(infile);
 }
 
@@ -122,6 +123,70 @@ bool isInitialRequest(char *header) {
 // checks whether it's a request for further data (connection brake)
 bool isStreamRequest(char *header) {
     return NULL != strstr(header, "Range: bytes=");
+}
+
+
+int url_decode(const char *src, const char *slim, char *dst, char *dlim) {
+    int state = 0, code;
+    char *start = dst;
+
+    if (dst >= dlim) {
+        return 0;
+    }
+    dlim--; /* ensure spot for '\0' */
+
+    while (src < slim && dst < dlim) {
+        switch (state) {
+            case 0:
+                if (*src == '%') {
+                    state = 1;
+                } else {
+                    *dst++ = *src;
+                }
+                break;
+            case 1:
+                code = *src - 48;
+            case 2:
+                if (isdigit(*src) == 0) {
+                    return -1;
+                }
+                if (state == 2) {
+                    *dst++ = (code * 16) + *src - 48;
+                    state = 0;
+                } else {
+                    state = 2;
+                }
+                break;
+        }
+        src++;
+    }
+    *dst = '\0'; /* I'll be back */
+
+    return dst - start;
+}
+
+
+void getUrl(char *header, char *urlDst) {
+    char buffer[1024] = "";
+
+    const char *str = strstr(header, "GET ");
+    if (NULL == str || sscanf(str, "GET %[^ ] HTTP", &buffer) != 1) {
+        printf("No URL found!\nExiting\n");
+        fflush(stdout);
+        return;
+    }
+
+    printf("URL1 = ---%s---\n", buffer);
+    fflush(stdout);
+
+    if (url_decode(buffer, buffer + strlen(buffer), urlDst, urlDst + 1024) == -1) {
+        printf("URL cannot be decoded!\nExiting\n");
+        fflush(stdout);
+        return;
+    }
+
+    printf("URL2 = %s\n", urlDst);
+    fflush(stdout);
 }
 
 // dummy: sends some special file to PCH 
@@ -249,6 +314,7 @@ int main(const int argc, const char *argv[]) {
         getHeader(clientSock, header, sizeof(header));
         printf("Initial request: %i\n", isInitialRequest(header));
         printf("Stream  request: %i\n", isStreamRequest(header));
+        fflush(stdout);
 
         if (isInitialRequest(header)) {
             clientNum = 1;
@@ -265,19 +331,26 @@ int main(const int argc, const char *argv[]) {
             close(sockfd); 
 
             printf("Got client connection: %d\n", clientNum);
+            fflush(stdout);
             
             // skip ignored connection
             if (clientNum < videoConnectionNumber) {
                 sendFile(clientSock, "sample.mpg", 1024 * 1000 * 2);
             } else {
-                // handleClient12(header, clientSock);
-                // http://pch-c200:9999/KartinaTV_web/2.avi
-                handleClient("pch-c200", 9999, "/KartinaTV_web/2.avi" , clientSock);
+                char url[1024] = "";
+                getUrl(header, url);
+
+                printf("DETECTED URL: %s\n", url);
+                fflush(stdout);
+                
+                // handleClient("pch-c200", 9999, "/KartinaTV_web/real-movie1.mpg" , clientSock);
+                handleClient("pch-c200", 9999, "/KartinaTV_web/real-movie1.mpg" , clientSock);
             }
 
             // done with this client
             close(clientSock);
             printf("-------------------------------\n");
+            fflush(stdout);
             exit(0);
         }
         close(clientSock);
