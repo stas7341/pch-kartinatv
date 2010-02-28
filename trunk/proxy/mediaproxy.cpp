@@ -29,41 +29,27 @@ void readSocket(int sockfd, FILE* out = NULL, int bytesLimit = 0) {
 }
 
 // send HTTP header and TS file on socket, used for ignored connections
-int sendFile(int sockfd, const char* filename, int minLength = 0) {
-    char buffer[2048] = "";
-    strcat(buffer, "HTTP/1.0 200 OK\r\n");
-    strcat(buffer, "Content-type: application/octet-stream\r\n");
-    strcat(buffer, "Cache-Control: no-cache\r\n");
-    strcat(buffer, "\r\n");
+int sendBuffer(int sockfd, const char* buffer, int bufferLength, int sendLength = 0) {
+    char header[2048] = "";
+    strcat(header, "HTTP/1.0 200 OK\r\n");
+    strcat(header, "Content-type: application/octet-stream\r\n");
+    strcat(header, "Cache-Control: no-cache\r\n");
+    strcat(header, "\r\n");
 
-    int bytesWritten = write(sockfd, buffer, strlen(buffer));
-    if (bytesWritten != strlen(buffer)) {
+    int bytesWritten = write(sockfd, header, strlen(header));
+    if (bytesWritten != strlen(header)) {
         fprintf(stderr, "ERROR writing to socket\n");
         return -1;
     }
 
-    FILE *infile = fopen(filename, "r");
-    if (infile == NULL) {
-        fprintf(stderr, "ERROR cannot open %s\n", filename);
-        return -1;
+    sendLength = sendLength > 0 ? sendLength : bufferLength;
+    int totalWritten = 0;
+    bytesWritten = bufferLength;
+    while (totalWritten < sendLength && bytesWritten == bufferLength) {
+        bytesWritten = write(sockfd, buffer, bufferLength);
+        totalWritten += bytesWritten;
     }
-
-    int counter = 0;
-    while (true) {
-        int bytesRead = fread(buffer, 1, sizeof(buffer), infile);
-        if (bytesRead < sizeof(buffer) && counter < minLength) {
-            fseek(infile, 0, SEEK_SET);
-            continue;
-        }
-        
-        counter += bytesRead;
-        bytesWritten = write(sockfd, buffer, bytesRead);
-        if (bytesRead < sizeof(buffer) || bytesWritten != bytesRead) {
-            break;
-        }
-    }
-    fclose(infile);
-    return counter;
+    return totalWritten;
 }
 
 // reads HTTP header of PCH client connection
@@ -229,7 +215,19 @@ int main(const int argc, const char *argv[]) {
     int port = 9119;
     int videoConnectionNumber = 9;
     const char* sampleFilename = argc > 1 ? argv[1] : "sample.ts";
+    
+    // read sample file to internal buffer in order to reduce disk access
+    FILE *sampleFile = fopen(sampleFilename, "r");
+    if (NULL == sampleFile) {
+        fprintf(stderr, "ERROR cannot open %s\n", sampleFilename);
+        return -1;
+    }
+    static char sampleBuffer[1024 * 100] = "";
+    static int  sampleLength = fread(sampleBuffer, 1, 
+            sizeof(sampleBuffer), sampleFile);
+    fclose(sampleFile);
 
+    // open listening socket
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0) {
         fprintf(stderr, "ERROR opening socket\n");
@@ -287,8 +285,8 @@ int main(const int argc, const char *argv[]) {
 
             // skip ignored connection and handle video ones
             if (clientNum < videoConnectionNumber) {
-                int bytes = sendFile(clientFd, sampleFilename, 1024 * 1400);
-                printf("Connection: %i [init: %i, stream: %i]: %dKb sent\n",
+                int bytes = sendBuffer(clientFd, sampleBuffer, sampleLength, 1024 * 1400);
+                printf("Connection: %i [init: %i, stream: %i]: %4d Kbytes sent\n",
                         clientNum, isInitialRequest(header), 
                         isStreamRequest(header), bytes / 1024);
                 fflush(stdout);
