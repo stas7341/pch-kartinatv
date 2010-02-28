@@ -88,9 +88,24 @@ function displayAudioPlaylist($name, $url) {
         # loaded automatically and when the video/audio will be stopped
         # the link written in onFocusSet will be immediately activated
         print '<a onFocusLoad onFocusSet="returnToIndex" ';
-
+        
         # video and audio have different extensions
         if ($vid) {
+
+            # media proxy support
+            if (0 != strlen(MEDIA_PROXY)) {
+                $parsedUrl = parse_url($url);
+                $host = $parsedUrl['host'];
+                $port = $parsedUrl['port'];
+                $path = $parsedUrl['path'] . "?" . $parsedUrl['query'];
+
+                $url  = MEDIA_PROXY . "/?host=" . $host;
+                $url .= "&port=" . $port . "&path=" . $path;
+                if ("rtsp" == $parsedUrl['scheme']) {
+                    $url .= "&rtsp=1";
+                }
+            }
+
             print "href=\"$url\" vod";
             if (BUFFER_SIZE > 0) {
                 print " prebuf=\"" . (BUFFER_SIZE * 1048576) . "\"";
