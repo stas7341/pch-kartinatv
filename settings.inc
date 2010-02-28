@@ -22,17 +22,20 @@ define("USERNAME", "148");
 define("PASSWORD", "841");
 
 # defines time zone offset (in hours) for this region
-define("TIME_ZONE", "+1");
+define("TIME_ZONE", "0");
 
 # set this flag to TRUE if you want the adult channels to be available
 # and to FALSE if you want to disable it
 define("ALLOW_EROTIC", TRUE);
 
 # video stream pre-bufferring size in Mb
-define("BUFFER_SIZE", 20);
+define("BUFFER_SIZE", 1);
 
 # default font size used in plugin
 define("FONT_SIZE", 16);
+
+# use media proxy or not
+define("MEDIA_PROXY", "");
 
 # height of page by default
 define("DEFAULT_PAGE_HEIGHT", 650);

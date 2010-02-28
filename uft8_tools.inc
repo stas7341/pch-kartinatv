@@ -41,7 +41,7 @@ function utf8_getAllowedLength($str, $pixels, $bold = false) {
         $val += $out[4][$i] == "" ? 0 :  7.8;     # mean normal  cyrilic
         $val += $out[5][$i] == "" ? 0 :  7.0;     # mean others
         $val = $val * (FONT_SIZE - 4) / (12 - 4); # default font size is 12
-        $curr += $bold ? ($val * 1.2) : $val;     # bold font difference
+        $curr += $bold ? ($val * 1.3) : $val;     # bold font difference
     }
 
     # TRUE means length is OK, string should not be cut
