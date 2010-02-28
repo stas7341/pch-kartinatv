@@ -63,7 +63,7 @@ int sendFile(int sockfd, const char* filename, int minLength = 0) {
         }
     }
     fclose(infile);
-    return counter / 1024;
+    return counter;
 }
 
 // reads HTTP header of PCH client connection
@@ -114,73 +114,17 @@ bool isInitialRequest(char *header) {
     return header == strstr(header, "HEAD ");
 }
 
-// checks whether it's a request for further data (connection brake)
+// checks whether it's a request for further data (after connection brake)
 bool isStreamRequest(char *header) {
     return NULL != strstr(header, "Range: bytes=");
 }
 
-// performs RTSP handshake required by archives
-int skipRtpsHandshake(char *host, int port, char *path) {
+// proxy intercommunication
+void handleClient(char *host, int port, char *path, int clientFd) {
     int serverFd = connectToHost(host, port);
     if (-1 == serverFd) {
-        return serverFd;
-    }
-
-    char buffer[2048] = "";
-    sprintf(buffer, "DESCRIBE rtsp://%s:%d/%s RTSP/1.0\r\n", path, host, port);
-    strcat(buffer + strlen(buffer), "CSeq: 1\r\n");
-    strcat(buffer, "\r\n");
-
-    printf("Sending 1: \n%s", buffer);
-    fflush(stdout);
-    int bytesToSend = strlen(buffer);
-    if (-1 == send(serverFd, buffer, bytesToSend, 0)) {
-        fprintf(stderr, "ERROR writing to server socket\n");
-        return serverFd;
-    }
-    readSocket(serverFd, stdout);
-
-
-    sprintf(buffer, "SETUP rtsp://%s:%d/%s/trackID=1 RTSP/1.0\r\n", path, host, port);
-    strcat(buffer + strlen(buffer), "CSeq: 2\r\n");
-    strcat(buffer, "Transport: RTP/AVP\r\n");
-    strcat(buffer, "\r\n");
-
-    printf("Sending 2: \n%s", buffer);
-    fflush(stdout);
-    bytesToSend = strlen(buffer);
-    if (-1 == send(serverFd, buffer, bytesToSend, 0)) {
-        fprintf(stderr, "ERROR writing to server socket\n");
-        return serverFd;
-    }
-    readSocket(serverFd, stdout);
-
-
-    sprintf(buffer, "PLAY rtsp://%s:%d/%s RTSP/1.0\r\n", path, host, port);
-    strcat(buffer + strlen(buffer), "CSeq: 3\r\n");
-    strcat(buffer, "\r\n");
-
-    printf("Sending 3: \n%s", buffer);
-    fflush(stdout);
-    bytesToSend = strlen(buffer);
-    if (-1 == send(serverFd, buffer, bytesToSend, 0)) {
-        fprintf(stderr, "ERROR writing to server socket\n");
-        return serverFd;
-    }
-    readSocket(serverFd, stdout);
-
-    return serverFd;
-}
-
-
-// proxy implementation start
-void handleClient(char *host, int port, char *path, int clientFd, int serverFd = -1) {
-    if (-1 == serverFd) {
-        serverFd = connectToHost(host, port);
-        if (-1 == serverFd) {
-            fprintf(stderr, "\nERROR Cannot connect to %s\n", host);
-            return;
-        }
+        fprintf(stderr, "\nERROR Cannot connect to %s\n", host);
+        return;
     }
 
     bool clientConnected = true;
@@ -251,17 +195,41 @@ void handleClient(char *host, int port, char *path, int clientFd, int serverFd =
         bytesReceived = recv(clientFd, buffer, sizeof(buffer), MSG_DONTWAIT);
     }
     close(serverFd);
-    printf("Totally sent: %i.%i KBytes\n", totalMBytes, totalKBytes);
+    printf("Totally sent: %i.%i KBytes\n\n", totalMBytes, totalKBytes);
     fflush(stdout);
+}
+
+// reads supplied header and delegates proxy functions
+void handleClient(char *header, int clientFd) {
+    char host[1024] = "";
+    char path[1024] = "";
+    int  port = 80;
+
+    const char *str = strstr(header, "GET /?");
+    if (NULL == str || sscanf(str, 
+                "GET /?host=%[^&]&port=%i&path=%[^ ]",
+                &host, &port, &path) != 3)
+    {
+        printf("No URL found!\nExiting\n");
+        fflush(stdout);
+        return;
+    }
+
+    printf("Host: %s\n", host);
+    printf("Port: %i\n", port);
+    printf("Path: %s\n", path);
+    fflush(stdout);
+    
+    handleClient(host, port, path, clientFd);
 }
 
 // connections managing server
 int main(const int argc, const char *argv[]) {
 
-    int videoConnectionNumber = 9;
-    const char* sampleFilename = argc > 1 ? argv[1] : "sample.mpg";
-
     int port = 9119;
+    int videoConnectionNumber = 9;
+    const char* sampleFilename = argc > 1 ? argv[1] : "sample.ts";
+
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0) {
         fprintf(stderr, "ERROR opening socket\n");
@@ -285,6 +253,7 @@ int main(const int argc, const char *argv[]) {
 
     int clientNum = 0;
     while (true) { 
+        // accept client connection
         struct sockaddr_in cli_addr;
         int clilen = sizeof(cli_addr);
         int clientFd = accept(sockfd, (struct sockaddr *) &cli_addr, (socklen_t*)&clilen);
@@ -294,9 +263,11 @@ int main(const int argc, const char *argv[]) {
             exit(1);
         }
 
+        // read supplied header
         char header[8192];
         getHeader(clientFd, header, sizeof(header));
 
+        // decide what kind of connection it is
         if (isInitialRequest(header)) {
             // in case of initial request reset the counter
             clientNum = 1;
@@ -308,57 +279,27 @@ int main(const int argc, const char *argv[]) {
             clientNum++;
         }
 
-        printf("Got client connection: %i [init: %i, stream: %i]: ", 
-                clientNum, isInitialRequest(header), isStreamRequest(header));
-        fflush(stdout);
-        
         // this is the child process
         if (! fork()) { 
             
             // child doesn't need the listener
             close(sockfd); 
 
-            // skip ignored connection
+            // skip ignored connection and handle video ones
             if (clientNum < videoConnectionNumber) {
-                printf("%dKb was sent\n", sendFile(clientFd, sampleFilename, 1024 * 1400));
+                int bytes = sendFile(clientFd, sampleFilename, 1024 * 1400);
+                printf("Connection: %i [init: %i, stream: %i]: %dKb sent\n",
+                        clientNum, isInitialRequest(header), 
+                        isStreamRequest(header), bytes / 1024);
                 fflush(stdout);
             } else {
-                printf("handles as video connection\n");
+                printf("Connection: %i, a video one:\n", clientNum);
                 fflush(stdout);
-
-                char host[1024] = "";
-                int  port       = 80;
-                char path[1024] = "";
-                bool isRtsp = false;
-
-                const char *str = strstr(header, "GET /?");
-                if (NULL == str || sscanf(str, 
-                            "GET /?host=%[^&]&port=%i&path=%[^ ]&rtsp=%i", 
-                            &host, &port, &path, &isRtsp) < 3) 
-                {
-                    printf("No URL found!\nExiting\n");
-                    fflush(stdout);
-                    return 1;
-                }
-
-                printf("DETECTED host: %s\n", host);
-                printf("DETECTED port: %i\n", port);
-                printf("DETECTED path: %s\n", path);
-                printf("DETECTED RTSP: %i\n", isRtsp);
-                fflush(stdout);
-               
-                if (isRtsp) {
-                    int serverFd = skipRtpsHandshake(host, port, path);
-                    handleClient(host, port, path, clientFd, serverFd);
-                } else {
-                    // handleClient("pch-c200", 9999, "/KartinaTV_web/real-movie1.mpg" , clientFd);
-                    handleClient(host, port, path, clientFd);
-                }
+                handleClient(header, clientFd);
             }
 
             // done with this client
             close(clientFd);
-            fflush(stdout);
             exit(0);
         }
         close(clientFd);
