@@ -2,29 +2,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <strings.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
 #include <string>
+#include "tools.h"
 
 using namespace std;
 
-// to skip socket output which can be ignored
-void readSocket(int sockfd, FILE* out = NULL, int bytesLimit = 0) {
-    char buffer[2048];
-    int totalRead = 0;
-    int size = sizeof(buffer) - 1;
-    int bytesRead = size;
-    while (bytesRead == size && (bytesLimit <= 0 || totalRead < bytesLimit)) {
-        bytesRead = read(sockfd, buffer, size);
-        totalRead += bytesRead;
-        buffer[bytesRead] = '\0';
-        if (NULL != out) {
-            fprintf(out, "%s", buffer);
-            fflush(out);
-        }
+// reads HTTP header of PCH client connection
+void getHeader(int sockfd, char *headerBuffer, int maxlen) {
+    int size = maxlen - 1;
+    int bytesRead = read(sockfd, headerBuffer, size);
+    headerBuffer[bytesRead] = '\0';
+
+    if (bytesRead == size) {
+        printf("Header is over %i bytes: extra read initiated!\n", size);
+        printf("Read so far:\n%s\n", headerBuffer);
+        printf("Now goes ignored part:\n");
+        fflush(stdout);
+        readSocket(sockfd, stdout);
     }
 }
 
@@ -50,49 +48,6 @@ int sendBuffer(int sockfd, const char* buffer, int bufferLength, int sendLength 
         totalWritten += bytesWritten;
     }
     return totalWritten;
-}
-
-// reads HTTP header of PCH client connection
-void getHeader(int sockfd, char *headerBuffer, int length) {
-    int size = length - 1;
-    int bytesRead = read(sockfd, headerBuffer, size);
-    headerBuffer[bytesRead] = '\0';
-
-    if (bytesRead == size) {
-        printf("Header is over %i bytes: extra read initiated!\n", size);
-        printf("Read so far:\n%s\n", headerBuffer);
-        printf("Now goes ignored part:\n");
-        fflush(stdout);
-        readSocket(sockfd, stdout);
-    }
-}
-
-// open socket connection to given host
-int connectToHost(const char *host, int port) {
-    int sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd < 0) {
-        fprintf(stderr, "ERROR opening socket\n");
-        return -1;
-    }
-
-    struct hostent *server = gethostbyname(host);
-    if (server == NULL) {
-        fprintf(stderr, "ERROR no such host %s\n", host);
-        return -1;
-    }
-
-    struct sockaddr_in serv_addr;
-    bzero((char*) &serv_addr, sizeof(serv_addr));
-    serv_addr.sin_family = AF_INET;
-    bcopy((char*)server->h_addr, (char*)&serv_addr.sin_addr.s_addr, server->h_length);
-    serv_addr.sin_port = htons(port);
-
-    if (connect(sockfd,(struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0) {
-        fprintf(stderr, "ERROR connecting %s:%i\n", host, port);
-        return -1;
-    }
-
-    return sockfd;
 }
 
 // checks whether it's the first request in the sequence
@@ -210,21 +165,16 @@ void handleClient(char *header, int clientFd) {
 }
 
 // connections managing server
-int main(const int argc, const char *argv[]) {
-
-    int port = 9119;
-    int videoConnectionNumber = 9;
-    const char* sampleFilename = argc > 1 ? argv[1] : "sample.ts";
+int startProxyServer(int port, int videoConnectionNumber, const char* sampleFilename) {
     
     // read sample file to internal buffer in order to reduce disk access
     FILE *sampleFile = fopen(sampleFilename, "r");
     if (NULL == sampleFile) {
-        fprintf(stderr, "ERROR cannot open %s\n", sampleFilename);
+        fprintf(stderr, "ERROR cannot open sample %s\n", sampleFilename);
         return -1;
     }
-    static char sampleBuffer[1024 * 100] = "";
-    static int  sampleLength = fread(sampleBuffer, 1, 
-            sizeof(sampleBuffer), sampleFile);
+    char sampleBuffer[1024 * 100] = "";
+    int  sampleLength = fread(sampleBuffer, 1, sizeof(sampleBuffer), sampleFile);
     fclose(sampleFile);
 
     // open listening socket
@@ -234,12 +184,12 @@ int main(const int argc, const char *argv[]) {
         exit(1);
     }
 
-    struct sockaddr_in serv_addr;
-    bzero((char *) &serv_addr, sizeof(serv_addr));
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_addr.s_addr = INADDR_ANY;
-    serv_addr.sin_port = htons(port);
-    if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
+    struct sockaddr_in addr;
+    memset(&addr, '\0', sizeof(addr));
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = INADDR_ANY;
+    addr.sin_port = htons(port);
+    if (bind(sockfd, (struct sockaddr *) &addr, sizeof(addr)) < 0) {
         fprintf(stderr, "ERROR on binding\n");
         exit(1);
     }
@@ -304,4 +254,27 @@ int main(const int argc, const char *argv[]) {
     }
     close(sockfd);
     return 0; 
+}
+
+
+
+int main(const int argc, const char *argv[]) {
+    int port = 9119;
+    int videoConnectionNumber = 9;
+    const char* sampleFilename = argc > 1 ? argv[1] : "sample.ts";
+
+    // startProxyServer(port, videoConnectionNumber, sampleFilename);
+
+    string url = "http://iptv.kartina.tv";
+    string parameters = "act=login";
+    parameters += "&code_login=148";
+    parameters += "&code_pass=841";
+
+    string html = getPageContentByPost(url, parameters);
+    printf("--------------\n%s\n------------\n", html.c_str());
+
+    // Location: http://iptv.kartina.tv/?msg=access_denied
+    // Closed for 10 minutes
+
+    return 0;
 }
