@@ -3,26 +3,24 @@
 MIPS_FLAG=
 CC=g++
 CFLAGS=$(MIPS_FLAG)
-CXXFLAGS=$(MIPS_FLAG)
-CPPFLAGS=$(MIPS_FLAG)
 LDFLAGS=$(MIPS_FLAG) -lpthread
-ASFLAGS=$(MIPS_FLAG)
+LDLIBS=
 
 PROJNAME = mediaproxy
 BIN      = bin
 
+CPP_HEADERS := $(wildcard *.h)
 CPP_SOURCES := $(wildcard *.cpp)
 OBJECTS  = $(addprefix $(BIN)/, $(CPP_SOURCES:.cpp=.o))
-BINARIES = $(OBJECTS:.o=)
+BINARY   = $(BIN)/$(PROJNAME)
 
+all: $(BIN) $(BINARY)
 
-all: $(BIN) $(BINARIES)
-
-$(BIN)/%.o: %.cpp
+$(BIN)/%.o: %.cpp $(CPP_HEADERS)
 	$(CC) $(CFLAGS) -o $@ -c $<
 
-$(BIN)/%: $(BIN)/%.o
-	$(CC) $(LDFLAGS) -o $@ $< $(LDLIBS)
+$(BINARY): $(BIN) $(OBJECTS)
+	$(CC) $(LDFLAGS) -o $@ $(OBJECTS) $(LDLIBS) 
 
 $(BIN):
 	mkdir -p $(BIN)
