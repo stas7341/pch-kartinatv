@@ -8,7 +8,7 @@ string readSocket(int sockfd, FILE* out) {
     string result;
     char buffer[2048];
     int bytesRead = sizeof(buffer);
-    while (bytesRead == sizeof(buffer)) {
+    while (bytesRead > 0) {
         bytesRead = recv(sockfd, buffer, sizeof(buffer), 0);
         if (bytesRead > 0) {
             result.append(buffer, bytesRead);
@@ -51,26 +51,26 @@ int connectToHost(const char *host, int port) {
 
 
 // reads page returned by specified url
-string getPageContent(string url, string params);
+string getPageContent(string url, string params, string headerExt);
 
 // reads page returned by specified url (HTTP GET method)
-string getPageContentByGet(string url) {
+string getPageContentByGet(string url, string headerExt) {
     printf("GET %s\n", url.c_str());
-    return getPageContent(url, "");
+    return getPageContent(url, "", headerExt);
 }
 
 // reads page returned by specified url (HTTP POST method)
-string getPageContentByPost(string url, string params) {
+string getPageContentByPost(string url, string params, string headerExt) {
     printf("POST %s, %s\n", url.c_str(), params.c_str());
     if (0 == params.length()) {
         fprintf(stderr, "ERROR POST params are empty\n");
         return "";
     }
-    return getPageContent(url, params);
+    return getPageContent(url, params, headerExt);
 }
 
 // reads page returned by specified url
-string getPageContent(string url, string params) {
+string getPageContent(string url, string params, string headerExt) {
     char hostPort[512] = "";
     char host[256]     = "";
     char path[1024]    = "/";
@@ -95,6 +95,9 @@ string getPageContent(string url, string params) {
     request << "Accept: */*\r\n";
     request << "Connection: Close\r\n";
     request << "Content-Type: application/x-www-form-urlencoded\r\n";
+    if (0 != headerExt.length()) {
+        request << headerExt << "\r\n";
+    }
     if (0 != params.length()) {
         request << "Content-Length: " << params.length() << "\r\n\r\n" << params;
     }
@@ -108,5 +111,18 @@ string getPageContent(string url, string params) {
     }
 
     return readSocket(sockfd);
+}
+
+// returns string contained between two strings
+string findExpr(string text, string start, string stop) {
+    int pos1 = text.find(start);
+    if (pos1 != string::npos) {
+        pos1 += start.length();
+        int pos2 = text.find(stop, pos1);
+        if (pos2 != string::npos) {
+            return text.substr(pos1, pos2 - pos1);
+        }
+    }
+    return "";
 }
 
