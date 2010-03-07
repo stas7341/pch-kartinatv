@@ -1,5 +1,5 @@
 #include <netdb.h>
-#include <string.h>
+#include <string>
 #include <sstream>
 #include "tools.h"
 
