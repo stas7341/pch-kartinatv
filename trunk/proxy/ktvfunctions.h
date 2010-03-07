@@ -76,15 +76,15 @@ public:
 
     /**
      * Returns id of channel which URL should be found.
-     * @param id id of channel which URL should be found.
-     * @param time time offset of program to return, formatted as in EPG.
+     * @param  id id of channel which URL should be found.
+     * @param  time time offset of program to return, formatted as in EPG.
      * @return html response with channels URL.
      */
     string getStreamUrl(string id, string time = "");
 
     /**
      * Returns EPG for given channel.
-     * @param id id of channel which EPG should be found.
+     * @param  id id of channel which EPG should be found.
      * @return html response with channels EPG.
      */
     string getEpg(string id);
@@ -105,8 +105,8 @@ protected:
     /**
      * Generic method to request some information on Kartina.TV server
      * using HTTP GET method. Most of functions are implemented this way.
-     * @param url information specific request url.
-     * @param name operation comment used for traces and error reporting.
+     * @param  url information specific request url.
+     * @param  name operation comment used for traces and error reporting.
      * @return html response with requested information.
      */
     string getData(string url, string name);
