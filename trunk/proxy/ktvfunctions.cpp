@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string>
+#include <time.h>
 #include "tools.h"
 #include "ktvfunctions.h"
 
@@ -79,9 +80,16 @@ string KtvFunctions::getStreamUrl(string id) {
 
 string KtvFunctions::getEpg(string id) {
     // string date = DateTime.Now.ToString("ddMMyy"); // 240598
-    string date = "240598";
+    time_t rawtime;
+    struct tm * timeinfo;
+    char date[10];
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+    strftime(date, sizeof(date), "%d%m%y", timeinfo);
+    
     string url = URL;
-    url += "?m=epg&act=show_day_xml&day=" + date;
+    url += "?m=epg&act=show_day_xml&day=";
+    url += date;
     url += "&cid=" + id;
     return getData(url, "EPG for channel " + id);
 }
