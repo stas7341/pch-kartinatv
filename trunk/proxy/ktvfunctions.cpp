@@ -12,22 +12,22 @@ bool KtvFunctions::authorize() {
 
     string url = URL;
     string parameters = "act=login";
-    parameters += "&code_login=" + this->username;
-    parameters += "&code_pass=" + this->password;
+    parameters += "&code_login=" + m_username;
+    parameters += "&code_pass=" + m_password;
 
     string html = getPageContentByPost(url, parameters);
-    this->cookie = findExpr(html, COOKIE_PREFIX, ";");
+    m_cookie = findExpr(html, COOKIE_PREFIX, ";");
 
     bool result = isAuthorized(html);
     printf("Authorization complete: %s", result ? "OK" : "FAIL");
-    printf(" (%s)\n", this->cookie.c_str());
+    printf(" (%s)\n", m_cookie.c_str());
     return result;
 }
 
 bool KtvFunctions::isAuthorized(string htmlToCheck) {
     bool ok =
-        0 != this->cookie.length() &&
-        this->cookie.compare("deleted") &&
+        0 != m_cookie.length() &&
+        m_cookie.compare("deleted") &&
         0 != htmlToCheck.length() &&
         string::npos == htmlToCheck.find("code_login") && 
         string::npos == htmlToCheck.find("code_pass") &&
@@ -41,11 +41,11 @@ bool KtvFunctions::isAuthorized(string htmlToCheck) {
 
 string KtvFunctions::getData(string url, string name) {
     printf("Getting %s\n", name.c_str());
-    if (0 == this->cookie.length()) {
+    if (0 == m_cookie.length()) {
         fprintf(stderr, "No authorization was made yet!");
         authorize();
     }
-    string cookie = COOKIE_PREFIX + this->cookie;
+    string cookie = COOKIE_PREFIX + m_cookie;
     string html = getPageContentByGet(url, cookie);
     if (! isAuthorized(html)) {
         authorize(); 
@@ -67,11 +67,14 @@ string KtvFunctions::getChannelsList() {
 }
 
 
-string KtvFunctions::getStreamUrl(string id) {
+string KtvFunctions::getStreamUrl(string id, string time) {
     string url = URL;
     url += "?m=channels&act=get_stream_url&cid=" + id;
     if (ALLOW_EROTIC) {
-        url += "&protect_code=" + this->password;
+        url += "&protect_code=" + m_password;
+    }
+    if (0 != time.length()) {
+        url += "&gmt=" + time;
     }
     return getData(url, "stream URL of channel " + id);
 }
