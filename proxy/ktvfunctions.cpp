@@ -6,6 +6,10 @@
 #define COOKIE_PREFIX   "Cookie: MWARE_SSID="
 #define ALLOW_EROTIC    true
 
+/**
+ * Authorizes user on Kartina.TV server.
+ * @return true if succeeds and false otherwise.
+ */
 bool KtvFunctions::authorize() {
     printf("Authorization started\n");
     forgetCookie();
@@ -24,12 +28,16 @@ bool KtvFunctions::authorize() {
     return result;
 }
 
+/**
+ * Checks whether user is authorized on Kartina.TV server.
+ * @return true if authorized and false otherwise.
+ */
 bool KtvFunctions::isAuthorized(string htmlToCheck) {
     bool ok =
         0 != m_cookie.length() &&
         m_cookie.compare("deleted") &&
         0 != htmlToCheck.length() &&
-        string::npos == htmlToCheck.find("code_login") && 
+        string::npos == htmlToCheck.find("code_login") &&
         string::npos == htmlToCheck.find("code_pass") &&
         string::npos == htmlToCheck.find("msg=access_denied");
     if (! ok) {
@@ -38,35 +46,21 @@ bool KtvFunctions::isAuthorized(string htmlToCheck) {
     return ok;
 }
 
-
-string KtvFunctions::getData(string url, string name) {
-    printf("Getting %s\n", name.c_str());
-    if (0 == m_cookie.length()) {
-        fprintf(stderr, "No authorization was made yet!");
-        authorize();
-    }
-    string cookie = COOKIE_PREFIX + m_cookie;
-    string html = getPageContentByGet(url, cookie);
-    if (! isAuthorized(html)) {
-        authorize(); 
-        printf("Second try to get %s\n", name.c_str());
-        html = getPageContentByGet(url, cookie);
-        if (! isAuthorized(html)) {
-            fprintf(stderr, "Failed to get %s\n%s\n", 
-                    url.c_str(), html.c_str());
-            return "";
-        }
-    }
-    return html;
-}
-
+/**
+ * @return html response with list of channels allowed user to view.
+ */
 string KtvFunctions::getChannelsList() {
     string url = URL;
     url += "?m=channels&act=get_list_xml";
     return getData(url, "channels list");
 }
 
-
+/**
+ * Returns id of channel which URL should be found.
+ * @param  id id of channel which URL should be found.
+ * @param  time time offset of program to return, formatted as in EPG.
+ * @return html response with channels URL.
+ */
 string KtvFunctions::getStreamUrl(string id, string time) {
     string url = URL;
     url += "?m=channels&act=get_stream_url&cid=" + id;
@@ -79,6 +73,11 @@ string KtvFunctions::getStreamUrl(string id, string time) {
     return getData(url, "stream URL of channel " + id);
 }
 
+/**
+ * Returns EPG for given channel.
+ * @param  id id of channel which EPG should be found.
+ * @return html response with channels EPG.
+ */
 string KtvFunctions::getEpg(string id) {
     time_t rawtime;
     struct tm * timeinfo;
@@ -86,7 +85,7 @@ string KtvFunctions::getEpg(string id) {
     time(&rawtime);
     timeinfo = localtime(&rawtime);
     strftime(date, sizeof(date), "%d%m%y", timeinfo);
-    
+
     string url = URL;
     url += "?m=epg&act=show_day_xml&day=";
     url += date; // format = "ddMMyy", e.g. 240598
@@ -94,14 +93,51 @@ string KtvFunctions::getEpg(string id) {
     return getData(url, "EPG for channel " + id);
 }
 
+/**
+ * Returns time shift configured for current user.
+ * @return html response with time shift configured for current user.
+ */
 string KtvFunctions::getTimeShift() {
     string url = URL;
     url += "?m=clients&act=form_tshift";
     return getData(url, "time shift");
 }
 
+/**
+ * Returns broadcasting server configured for current user.
+ * @return html response with broadcasting server of current user.
+ */
 string KtvFunctions::getBroadcastingServer() {
     string url = URL;
     url += "?m=clients&act=form_sserv";
     return getData(url, "broadcasting server");
 }
+
+/**
+ * Generic method to request some information on Kartina.TV server
+ * using HTTP GET method. Most of functions are implemented this way.
+ * @param  url information specific request url.
+ * @param  name operation comment used for traces and error reporting.
+ * @return html response with requested information.
+ */
+string KtvFunctions::getData(string url, string name) {
+    printf("Getting %s\n", name.c_str());
+    if (0 == m_cookie.length()) {
+        fprintf(stderr, "No authorization was made yet!");
+        authorize();
+    }
+    string cookie = COOKIE_PREFIX + m_cookie;
+    string html = getPageContentByGet(url, cookie);
+    if (! isAuthorized(html)) {
+        authorize();
+        printf("Second try to get %s\n", name.c_str());
+        html = getPageContentByGet(url, cookie);
+        if (! isAuthorized(html)) {
+            fprintf(stderr, "Failed to get %s\n%s\n",
+                    url.c_str(), html.c_str());
+            return "";
+        }
+    }
+    return html;
+}
+

@@ -3,7 +3,13 @@
 #include <sstream>
 #include "tools.h"
 
-// to skip socket output which can be ignored
+/**
+ * Reads given socket until there is no data left inside.
+ * Used to skip socket output which can be ignored.
+ * @param  sockfd file descriptor of open socket.
+ * @param  out if provided read data will be printed to file (e.g. stdout).
+ * @return read data as string.
+ */
 string readSocket(int sockfd, FILE* out) {
     string result;
     char buffer[2048];
@@ -21,7 +27,12 @@ string readSocket(int sockfd, FILE* out) {
     return result;
 }
 
-// open socket connection to given host
+/**
+ * Opens socket connection to given host.
+ * @param  host name of host to connect to.
+ * @param  port port number to connect to.
+ * @return file descriptor of open socket.
+ */
 int connectToHost(const char *host, int port) {
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0) {
@@ -50,44 +61,32 @@ int connectToHost(const char *host, int port) {
 }
 
 
-// reads page returned by specified url
-string getPageContent(string url, string params, string headerExt);
-
-// reads page returned by specified url (HTTP GET method)
-string getPageContentByGet(string url, string headerExt) {
-    printf("GET %s\n", url.c_str());
-    return getPageContent(url, "", headerExt);
-}
-
-// reads page returned by specified url (HTTP POST method)
-string getPageContentByPost(string url, string params, string headerExt) {
-    printf("POST %s, %s\n", url.c_str(), params.c_str());
-    if (0 == params.length()) {
-        fprintf(stderr, "ERROR POST params are empty\n");
-        return "";
-    }
-    return getPageContent(url, params, headerExt);
-}
-
-// reads page returned by specified url
+/**
+ * Sends specified HTTP GET or POST request and returns server response page.
+ * @param  url url to open.
+ * @param  parameters if supplied parameters will be send via POST
+ *                    otherwise GET will be used.
+ * @param  headerExt if provided header extension included in request.
+ * @return page returned by server formed as string.
+ */
 string getPageContent(string url, string params, string headerExt) {
     char hostPort[512] = "";
     char host[256]     = "";
     char path[1024]    = "/";
     int  port          = 80;
     if (sscanf(url.c_str(), "http://%[^/]%s", &hostPort, &path) < 1 ||
-            sscanf(hostPort, "%[^:]:%i", &host, &port) < 1) 
+            sscanf(hostPort, "%[^:]:%i", &host, &port) < 1)
     {
         fprintf(stderr, "ERROR wrong URL: %s\n", url.c_str());
         return "";
     }
-    
+
     int sockfd = connectToHost(host, port);
     if (sockfd < 0) {
         return "";
     }
 
-    stringstream request; 
+    stringstream request;
     request << (0 == params.length() ? "GET " : "POST ");
     request << path << " HTTP/1.1\r\n";
     request << "Host: " << hostPort << "\r\n";
@@ -113,7 +112,40 @@ string getPageContent(string url, string params, string headerExt) {
     return readSocket(sockfd);
 }
 
-// returns string contained between two strings
+/**
+ * Sends specified HTTP GET request and returns server response page.
+ * @param  url url to open with all the parameters.
+ * @param  headerExt if provided header extension included in request.
+ * @return page returned by server formed as string.
+ */
+string getPageContentByGet(string url, string headerExt) {
+    printf("GET %s\n", url.c_str());
+    return getPageContent(url, "", headerExt);
+}
+
+/**
+ * Sends specified HTTP POST request and returns server response page.
+ * @param  url url to open.
+ * @param  parameters parameters to send via POST.
+ * @param  headerExt if provided header extension included in request.
+ * @return page returned by server formed as string.
+ */
+string getPageContentByPost(string url, string params, string headerExt) {
+    printf("POST %s, %s\n", url.c_str(), params.c_str());
+    if (0 == params.length()) {
+        fprintf(stderr, "ERROR POST params are empty\n");
+        return "";
+    }
+    return getPageContent(url, params, headerExt);
+}
+
+/**
+ * Parses string and retured first string placed between two given strings.
+ * @param  text text to parse.
+ * @param  start string bounding start of searched pattern.
+ * @param  stop  string bounding stop  of searched pattern.
+ * @return string placed between two given strings.
+ */
 string findExpr(string text, string start, string stop) {
     int pos1 = text.find(start);
     if (pos1 != string::npos) {
@@ -125,4 +157,3 @@ string findExpr(string text, string start, string stop) {
     }
     return "";
 }
-

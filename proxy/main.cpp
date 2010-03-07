@@ -1,3 +1,4 @@
+/* all the includes required by embedded PCH compiler */
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,6 +15,12 @@
 using namespace std;
 
 
+/**
+ * Main method application.
+ * @param  argc amount of arguments.
+ * @param  argv string array of arguments.
+ * @return 0 if all OK and not 0 otherwise.
+ */
 int main(const int argc, const char *argv[]) {
     int port = 9119;
     int videoConnectionNumber = 9;
@@ -42,7 +49,7 @@ int main(const int argc, const char *argv[]) {
     printf("Cookie: %s\n", cookie.c_str());
     */
 
-    
+
     // Location: http://iptv.kartina.tv/?msg=access_denied
     // Closed for 10 minutes
 

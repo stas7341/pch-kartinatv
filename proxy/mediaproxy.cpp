@@ -2,7 +2,12 @@
 #include "mediaproxy.h"
 #include "tools.h"
 
-// reads HTTP header of PCH client connection
+/**
+ * Reads HTTP header of PCH client connection.
+ * @param  sockfd file descriptor of open socket.
+ * @param  headerBuffer buffer where header should be stored.
+ * @param  maxlen length of the buffer.
+ */
 void getHeader(int sockfd, char *headerBuffer, int maxlen) {
     int size = maxlen - 1;
     int bytesRead = read(sockfd, headerBuffer, size);
@@ -17,7 +22,14 @@ void getHeader(int sockfd, char *headerBuffer, int maxlen) {
     }
 }
 
-// send HTTP header and TS file on socket, used for ignored connections
+/**
+ * Send HTTP header and TS file on socket, used for ignored connections.
+ * @param  sockfd file descriptor of open socket.
+ * @param  buffer buffer whith file which should be sent looped.
+ * @param  bufferLength length of the buffer which should be sent.
+ * @param  sendLength total length of data to send.
+ * @return total amount of sent bytes.
+ */
 int sendBuffer(int sockfd, const char* buffer, int bufferLength, int sendLength) {
     char header[2048] = "";
     strcat(header, "HTTP/1.0 200 OK\r\n");
@@ -41,17 +53,31 @@ int sendBuffer(int sockfd, const char* buffer, int bufferLength, int sendLength)
     return totalWritten;
 }
 
-// checks whether it's the first request in the sequence
+/**
+ * Checks whether it's the first request in the sequence.
+ * @param  header header to analyze.
+ * @return true if current request is the first one and false otherwise.
+ */
 bool isInitialRequest(char *header) {
     return header == strstr(header, "HEAD ");
 }
 
-// checks whether it's a request for further data (after connection brake)
+/**
+ * Checks whether it's a request for further data (after connection brake).
+ * @param  header header to analyze.
+ * @return true if current request is a further data request.
+ */
 bool isStreamRequest(char *header) {
     return NULL != strstr(header, "Range: bytes=");
 }
 
-// proxy intercommunication
+/**
+ * Proxy intercommunication: reads server, writes to client.
+ * @param  host of server to connect to.
+ * @param  port of server to connect to.
+ * @param  path on server to connect to.
+ * @param  clientFd file descriptor of open socket to client.
+ */
 void handleClient(char *host, int port, char *path, int clientFd) {
     int serverFd = connectToHost(host, port);
     if (-1 == serverFd) {
@@ -131,14 +157,18 @@ void handleClient(char *host, int port, char *path, int clientFd) {
     fflush(stdout);
 }
 
-// reads supplied header and delegates proxy functions
+/**
+ * Reads supplied header and delegates proxy functions.
+ * @param  header header to analyze.
+ * @param  clientFd file descriptor of open socket to client.
+ */
 void handleClient(char *header, int clientFd) {
     char host[1024] = "";
     char path[1024] = "";
     int  port = 80;
 
     const char *str = strstr(header, "GET /?");
-    if (NULL == str || sscanf(str, 
+    if (NULL == str || sscanf(str,
                 "GET /?host=%[^&]&port=%i&path=%[^ ]",
                 &host, &port, &path) != 3)
     {
@@ -151,13 +181,19 @@ void handleClient(char *header, int clientFd) {
     printf("Port: %i\n", port);
     printf("Path: %s\n", path);
     fflush(stdout);
-    
+
     handleClient(host, port, path, clientFd);
 }
 
-// connections managing server
+/**
+ * Checks whether it's the first request in the sequence.
+ * @param  port on this port proxy server will listen for connections.
+ * @param  videoConnectionNumber this number of connections will be skipped.
+ * @param  sampleFilename sample file used for ignored connection stubs.
+ * @return false in case of any error and true otherwise.
+ */
 int startProxyServer(int port, int videoConnectionNumber, const char* sampleFilename) {
-    
+
     // read sample file to internal buffer in order to reduce disk access
     FILE *sampleFile = fopen(sampleFilename, "r");
     if (NULL == sampleFile) {
@@ -191,7 +227,7 @@ int startProxyServer(int port, int videoConnectionNumber, const char* sampleFile
     listen(sockfd, 5);
 
     int clientNum = 0;
-    while (true) { 
+    while (true) {
         // accept client connection
         struct sockaddr_in cli_addr;
         int clilen = sizeof(cli_addr);
@@ -219,16 +255,16 @@ int startProxyServer(int port, int videoConnectionNumber, const char* sampleFile
         }
 
         // this is the child process
-        if (! fork()) { 
-            
+        if (! fork()) {
+
             // child doesn't need the listener
-            close(sockfd); 
+            close(sockfd);
 
             // skip ignored connection and handle video ones
             if (clientNum < videoConnectionNumber) {
                 int bytes = sendBuffer(clientFd, sampleBuffer, sampleLength, 1024 * 1400);
                 printf("Connection: %i [init: %i, stream: %i]: %4d Kbytes sent\n",
-                        clientNum, isInitialRequest(header), 
+                        clientNum, isInitialRequest(header),
                         isStreamRequest(header), bytes / 1024);
                 fflush(stdout);
             } else {
@@ -244,6 +280,6 @@ int startProxyServer(int port, int videoConnectionNumber, const char* sampleFile
         close(clientFd);
     }
     close(sockfd);
-    return 0; 
+    return 0;
 }
 
