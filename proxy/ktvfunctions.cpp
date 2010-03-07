@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <string>
 #include <time.h>
 #include "tools.h"
 #include "ktvfunctions.h"
@@ -79,7 +77,6 @@ string KtvFunctions::getStreamUrl(string id) {
 }
 
 string KtvFunctions::getEpg(string id) {
-    // string date = DateTime.Now.ToString("ddMMyy"); // 240598
     time_t rawtime;
     struct tm * timeinfo;
     char date[10];
@@ -89,7 +86,7 @@ string KtvFunctions::getEpg(string id) {
     
     string url = URL;
     url += "?m=epg&act=show_day_xml&day=";
-    url += date;
+    url += date; // format = "ddMMyy", e.g. 240598
     url += "&cid=" + id;
     return getData(url, "EPG for channel " + id);
 }
