@@ -13,7 +13,9 @@ session_start();
 
 # id transmitted as a part of ref parameter at the very end
 $id  = preg_replace('/.*\?id=/', '', $_GET['ref']);
-$currentTime = time() + (TIME_ZONE * 60 * 60);
+$realTime = (time() + (TIME_ZONE * 60 * 60));
+$currentTime = isset($_GET['archiveTime']) ? $_GET['archiveTime'] : $realTime;
+#date(EPG_DATE_FORMAT, time() + ((TIME_ZONE - 3.5) * 60 * 60))
 # $ref = isset($_GET['ref']) ? $_GET['ref'] : "index.php";
 $ref = "index.php";
 
@@ -96,7 +98,7 @@ function calcWndWidth($programs, $defaultWidth) {
 <?php
     # renew the list using existing cookie
     $ktvFunctions = new KtvFunctions();
-    $program = $ktvFunctions->getEpg($id);
+    $program = $ktvFunctions->getEpg($id, $currentTime);
     
     $parser = new ProgramsParser();
     $parser->parse($program);
@@ -104,7 +106,7 @@ function calcWndWidth($programs, $defaultWidth) {
     $currentProgram = null;
     $currentIndex = 0;
     foreach ($parser->programs as $program) {
-        if ($program->beginTime > $currentTime) {
+        if ($program->beginTime > $realTime) {
             break;
         }
         $currentProgram = $program;
@@ -136,7 +138,7 @@ function calcWndWidth($programs, $defaultWidth) {
             $name = EMBEDDED_BROWSER ? 
                 '<marquee behavior="focus">'.$name.'</marquee>': $name;
             $name = "<a href=\"$linkUrl\" $linkExt>$name</a>";
-        } else if ($program->beginTime <= $currentTime) {
+        } else if ($program->beginTime <= $realTime) {
             $class="past";
 
             $linkUrl .= "&gmt=" . $program->beginTime;

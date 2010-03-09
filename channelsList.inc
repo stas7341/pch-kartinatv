@@ -191,8 +191,12 @@ function addShortcuts(
     
     # support for toggle details panel operation
     print '<a href="' . $_SERVER['PHP_SELF'] . '?showDetailsPanel=';
-    print ($showDetailsPanel ? '0' : '1') .'" TVID="REPEAT">';
+    print ($showDetailsPanel ? '0' : '1') .'" TVID="COPY">';
     print ($hideNames ? "" : " DETAILS ") . "</a>\n";
+
+    # support for date archive
+    print '<a href="dateOptions.php?ref=" TVID="_REPEAT">';
+    print ($hideNames ? "" : " ARCHIVE ") . "</a>\n";
 
     # support for detailed channel programs display
     print '<a href="displayProgram.php?ref=" TVID="_TAB"></a>' . "\n";
