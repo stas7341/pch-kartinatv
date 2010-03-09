@@ -3,10 +3,13 @@ Kartina.TV plugin for Popcorn Hour
 Features
 --------
 This plugin (set of scripts) allows to view on Popcorn Hour A100
-the IP-TV channels broadcasted by katrina.tv provider. 
+the IP-TV channels broadcasted by katrina.tv provider.
 
 Changes
 -------
+Changes in version 0.8.7:
+- Beta support of archives, press REPEAT to activate day selection
+
 Changes in version 0.8.6:
 - Alfa support of archives
 
@@ -56,7 +59,7 @@ Changes in version 0.6.5:
   Created lists can be observed via these links:
     http://pch-a100:8088/stream/file=/tmp/channel.jsp
     http://pch-a100:8088/stream/file=/tmp/bg.jsp
-  At the moment the list is created basing on works published 
+  At the moment the list is created basing on works published
   on http://www.deviantart.com/ under photography category.
   Slide show delay can be configured via OC_SLIDE_SHOW_DELAY parameter.
 
@@ -70,7 +73,7 @@ Changes in version 0.6.3:
   Switched off by default because of substantive slow down of browsing
 - Details panel can be switched on/off via REPEAT button
 - INFO button shows full program name in popup
-- Colored buttons RED,GREEN,YELLOW and BLUE can now be assigned 
+- Colored buttons RED,GREEN,YELLOW and BLUE can now be assigned
   to channels via settings.inc file
 
 Changes in version 0.6.2:
@@ -103,7 +106,7 @@ Changes in version 0.5.0:
   1. Key LEFT:  10 channels up
   2. Key RIGHT: 10 channels down
   3. Channel number: move cursor to this channel
-- Single step channel openning/closing. 
+- Single step channel openning/closing.
   Now to go back to Web Services page use the SOURCE key not RETURN
 - It's not important anymore where in NMT this plugin will be stored
 - Better functions split between scripts
@@ -111,7 +114,7 @@ Changes in version 0.5.0:
 
 Prerequisites
 -------------
-Popcorn Hour A100 with installed harddisk and 
+Popcorn Hour A100 with installed harddisk and
 installed and activated NMT services (e.g. torrent).
 
 Installation
@@ -149,7 +152,7 @@ Keyboard Assignment
     SOURCE = Leave the plugin
     RETURN = Go back to web services list
     SETUP  = Configuration page with diverse KartinaTV and Plugin options
-    
+
 - During playback
     Just usual short-cuts, no extensions
 
@@ -162,47 +165,47 @@ Keyboard Assignment
 Troubleshooting
 ---------------
 Q1: I'm getting set of following error messages above the channels list:
-    Warning: session_start(): open(/tmp/sess_67097718925a02165591a622f2641d91, 
-    O_RDWR) failed: Permission denied (13) in 
+    Warning: session_start(): open(/tmp/sess_67097718925a02165591a622f2641d91,
+    O_RDWR) failed: Permission denied (13) in
     /opt/sybhttpd/localhost.drives/HARD_DISK/kartina.tv/index.php on line 15
 
 A1: Please make sure at least one of following services is running:
     * Torrent
     * Usenet Client
-    * Casgle Client 
+    * Casgle Client
 
-Q2: Can't watch any channel. I see the channels list but when I'm trying 
-    to start the playback I see the PCH logo for several seconds and then 
+Q2: Can't watch any channel. I see the channels list but when I'm trying
+    to start the playback I see the PCH logo for several seconds and then
     I'm returned back to programs list.
 
 A2: Please make sure you are NOT using one of following firmwares:
     * PCH-A100: from 21 January 2009, 03 March 2009 or 02 April 2009
-    * PCH-A110: from 26 February 2009 or 02 April 2009 
-    These firmwares officially doesn't support KartinaTV. All others 
+    * PCH-A110: from 26 February 2009 or 02 April 2009
+    These firmwares officially doesn't support KartinaTV. All others
     (before and after) are compatible with KartinaTV.
 
-Q3: If I press ZOOM during playback then instead of zooming the playback 
+Q3: If I press ZOOM during playback then instead of zooming the playback
     hangs and only reboot can help.
 
-A3: Try to change in PCH video options the colorspace. In my case the 16-235 
+A3: Try to change in PCH video options the colorspace. In my case the 16-235
     was the right value. I don't know why it's some internal PCH problem.
 
-Q4: Can't watch any channel. I see the channels list but when I'm trying 
-    to start the playback I see the PCH is buffering something and then 
+Q4: Can't watch any channel. I see the channels list but when I'm trying
+    to start the playback I see the PCH is buffering something and then
     I'm returned back to programs list.
 
-A4: Please make sure you are NOT using the KartinaTV-broadcasting 
+A4: Please make sure you are NOT using the KartinaTV-broadcasting
     server number 2. It's not supported at the moment.
 
 Q5: You see following error message after changing the settings:
     Warning: fopen(settings.inc): failed to open stream: Permission denied in
-    /opt/sybhttpd/localhost.drives/HARD_DISK/kartina.tv/ktvOptions.inc 
+    /opt/sybhttpd/localhost.drives/HARD_DISK/kartina.tv/ktvOptions.inc
     on line 129 Unable to write settings.inc!
 
-A5: Make sure the permissions of settings.inc file are set to 0666 or 0777 
-    (writing allowed to everyone). 
+A5: Make sure the permissions of settings.inc file are set to 0666 or 0777
+    (writing allowed to everyone).
 
-Q6: I'm using component connector/ aka 480p mode / aka SD mode. 
+Q6: I'm using component connector/ aka 480p mode / aka SD mode.
     How to make the channels list looking nice?
 
 A6: Try to set following values in your settings.inc:
@@ -223,7 +226,7 @@ A6: Try to set following values in your settings.inc:
     # show progress bar in channel list (TRUE for yes and FALSE for no)
     define("CL_SHOW_PROGRESS", FALSE);
 
-    This patch will never be included in official release since 
+    This patch will never be included in official release since
     the SD mode is de facto dead.
 
 Credits
