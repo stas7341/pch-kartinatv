@@ -40,7 +40,7 @@ function displayAudioPlaylist($name, $url) {
         return;
     }
 
-    $images = getBackgrounds();    
+    $images = getBackgrounds();
     foreach ($images as $img) {
         $photos .= OC_SLIDE_SHOW_DELAY . "|0|Background|$img|\n";
     }
@@ -78,17 +78,17 @@ function displayAudioPlaylist($name, $url) {
     $_SESSION['selectedChannel'] = $number;
 
     $content = $ktvFunctions->getStreamUrl($id, $gmt);
-    $url = preg_replace('/.*url="(rtsp|http)(\/ts|)([^ "]*).*/', '$1$3', $content);
+    $url = preg_replace('/.*url="(rtsp|http)(\/ts|)([^ "]*).*/s', '$1$3', $content);
 
     if (0 === strpos($url, "http://") || 0 === strpos($url, "rtsp://")) {
         # show kartina.tv logo or video via vlc
         playMedia(EMBEDDED_BROWSER ? null : $url);
 
-        # Combination onFocusLoad + onFocusSet forces this link to be 
+        # Combination onFocusLoad + onFocusSet forces this link to be
         # loaded automatically and when the video/audio will be stopped
         # the link written in onFocusSet will be immediately activated
         print '<a onFocusLoad onFocusSet="returnToIndex" ';
-        
+
         # video and audio have different extensions
         if ($vid) {
 
@@ -108,7 +108,7 @@ function displayAudioPlaylist($name, $url) {
 
             print "href=\"$url\" vod";
             if (BUFFER_SIZE > 0) {
-                print " prebuf=\"" . (BUFFER_SIZE * 1048576) . "\"";
+                print " prebuf=\"" . (BUFFER_SIZE * 1024) . "\"";
             }
             print ">";
         } else {
