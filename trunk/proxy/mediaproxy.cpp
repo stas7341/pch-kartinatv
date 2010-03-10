@@ -1,6 +1,7 @@
 #include <netdb.h>
 #include "mediaproxy.h"
 #include "tools.h"
+#include "ktvfunctions.h"
 
 /**
  * Reads HTTP header of PCH client connection.
@@ -78,7 +79,7 @@ bool isStreamRequest(char *header) {
  * @param  path on server to connect to.
  * @param  clientFd file descriptor of open socket to client.
  */
-void handleClient(char *host, int port, char *path, int clientFd) {
+void handleClient(const char *host, int port, const char *path, int clientFd) {
     int serverFd = connectToHost(host, port);
     if (-1 == serverFd) {
         fprintf(stderr, "\nERROR Cannot connect to %s\n", host);
@@ -162,7 +163,7 @@ void handleClient(char *host, int port, char *path, int clientFd) {
  * @param  header header to analyze.
  * @param  clientFd file descriptor of open socket to client.
  */
-void handleClient(char *header, int clientFd) {
+void handleClient(const char *header, int clientFd) {
     char host[1024] = "";
     char path[1024] = "";
     int  port = 80;
@@ -203,6 +204,10 @@ int startProxyServer(int port, int videoConnectionNumber, const char* sampleFile
     char sampleBuffer[1024 * 100] = "";
     int  sampleLength = fread(sampleBuffer, 1, sizeof(sampleBuffer), sampleFile);
     fclose(sampleFile);
+
+    // create KTV functions instance
+    KtvFunctions ktv();
+    ktv.authorize();
 
     // open listening socket
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -270,7 +275,32 @@ int startProxyServer(int port, int videoConnectionNumber, const char* sampleFile
             } else {
                 printf("Connection: %i, a video one:\n", clientNum);
                 fflush(stdout);
-                handleClient(header, clientFd);
+
+                if (! ktv.isAuthorized("") && ! ktv.authorize()) {
+                    fprintf(stderr, "ERROR on accept\n");
+                    return -1;
+                }
+
+                char id[10] = "";
+                const char *str = strstr(header, "GET /?");
+                if (NULL != str && sscanf(str, "GET /?id=%[^& ]", &id) == 1) {
+                    string html = ktv.getStreamUrl(id);
+                    string url = findExpr(html, "url=\"", " ");
+                    string hostPort = findExpr(url, "//", "/");
+                    string path = url.substr(url.find(hostPort) + hostPort.length());
+                    
+                    char host[1024] = "";
+                    int  port = 80;
+                    sscanf(hostPort.c_str(), "%[^:]:%i", &host, &port);
+
+                    printf("ID = %s, Host = %s, port = %i, path = %s\n", 
+                            id, host, port, path.c_str());
+                    fflush(stdout);
+                    
+                    handleClient(host, port, path.c_str(), clientFd);
+                } else {
+                    handleClient(header, clientFd);
+                }
             }
 
             // done with this client
