@@ -40,14 +40,14 @@ bool isStreamRequest(char *header);
  * @param  path on server to connect to.
  * @param  clientFd file descriptor of open socket to client.
  */
-void handleClient(char *host, int port, char *path, int clientFd);
+void handleClient(const char *host, int port, const char *path, int clientFd);
 
 /**
  * Reads supplied header and delegates proxy functions.
  * @param  header header to analyze.
  * @param  clientFd file descriptor of open socket to client.
  */
-void handleClient(char *header, int clientFd);
+void handleClient(const char *header, int clientFd);
 
 /**
  * Checks whether it's the first request in the sequence.

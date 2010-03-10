@@ -26,14 +26,17 @@ int main(const int argc, const char *argv[]) {
     int videoConnectionNumber = 9;
     const char* sampleFilename = argc > 1 ? argv[1] : "sample.ts";
 
-    // startProxyServer(port, videoConnectionNumber, sampleFilename);
-
+    startProxyServer(port, videoConnectionNumber, sampleFilename);
+/*
     KtvFunctions ktvFunctions;
     ktvFunctions.authorize();
     // string html = ktvFunctions.getChannelsList();
     string html = ktvFunctions.getStreamUrl("7");
     printf("--------------\n%s\n------------\n", html.c_str());
 
+    string param = findExpr(html, "no-st", ",");
+    printf("--------------\n%s\n------------\n", param.c_str());
+*/
 
     /*
     string url = "http://iptv.kartina.tv";
