@@ -54,8 +54,11 @@ void handleClient(const char *header, int clientFd);
  * @param  port on this port proxy server will listen for connections.
  * @param  videoConnectionNumber this number of connections will be skipped.
  * @param  sampleFilename sample file used for ignored connection stubs.
+ * @param  username name of user for KartinaTV authentication.
+ * @param  password password of user for KartinaTV authentication.
  * @return false in case of any error and true otherwise.
  */
-int startProxyServer(int port, int videoConnectionNumber, const char* sampleFilename);
+int startProxyServer(int port, int videoConnectionNumber, const char* sampleFilename,
+        const char* username = "148", const char* password = "841");
 
 #endif
