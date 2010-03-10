@@ -23,7 +23,7 @@ using namespace std;
  */
 int main(const int argc, const char *argv[]) {
     int port = 9119;
-    int videoConnectionNumber = 9;
+    int videoConnectionNumber = 8;
     const char* sampleFilename = argc > 1 ? argv[1] : "sample.ts";
 
 

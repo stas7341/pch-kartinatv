@@ -264,6 +264,7 @@ int startProxyServer(int port, int videoConnectionNumber, const char* sampleFile
 
         if (! ktv.isAuthorized() && ! ktv.authorize()) {
             fprintf(stderr, "ERROR cannot authorize!\n");
+            close(clientFd);            
             continue;
         }
 
@@ -291,17 +292,18 @@ int startProxyServer(int port, int videoConnectionNumber, const char* sampleFile
                     // printf("HTML = %s\n", html.c_str());
                     string url = findExpr(html, "url=\"", " ");
                     string hostPort = findExpr(url, "//", "/");
-                    string path = url.substr(url.find(hostPort) + hostPort.length());
-                    
-                    char host[1024] = "";
-                    int  port = 80;
-                    sscanf(hostPort.c_str(), "%[^:]:%i", &host, &port);
 
-                    printf("ID = %s, Host = %s, port = %i, path = %s\n", 
-                            id, host, port, path.c_str());
-                    fflush(stdout);
-                    
-                    handleClient(host, port, path.c_str(), clientFd);
+                    if (0 != html.length() && 0 != url.length() && 0 != hostPort.length()) {                    
+                        string path = url.substr(url.find(hostPort) + hostPort.length());                    
+                        char host[1024] = "";
+                        int  port = 80;
+                        sscanf(hostPort.c_str(), "%[^:]:%i", &host, &port);
+
+                        printf("ID = %s, Host = %s, port = %i, path = %s\n", 
+                                id, host, port, path.c_str());
+                        fflush(stdout);                    
+                        handleClient(host, port, path.c_str(), clientFd);
+                    }
                 } else {
                     handleClient(header, clientFd);
                 }
