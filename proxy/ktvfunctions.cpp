@@ -36,10 +36,10 @@ bool KtvFunctions::isAuthorized(string htmlToCheck) {
     bool ok =
         0 != m_cookie.length() &&
         m_cookie.compare("deleted") &&
-        0 != htmlToCheck.length() &&
         string::npos == htmlToCheck.find("code_login") &&
         string::npos == htmlToCheck.find("code_pass") &&
-        string::npos == htmlToCheck.find("msg=access_denied");
+        string::npos == htmlToCheck.find("msg=access_denied") &&
+        string::npos == htmlToCheck.find("msg=auth_err");
     if (! ok) {
         fprintf(stderr, "Authorization missed or lost\n");
     }
@@ -122,15 +122,19 @@ string KtvFunctions::getBroadcastingServer() {
  */
 string KtvFunctions::getData(string url, string name) {
     printf("Getting %s\n", name.c_str());
-    if (0 == m_cookie.length()) {
+    if (! isAuthorized()) {
         fprintf(stderr, "No authorization was made yet!");
         authorize();
     }
     string cookie = COOKIE_PREFIX + m_cookie;
     string html = getPageContentByGet(url, cookie);
     if (! isAuthorized(html)) {
-        authorize();
+        if (! authorize()) {
+            fprintf(stderr, "Failed to authorize!\n");
+            return "";
+        }
         printf("Second try to get %s\n", name.c_str());
+        cookie = COOKIE_PREFIX + m_cookie;
         html = getPageContentByGet(url, cookie);
         if (! isAuthorized(html)) {
             fprintf(stderr, "Failed to get %s\n%s\n",

@@ -26,7 +26,35 @@ int main(const int argc, const char *argv[]) {
     int videoConnectionNumber = 9;
     const char* sampleFilename = argc > 1 ? argv[1] : "sample.ts";
 
-    startProxyServer(port, videoConnectionNumber, sampleFilename);
+
+    char username[128] = "148";
+    char password[128] = "841";
+
+    // read auth data
+    FILE *authFile = fopen("auth.txt", "r");
+    if (NULL == authFile) {
+        printf("No auth file found, using defaults\n");
+    } else {
+        char authBuffer[1024 * 100] = "";
+        int  authLength = fread(authBuffer, 1, sizeof(authBuffer)-1, authFile);
+        authBuffer[authLength] = '\0';
+        fclose(authFile);
+
+        const char *str = strstr(authBuffer, "username=");
+        if (NULL != str) {
+            sscanf(str, "%*[^=]=%s", &username);
+        }
+        str = strstr(authBuffer, "password=");
+        if (NULL != str) {
+            sscanf(str, "%*[^=]=%s", &password);
+        }
+    }
+
+    printf("KartinaTV authentication data: %s:%s\n", username, password);
+    fflush(stdout);
+
+    startProxyServer(port, videoConnectionNumber, sampleFilename, 
+            username, password);
 /*
     KtvFunctions ktvFunctions;
     ktvFunctions.authorize();

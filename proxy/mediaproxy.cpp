@@ -191,10 +191,13 @@ void handleClient(const char *header, int clientFd) {
  * @param  port on this port proxy server will listen for connections.
  * @param  videoConnectionNumber this number of connections will be skipped.
  * @param  sampleFilename sample file used for ignored connection stubs.
+ * @param  username name of user for KartinaTV authentication.
+ * @param  password password of user for KartinaTV authentication.
  * @return false in case of any error and true otherwise.
  */
-int startProxyServer(int port, int videoConnectionNumber, const char* sampleFilename) {
-
+int startProxyServer(int port, int videoConnectionNumber, const char* sampleFilename,
+        const char* username, const char* password)
+{
     // read sample file to internal buffer in order to reduce disk access
     FILE *sampleFile = fopen(sampleFilename, "r");
     if (NULL == sampleFile) {
@@ -206,7 +209,7 @@ int startProxyServer(int port, int videoConnectionNumber, const char* sampleFile
     fclose(sampleFile);
 
     // create KTV functions instance
-    KtvFunctions ktv();
+    KtvFunctions ktv(username, password);
     ktv.authorize();
 
     // open listening socket
@@ -259,6 +262,11 @@ int startProxyServer(int port, int videoConnectionNumber, const char* sampleFile
             clientNum++;
         }
 
+        if (! ktv.isAuthorized() && ! ktv.authorize()) {
+            fprintf(stderr, "ERROR cannot authorize!\n");
+            continue;
+        }
+
         // this is the child process
         if (! fork()) {
 
@@ -276,15 +284,11 @@ int startProxyServer(int port, int videoConnectionNumber, const char* sampleFile
                 printf("Connection: %i, a video one:\n", clientNum);
                 fflush(stdout);
 
-                if (! ktv.isAuthorized("") && ! ktv.authorize()) {
-                    fprintf(stderr, "ERROR on accept\n");
-                    return -1;
-                }
-
                 char id[10] = "";
                 const char *str = strstr(header, "GET /?");
                 if (NULL != str && sscanf(str, "GET /?id=%[^& ]", &id) == 1) {
                     string html = ktv.getStreamUrl(id);
+                    // printf("HTML = %s\n", html.c_str());
                     string url = findExpr(html, "url=\"", " ");
                     string hostPort = findExpr(url, "//", "/");
                     string path = url.substr(url.find(hostPort) + hostPort.length());

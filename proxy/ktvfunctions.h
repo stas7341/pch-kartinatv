@@ -67,7 +67,7 @@ public:
      * Checks whether user is authorized on Kartina.TV server.
      * @return true if authorized and false otherwise.
      */
-    bool isAuthorized(string htmlToCheck);
+    bool isAuthorized(string htmlToCheck = "");
 
     /**
      * @return html response with list of channels allowed user to view.
