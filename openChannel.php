@@ -71,7 +71,7 @@ function displayAudioPlaylist($name, $url) {
 
     $id     = $_GET['id'];
     $number = $_GET['number'];
-    $name   = $_GET['title'];
+    $name   = urldecode($_GET['title']);
     $vid    = $_GET['vid'];
     $gmt    = $_GET['gmt'];
     $ref    = isset($_GET['ref']) ? urldecode($_GET['ref']) : "index.php";
@@ -89,23 +89,13 @@ function displayAudioPlaylist($name, $url) {
         # the link written in onFocusSet will be immediately activated
         print '<a onFocusLoad onFocusSet="returnToIndex" ';
 
+        # set info for playback to channel name
+        $info = preg_replace('/\s/', '_', $name);
+        $info = str_pad($info, 50, "_", STR_PAD_BOTH) . "________";
+        $url = preg_replace('/\?/', "?$info=0&", $url);
+
         # video and audio have different extensions
         if ($vid) {
-
-            # media proxy support
-            if (0 != strlen(MEDIA_PROXY)) {
-                $parsedUrl = parse_url($url);
-                $host = $parsedUrl['host'];
-                $port = $parsedUrl['port'];
-                $path = $parsedUrl['path'] . "?" . $parsedUrl['query'];
-
-                $url  = MEDIA_PROXY . "/?host=" . $host;
-                $url .= "&port=" . $port . "&path=" . $path;
-                if ("rtsp" == $parsedUrl['scheme']) {
-                    $url .= "&rtsp=1";
-                }
-            }
-
             print "href=\"$url\" vod";
             if (BUFFER_SIZE > 0) {
                 print " prebuf=\"" . (BUFFER_SIZE * 1024) . "\"";
