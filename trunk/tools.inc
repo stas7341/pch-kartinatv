@@ -24,19 +24,9 @@ function parseOutCookies($html) {
     return $cookies;
 }
 
-function getHostIp($host) {
-    exec("ping -c1 -q $host", &$ip);
-    $ip = implode("", $ip);
-    $ip = preg_replace('/.*\((\d+\.\d+\.\d+\.\d+)\).*/', '$1', $ip);
-    return $ip;
-}
-
 function getPageContentByGet($url, $headerExt) {
     $parsedUrl = parse_url($url);
     $host = $parsedUrl['host'];
-    
-    # support for broken DNS in PCH version of PHP
-    $url = preg_replace("/$host/", getHostIp($host), $url);
     
     $opts = array(
         'http' => array(
@@ -70,6 +60,7 @@ function getPageContentByGet($url, $headerExt) {
         die ("Cannot open $host");
     }
 
+    $content = "";
     while($data = fread($f, 1024)) {
         $content .= $data;
     }
@@ -80,14 +71,9 @@ function getPageContentByGet($url, $headerExt) {
 function getPageContentByPost($url, $params, $headerExt = "") {
     $parsedUrl = parse_url($url);
     $host = $parsedUrl['host'];
-    $path = $parsedUrl['path'];
+    $path = isset($parsedUrl['path']) ? $parsedUrl['path'] : '/';
+    $port = isset($parsedUrl['port']) ? $parsedUrl['port'] : 80;
     
-    # support for broken DNS in PCH version of PHP
-    $ip  = getHostIp($host);
-    if ("" == $path) {
-        $path = "/";
-    }
-
     $header  = "POST $path HTTP/1.1\r\n";
     $header .= "Host: $host\r\n";
     $header .= "User-Agent: Mozilla/5.0\r\n";
@@ -97,7 +83,7 @@ function getPageContentByPost($url, $params, $headerExt = "") {
     $header .= $headerExt;
     $header .= "\r\n";
 
-    $fp = fsockopen($ip, 80, $errno, $errstr, 30); 
+    $fp = fsockopen($host, $port, $errno, $errstr, 30); 
     if (! $fp) {
         die ("Cannot open $host");
     }
