@@ -74,8 +74,8 @@ class Sorter {
             }
 
             // check channel name against big list of found channels
-            Sorter::moveChannel($name, &$categories, &$newCategories);
-            Sorter::moveChannel($name, &$newCategories, &$newCategories);
+            Sorter::moveChannel($name, $categories, $newCategories);
+            Sorter::moveChannel($name, $newCategories, $newCategories);
         }    
 
         // merge the rest of the list if the last category is REST
