@@ -32,7 +32,7 @@ function displayCustomStyles() {
     td.time        { width: <?php echo CL_WIDTH_TIME?>px; }
     th.details     { width: <?php echo CL_WIDTH_TABLE?>px; height: 70px; background-color: #005B95; }
     td.progress    { background-color: #79a1bd; height: 3px; }
-    
+
 </style>
 <?php
 }
@@ -49,22 +49,22 @@ function displayDetailsPanel() {
 function displayCredits() {
 ?>
     <hr>
-    <div align="center">Kartina.TV for 
-    <font color="white"> Popcorn Hour</font> by <b>consros</b> 
+    <div align="center">Kartina.TV for
+    <font color="white"> Popcorn Hour</font> by <b>consros</b>
     <font color="white"> (c) 2009</font></div>
 <?php
-}       
+}
 
 function displayCategory($category) {
-    $name = ($category->color == "#efefef") ? 
+    $name = ($category->color == "#efefef") ?
         "<font color=\"gray\">$category->name</font>" : $category->name;
     print "\n<tr bgcolor=\"$category->color\">\n";
     print "<th colspan=\"7\" align=\"center\">$name</th>\n";
     print "</tr>\n";
 }
 
-function displayChannel($channel, $firstChannelNumber, 
-    $lastChannelNumber, $showDetailsPanel) 
+function displayChannel($channel, $firstChannelNumber,
+    $lastChannelNumber, $showDetailsPanel)
 {
     $number   = ($channel->number < 10 ? "0" : "") . $channel->number;
     $logo     = "http://iptv.kartina.tv/img/ico/24/$channel->id.gif";
@@ -72,6 +72,15 @@ function displayChannel($channel, $firstChannelNumber,
     $linkUrl .= "&title=" . urlencode($channel->name);
     $linkUrl .= "&vid=" . ($channel->isVideo ? 1 : 0);
     $linkExt  = "name=\"channel-$channel->number\"";
+
+    # use media proxy if provided
+    if (0 != strlen(MEDIA_PROXY)) {
+        $linkUrl  = "playlist.php?id=" . $channel->id;
+        $linkExt .= "\nvod=\"playlist\"";
+        if (BUFFER_SIZE > 0) {
+            $linkExt .= "\nprebuf=\"" . (BUFFER_SIZE * 1024) . "\"";
+        }
+    }
     
     # info button on selected chanel
     if ("" != $channel->program) {
@@ -114,14 +123,14 @@ function displayChannel($channel, $firstChannelNumber,
     # decide how to display the program
     $name = preg_replace('/ -\d+$/', '', $channel->name);
     if ("" == $channel->program) {
-        $name = EMBEDDED_BROWSER ? 
+        $name = EMBEDDED_BROWSER ?
             '<marquee behavior="focus">'.$name.'</marquee>':
-            utf8_cutByPixel($name, CL_WIDTH_LONGNAME, true);    
+            utf8_cutByPixel($name, CL_WIDTH_LONGNAME, true);
         $name = "<a href=\"$linkUrl\" $linkExt>$name</a>";
         $program = "";
     } else {
         $name = utf8_cutByPixel($name, CL_WIDTH_NAME, true);
-        $program = EMBEDDED_BROWSER ? 
+        $program = EMBEDDED_BROWSER ?
             '<marquee behavior="focus">'.$channel->program.'</marquee>':
             utf8_cutByPixel($channel->program, CL_WIDTH_PROGRAM, false);
         $program = "<a href=\"$linkUrl\" $linkExt>$program</a>";
@@ -129,10 +138,10 @@ function displayChannel($channel, $firstChannelNumber,
 
 
 
-    # now the entry itself 
+    # now the entry itself
     print "<tr>\n";
     print "<td class=\"number\">";
-    print EMBEDDED_BROWSER ? $number : 
+    print EMBEDDED_BROWSER ? $number :
         '<a href="displayProgram.php?ref=' . "$linkUrl\">$number</a>";
     print "</td>\n";
     print "<td class=\"logo\"><img src=\"$logo\" /></td>\n";
@@ -147,16 +156,16 @@ function displayChannel($channel, $firstChannelNumber,
         $progressbar = "background=\"img/progress/progress-${num}0.PNG\"";
     }
 
-    print "<td class=\"program\" $progressbar>$program</td>\n";    
+    print "<td class=\"program\" $progressbar>$program</td>\n";
     print "<td class=\"time\" align=\"right\" nowrap>$time</td>\n";
     print "</tr>\n";
 }
 
 function addShortcuts(
-    $channelsAmount, $firstChannelNumber, 
-    $lastChannelNumber, $showDetailsPanel, $hideNames = EMBEDDED_BROWSER) 
+    $channelsAmount, $firstChannelNumber,
+    $lastChannelNumber, $showDetailsPanel, $hideNames = EMBEDDED_BROWSER)
 {
-    $pageupRef = ($firstChannelNumber > 1) ? 
+    $pageupRef = ($firstChannelNumber > 1) ?
         $firstChannelNumber - 1 : $channelsAmount;
     print '<a href="' . $_SERVER['PHP_SELF'] . '?selectedChannel=';
     print $pageupRef . '" name="pageup" TVID="PGUP" onFocusLoad>';
@@ -187,8 +196,8 @@ function addShortcuts(
         print constant("CL_CHANNEL_" . $color) . '" TVID="' . $color . '">';
         print '<font color="' . $color . '">';
         print ($hideNames ? "" : " $color ") . "</font></a>\n";
-    }    
-    
+    }
+
     # support for toggle details panel operation
     print '<a href="' . $_SERVER['PHP_SELF'] . '?showDetailsPanel=';
     print ($showDetailsPanel ? '0' : '1') .'" TVID="COPY">';
@@ -220,13 +229,13 @@ function displayChannelsList($channelsParser, $showDetailsPanel) {
 
 <script type="text/javascript">
     function updateDetails(text) {
-        document.getElementById('details').nextSibling.nodeValue = 
+        document.getElementById('details').nextSibling.nodeValue =
             text == '' ? "Kartina TV" : text;
     }
 </script>
 
 </head>
-<body <?php echo getBodyStyles() . 
+<body <?php echo getBodyStyles() .
     " onLoadSet=\"channel-$channelsParser->selectedChannel\""?>>
 <div align="center">
 <table class="channels">
@@ -241,7 +250,7 @@ function displayChannelsList($channelsParser, $showDetailsPanel) {
     $lastChannelNumber  = 0;       # last displayed channel on page
     $currentEntry       = 0;
     $foundSelected      = false;
-    $limit = $showDetailsPanel ? CL_ITEMS_PER_PAGE - 2 : CL_ITEMS_PER_PAGE; 
+    $limit = $showDetailsPanel ? CL_ITEMS_PER_PAGE - 2 : CL_ITEMS_PER_PAGE;
     foreach ($channelsParser->categories as $category) {
         if ($currentEntry % $limit == 0) {
             if ($foundSelected) {
@@ -267,7 +276,7 @@ function displayChannelsList($channelsParser, $showDetailsPanel) {
 
             if ($channel->number == $channelsParser->selectedChannel) {
                 $foundSelected = true;
-            }                
+            }
             if (0 == $firstChannelNumber) {
                 $firstChannelNumber = $channel->number;
             }
@@ -280,18 +289,18 @@ function displayChannelsList($channelsParser, $showDetailsPanel) {
         if (is_a($item, 'Category')) {
             displayCategory($item);
         } else {
-            displayChannel($item, $firstChannelNumber, 
+            displayChannel($item, $firstChannelNumber,
                 $lastChannelNumber, $showDetailsPanel);
         }
     }
 
     # time for shortcuts
     print "<tr><th colspan=\"7\" align=\"center\">\n";
-    addShortcuts($channelsParser->channelsAmount, 
+    addShortcuts($channelsParser->channelsAmount,
         $firstChannelNumber, $lastChannelNumber, $showDetailsPanel);
     print "</th></tr>\n";
     print "</table>\n";
-    
+
     if ($lastChannelNumber == $channelsParser->channelsAmount) {
         displayCredits();
     }
