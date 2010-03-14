@@ -118,7 +118,7 @@ class ChannelsParser extends AbstractParser {
 
     function parse($string) {
         $xmlParser = xml_parser_create();
-        xml_parse_into_struct($xmlParser, $string, &$elements, &$index);
+        xml_parse_into_struct($xmlParser, $string, $elements, $index);
         xml_parser_free($xmlParser);
 
         foreach ($elements as $xmlElem) {
@@ -168,34 +168,37 @@ class ChannelsParser extends AbstractParser {
 }
 
 class ProgramsParser extends AbstractParser {
+    var $hasArchive;
     var $programs;
 
     function ProgramsParser() {
         $this->programs = array();
+        $this->hasArchive = false;
     }
 
     function parse($string) {
         $this->programs = array();
 
         $xmlParser = xml_parser_create();
-        xml_parse_into_struct($xmlParser, $string, &$elements, &$index);
+        xml_parse_into_struct($xmlParser, $string, $elements, $index);
         xml_parser_free($xmlParser);
 
         foreach ($elements as $xmlElem) {
-            if ('complete' == $xmlElem['type']) {
-                if ('ITEM' == $xmlElem['tag']) {
-                    if ('2' != $xmlElem['level']) {
-                        die (reportWrongElement($xmlElem));
-                    }
-                    $attr = $xmlElem['attributes'];
-                    $program = new Program(
-                        $attr['PROGNAME'], $attr['PDESCR'], $attr['T_START']);
-                
-                    $this->programs[] = $program;
+            if ('complete' == $xmlElem['type'] && 'ITEM' == $xmlElem['tag']) {
+                if ('2' != $xmlElem['level']) {
+                    die (reportWrongElement($xmlElem));
                 }
+                $attr = $xmlElem['attributes'];
+                $this->programs[] = new Program(
+                    $attr['PROGNAME'], $attr['PDESCR'], $attr['T_START']);
+            } else if ('open' == $xmlElem['type'] && 'PROGRAMM' == $xmlElem['tag']) {
+                if ('1' != $xmlElem['level']) {
+                    die (reportWrongElement($xmlElem));
+                }
+                $attr = $xmlElem['attributes'];
+                $this->hasArchive = '1' == $attr['HAVE_ARCHIVE'];
             }
-        }
-    }        
+        }        
+    }
 }
-
 ?>
