@@ -4,7 +4,7 @@
 # Also contains parser used to convert raw xml list into wrapping classes.  #
 # Used to simplify further list handling.                                   #
 #                                                                           #
-# Author: consros 2008                                                      #
+# Author: consros 2010                                                      #
 #############################################################################
 
 require_once("settings.inc");
@@ -198,7 +198,14 @@ class ProgramsParser extends AbstractParser {
                 $attr = $xmlElem['attributes'];
                 $this->hasArchive = '1' == $attr['HAVE_ARCHIVE'];
             }
-        }        
+        }
+
+        # archive is limited by two weeks back
+        if ($this->hasArchive && count($this->programs) > 0 && 
+            $this->programs[0]->beginTime + 14 * 24 * 60 * 60 < time())
+        {
+            $this->hasArchive = false;
+        }
     }
 }
 ?>

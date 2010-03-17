@@ -69,7 +69,7 @@ function displayProgram($program, $nowTime, $hasArchive, $openRef, $currentProgr
 
 
 displayHtmlHeader(
-    "NMT detailed programs list for desired channel", 60);
+    "NMT detailed programs list for desired channel", 300);
 ?>
 <style type="text/css">
     td.no-data   { height:570px; background-color: #4d6080; }
@@ -149,11 +149,18 @@ displayHtmlHeader(
         $lastProgram = $program;
     }
 
+    # generate title
     $totalPages = $page + 1;
     $title  = $_GET['title'] . "   (" . LANG_EPG_FROM . " ";
-    $title .= date('d.m', $arcTime - EPG_START_OFFSET) . ", " . LANG_EPG_PAGE;
-    $title .= " " . (isset($dstPage) ? $dstPage + 1 : $totalPages);
-    $title .= "/" . $totalPages . ")";
+    $title .= date('d.m', $arcTime - EPG_START_OFFSET);
+
+    # show pages only if there are more than one
+    if ($totalPages > 1) {
+        $title .= ", " . LANG_EPG_PAGE . " ";
+        $title .= isset($dstPage) ? $dstPage + 1 : $totalPages;
+        $title .= "/" . $totalPages;
+    }
+    $title .= ")";
 
 ?>
 
@@ -215,7 +222,7 @@ displayHtmlHeader(
 
     # short-cuts
     print '<a href="index.php" TVID="BACK">';
-    print (EMBEDDED_BROWSER ? "" : " BACK ") . "</a>\n";
+    print (EMBEDDED_BROWSER ? "" : (" &lt;&lt;&nbsp;" . LANG_CHANNELS_LIST)) . "</a>\n";
 
     # support for days/page navigation
     $epgRef  = $_SERVER['PHP_SELF'] . "?d=0";
@@ -224,6 +231,7 @@ displayHtmlHeader(
     $epgRef .= "&title="  . $_GET['title'];
     $epgRef .= "&vid="    . $_GET['vid'];
 
+    # backward -1 month
     $prevDay = $arcTime - 24 * 60 * 60;
     print '<a href="'. $epgRef . '&archiveTime=' . $prevDay . '" TVID="PGUP">';
     print (EMBEDDED_BROWSER ? "" : " &lt;DAY ") . "</a>\n";
@@ -234,6 +242,7 @@ displayHtmlHeader(
     print '<a href="'. $epgRef . '" TVID="HOME">';
     print (EMBEDDED_BROWSER ? "" : " NOW ") . "</a>\n";
 
+    # forward +5 days
     print '<a href="'. $epgRef . '&archiveTime=' . $nextPage . '" TVID="RIGHT">';
     print (EMBEDDED_BROWSER ? "" : " PAGE&gt; ") . "</a>\n";
 

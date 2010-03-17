@@ -210,8 +210,7 @@ function addShortcuts(
     print ($hideNames ? "" : " DETAILS ") . "</a>\n";
 
     # support for date archive
-    print '<a href="dateOptions.php?ref=" TVID="_REPEAT">';
-    print ($hideNames ? "" : " ARCHIVE ") . "</a>\n";
+    print '<a href="dateOptions.php?ref=" TVID="_REPEAT"></a>' . "\n";
 
     # support for detailed channel programs display
     print '<a href="displayProgram.php?ref=" TVID="_TAB"></a>' . "\n";
