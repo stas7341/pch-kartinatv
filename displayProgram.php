@@ -16,10 +16,8 @@ require_once "uft8_tools.inc";
 define("EPG_START_OFFSET", 3 * 60 * 60);
 
 $id = $_GET['id'];
-
 $nowTime = time() + TIME_ZONE * 60 * 60;
 $arcTime = isset($_GET['archiveTime']) ? $_GET['archiveTime'] : $nowTime;
-$title = $_GET['title'] . "   (" . date('d.m', $arcTime - EPG_START_OFFSET) . ")";
 
 
 function getEpg($id, $date) {
@@ -37,69 +35,36 @@ function getEpg($id, $date) {
     return $parser;
 }
 
-function displayPage($id, $programs, $nowTime, $endTime, $hasArchive) {
-
-    if (count($programs) == 0) {
-        print '<tr><td class="no-data" colspan="4" align="center">';
-        print '<table><tr><td>';
-        print '<img src="img/empty-list2.png" /></td><td>';
-        print LANG_ERR_NO_EPG;
-        print '</td></tr></table>';
-        print "</td></tr>\n";
-        return;
-    }
-
-    # detect current program
-    $currentProgram = null;
-    if ($nowTime >= $programs[0]->beginTime && $nowTime < $endTime) {
-        foreach ($programs as $program) {
-            if ($program->beginTime > $nowTime) {
-                break;
-            }
-            $currentProgram = $program;
-        }
-    }
-
-    # generate link to open program URL
-    $openRef  = "openChannel.php?id=$id";
-    $openRef .= ! isset($_GET['number']) ? "" : "&number=" . $_GET['number'];
-    $openRef .= ! isset($_GET['title'])  ? "" : "&title="  . $_GET['title'];
-    $openRef .= ! isset($_GET['vid'])    ? "" : "&vid="    . $_GET['vid'];
-    $openRef .= "&ref=" . urlencode($_SERVER['REQUEST_URI']);
-
-    foreach ($programs as $program) {
-        print "<tr>\n";
-        print '<td class="time" align="center">' . date('H:i', $program->beginTime) . "</td>\n";
-
-        $class = "";
-        $name = $program->name;
-        if ($program === $currentProgram) {
-            $class="current";
+function displayProgram($program, $nowTime, $hasArchive, $openRef, $currentProgram = null) {
+    $class = "future";
+    $name = $program->name;
+    if ($program === $currentProgram) {
+        $class="current";
+        $name = EMBEDDED_BROWSER ?
+            "<marquee behavior=\"focus\">$name</marquee>" : $name;
+        $name = "<a href=\"$openRef\">$name</a>";
+    } else if ($program->beginTime <= $nowTime) {
+        $class="past";
+        if ($hasArchive) {
+            $openRef .= "&gmt=" . $program->beginTime;
             $name = EMBEDDED_BROWSER ?
-                '<marquee behavior="focus">'.$name.'</marquee>': $name;
-            $name = "<a href=\"$openRef\" $linkExt>$name</a>";
-        } else if ($program->beginTime <= $nowTime) {
-            $class="past";
-            if ($hasArchive) {
-                $linkUrl = $openRef . "&gmt=" . $program->beginTime;
-                $name = EMBEDDED_BROWSER ?
-                    '<marquee behavior="focus">'.$name.'</marquee>': $name;
-                $name = "<a href=\"$linkUrl\" $linkExt>$name</a>";
-            }
-        } else {
-            $class="future";
+                "<marquee behavior=\"focus\">$name</marquee>" : $name;
+            $name = "<a href=\"$openRef\">$name</a>";
         }
-
-        print "<td class=\"$class\" colspan=\"3\">\n";
-        print "<table width=\"100%\"><tr>\n";
-        print '<td>' . $name . "</td>\n";
-        if (isset($program->details) && "" != $program->details) {
-            print '</tr><tr>';
-            print '<td class="' . $class . '-details">' . $program->details . "</td>\n";
-        }
-        print "</tr></table>\n";
-        print "</td></tr>\n";
     }
+
+    $beginTime = date('H:i', $program->beginTime);
+    $details = ! isset($program->details) || "" == $program->details ? "" :
+        "</tr><tr><td class=\"${class}-details\">$program->details</td>\n";
+
+    print "<tr>\n";
+    print '<td class="time" align="center">' . $beginTime . "</td>\n";
+    print "<td class=\"$class\" colspan=\"3\">\n";
+    print "<table width=\"100%\"><tr>\n";
+    print '<td>' . $name . "</td>\n";
+    print $details;
+    print "</tr></table>\n";
+    print "</td></tr>\n";
 }
 
 
@@ -124,36 +89,29 @@ displayHtmlHeader(
 <?php
     displayHtmlBody();
     $parser = getEpg($id, $arcTime);
-?>
 
-<table>
-<tr>
-<td class="titleLogo" align="center">
-    <img src="http://www.kartina.tv/images/icons/channels/<?php echo $id?>.gif" />
-</td>
-<td class="titleText" align="center"><?php print $title ?></td>
-<td class="titleTime" align="center"><?php print date('d.m H:i', $nowTime) ?></td>
-<td class="titleArc" align="center">
-    <img src="img/indicator-<?php echo $parser->hasArchive ? "green" : "gray"?>.png" />
-</td>
-</tr>
+    $programs = array(); # programs on current page
+    $page     = 0;       # page index iterating over all possible
+    $lines    = 0;       # lines amount on current page
+    $dstPage  = null;    # index of active page
 
-<?php
-    $programs = array();
-    $page = 0;
-    $lines = 0;
-    $dstPage = null;
+    $lastProgram = null; # previous loop element, to compare begin times
+    $prevPage    = null; # time stamp of first begin time before current page
+    $nextPage    = null; # time stamp of first begin time after current page
 
-    $lastBegin = 0;
-    $prevPage = null;
-    $nextPage = null;
+    $currentProgram = null; # program currently running
 
     foreach ($parser->programs as $program) {
         # check whether it's our destination page
-        if ($arcTime >= $lastBegin && $arcTime < $program->beginTime) {
+        if ((! isset($lastProgram) || $lastProgram->beginTime <= $arcTime) && $arcTime < $program->beginTime) {
             $dstPage = $page;
         }
-        
+
+        # remember current program if it fits to bounds
+        if (isset($lastProgram) && $lastProgram->beginTime <= $nowTime && $nowTime < $program->beginTime) {
+            $currentProgram = $lastProgram;
+        }
+
         $lineHeight = 1;
         if (isset($program->details) && "" != $program->details) {
             # first details line ~= 0.55
@@ -167,11 +125,11 @@ displayHtmlHeader(
             $lines = 0;
             $page++;
 
-            # if destination page not yet found 
+            # if destination page not yet found
             # reset page programs and remember last begin time
             if (! isset($dstPage)) {
                 $programs = array();
-                $prevPage = $lastBegin;
+                $prevPage = $lastProgram->beginTime;
             }
         }
         $lines += $lineHeight;
@@ -187,34 +145,75 @@ displayHtmlHeader(
             $nextPage = $program->beginTime;
         }
 
-        # remember last begin time for next iteration
-        $lastBegin = $program->beginTime;
+        # remember last program for next iteration
+        $lastProgram = $program;
     }
 
     $totalPages = $page + 1;
+    $title  = $_GET['title'] . "   (" . LANG_EPG_FROM . " ";
+    $title .= date('d.m', $arcTime - EPG_START_OFFSET) . ", " . LANG_EPG_PAGE;
+    $title .= " " . (isset($dstPage) ? $dstPage + 1 : $totalPages);
+    $title .= "/" . $totalPages . ")";
 
+?>
 
-    if (! isset($prevPage)) {
-        $time = $arcTime -  EPG_START_OFFSET;
-        $time -= 24 * 60 * 60;
-        $time = mktime(23, 59, 59, 
-            date("n", $time), date("j", $time), date("Y", $time));
-        $prevPage = $time + EPG_START_OFFSET;
+<table>
+<tr>
+<td class="titleLogo" align="center">
+    <img src="http://www.kartina.tv/images/icons/channels/<?php echo $id?>.gif" />
+</td>
+<td class="titleText" align="center"><?php print $title ?></td>
+<td class="titleTime" align="center"><?php print date('d.m H:i', $nowTime) ?></td>
+<td class="titleArc" align="center">
+    <img src="img/indicator-<?php echo $parser->hasArchive ? "green" : "gray"?>.png" />
+</td>
+</tr>
+
+<?php
+
+    if (count($programs) == 0) {
+        print '<tr><td class="no-data" colspan="4" align="center">';
+        print '<table><tr><td>';
+        print '<img src="img/empty-list2.png" /></td><td>';
+        print LANG_ERR_NO_EPG;
+        print '</td></tr></table>';
+        print "</td></tr>\n";
+    } else {
+        # generate link to open program URL
+        $openRef  = "openChannel.php?id=$id";
+        $openRef .= ! isset($_GET['number']) ? "" : "&number=" . $_GET['number'];
+        $openRef .= ! isset($_GET['title'])  ? "" : "&title="  . $_GET['title'];
+        $openRef .= ! isset($_GET['vid'])    ? "" : "&vid="    . $_GET['vid'];
+        $openRef .= "&ref=" . urlencode($_SERVER['REQUEST_URI']);
+
+        foreach ($programs as $program) {
+            displayProgram($program, $nowTime, $parser->hasArchive,
+                $openRef, $currentProgram);
+        }
     }
-
-    if (! isset($nextPage)) {
-        $time = $arcTime - EPG_START_OFFSET;
-        $time += 24 * 60 * 60;
-        $time = mktime(0, 0, 1, 
-            date("n", $time), date("j", $time), date("Y", $time));
-        $nextPage = $time + EPG_START_OFFSET;
-    }
-
-    displayPage($id, $programs, $nowTime, $nextPage, $parser->hasArchive);
 
     # end of main table
     print "</table>\n";
 
+    # define previous page link if it wasn't already
+    if (! isset($prevPage)) {
+        $time = $arcTime -  EPG_START_OFFSET;
+        $time -= 24 * 60 * 60;
+        $time = mktime(23, 59, 59,
+            date("n", $time), date("j", $time), date("Y", $time));
+        $prevPage = $time + EPG_START_OFFSET;
+    }
+
+    # define next page link if it wasn't already
+    if (! isset($nextPage)) {
+        $time = $arcTime - EPG_START_OFFSET;
+        $time += 24 * 60 * 60;
+        $time = mktime(0, 0, 1,
+            date("n", $time), date("j", $time), date("Y", $time));
+        $nextPage = $time + EPG_START_OFFSET;
+    }
+
+    # short-cuts
     print '<a href="index.php" TVID="BACK">';
     print (EMBEDDED_BROWSER ? "" : " BACK ") . "</a>\n";
 
