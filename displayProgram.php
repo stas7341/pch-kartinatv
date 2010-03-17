@@ -17,16 +17,30 @@ $id = $_GET['id'];
 $nowTime = time() + TIME_ZONE * 60 * 60;
 
 # at 03:00 starts another EPG day
-$arcTime = isset($_GET['archiveTime']) ? $_GET['archiveTime'] : ($nowTime - 3*60*60);
+$arcTime = isset($_GET['archiveTime']) ? $_GET['archiveTime'] : $nowTime;
 
-$title = $_GET['title'] . "   (" . date('d.m', $arcTime) . ")";
+$title = $_GET['title'] . "   (" . date('d.m H:i:s', $arcTime) . ")";
 
+$ref  = $_SERVER['PHP_SELF'] . "?d=0";
+$ref .= "&id="     . $_GET['id'];
+$ref .= "&number=" . $_GET['number'];
+$ref .= "&title="  . $_GET['title'];
+$ref .= "&vid="    . $_GET['vid'];
+
+
+function getTime($date) {
+    return date("H", $date)*60*60 + date("i", $date)*60 + date("s", $date);
+}
 
 function getEpg($id, $date) {
+    # at 03:00 starts another EPG day
+    # all below 03:00 belongs to previous day
+    $date -= 3 * 60 * 60;
+
     # renew the list using existing cookie
     $ktvFunctions = new KtvFunctions();
     $program = $ktvFunctions->getEpg($id, $date);
-    
+
     $parser = new ProgramsParser();
     $parser->parse($program);
 
@@ -35,7 +49,7 @@ function getEpg($id, $date) {
 
 function displayPage($id, $programs, $nowTime, $endTime, $hasArchive) {
 
-    // detect current program    
+    // detect current program
     $currentProgram = null;
     if ($nowTime >= $programs[0]->beginTime && $nowTime < $endTime) {
         foreach ($programs as $program) {
@@ -45,29 +59,29 @@ function displayPage($id, $programs, $nowTime, $endTime, $hasArchive) {
             $currentProgram = $program;
         }
     }
-    
+
     foreach ($programs as $program) {
         print "<tr>\n";
         print '<td class="time" align="center">' . date('H:i', $program->beginTime) . "</td>\n";
 
         $linkUrl  = "openChannel.php?id=$id";
-        $linkUrl .= ! isset($_GET['number']) ? "" : "&number=" . $_GET['number']; 
+        $linkUrl .= ! isset($_GET['number']) ? "" : "&number=" . $_GET['number'];
         $linkUrl .= ! isset($_GET['title'])  ? "" : "&title="  . $_GET['title'];
         $linkUrl .= ! isset($_GET['vid'])    ? "" : "&vid="    . $_GET['vid'];
         $linkUrl .= "&ref=" . urlencode($_SERVER['REQUEST_URI']);
-    
+
         $class = "";
         $name = $program->name;
         if ($program === $currentProgram) {
             $class="current";
-            $name = EMBEDDED_BROWSER ? 
+            $name = EMBEDDED_BROWSER ?
                 '<marquee behavior="focus">'.$name.'</marquee>': $name;
             $name = "<a href=\"$linkUrl\" $linkExt>$name</a>";
         } else if ($program->beginTime <= $nowTime) {
             $class="past";
             if ($hasArchive) {
                 $linkUrl .= "&gmt=" . $program->beginTime;
-                $name = EMBEDDED_BROWSER ? 
+                $name = EMBEDDED_BROWSER ?
                     '<marquee behavior="focus">'.$name.'</marquee>': $name;
                 $name = "<a href=\"$linkUrl\" $linkExt>$name</a>";
             }
@@ -106,8 +120,8 @@ displayHtmlHeader(
     td.future-details  { font-size: 11pt; color: #AAAAAA; }
 </style>
 
-<?php 
-    displayHtmlBody(); 
+<?php
+    displayHtmlBody();
     $parser = getEpg($id, $arcTime);
 ?>
 
@@ -123,28 +137,59 @@ displayHtmlHeader(
 </td>
 </tr>
 
-<?php    
+<?php
     $programs = array();
     $page = 0;
     $lines = 0;
+    $dstPage = null;
+
+    $lastBegin = 0;
+    $prevPage = null;
+    $nextPage = null;
+
     foreach ($parser->programs as $program) {
-        $lines++;
+        // check whether it's our destination page
+        if ($arcTime >= $lastBegin && $arcTime < $program->beginTime) {
+            print date('d.m H:i', $lastBegin) . "-->" . date('d.m H:i', $program->beginTime) . "<br>";
+            $dstPage = $page;
+        }
+        
+        $lineWidth = 1;
         if (isset($program->details) && "" != $program->details) {
             // first details line ~= 0.55
             // all next lines ~= 0.4
             // mean details line length ~= 130 characters
-            $lines += 0.55 + ut8_strlen($program->details) / 130 * 0.4;
+            $lineWidth += 0.55 + ut8_strlen($program->details) / 130 * 0.4;
         }
-        if ($lines > PR_ITEMS_PER_PAGE) {
+
+        if ($lines + $lineWidth > PR_ITEMS_PER_PAGE) {
             $lines = 0;
             $page++;
+
+            // if destination page not yet found 
+            // reset page programs and remember last begin time
+            if (! isset($dstPage)) {
+                $programs = array();
+                $prevPage = $lastBegin;
+            }
         }
-        if ($page == $pageNumber) {
+        $lines += $lineWidth;
+
+        // add program to list if there is no destination page yet
+        // or if current page is the destination one
+        if (! isset($dstPage) || $dstPage == $page) {
             $programs[] = $program;
-        } else if (! isset($endTime) && $page > $pageNumber) {
-            $endTime = $program->beginTime;
         }
+
+        // if current is beyond destination remember first program begining
+        if (isset($dstPage) && $page > $dstPage && ! isset($nextPage)) {
+            $nextPage = $program->beginTime;
+        }
+
+        // remember last begin time for next iteration
+        $lastBegin = $program->beginTime;
     }
+
     $totalPages = $page + 1;
 
     if (count($programs) == 0) {
@@ -157,13 +202,49 @@ displayHtmlHeader(
         return;
     }
 
-    if (! isset($endTime)) {
-        // 30 minutes reserved for the very last program
-        $endTime = end($programs)->beginTime + 60 * 30;
+    if (! isset($prevPage)) {
+        $time = $arcTime;
+        if (getTime($time) < 3 * 60 * 60) {
+            $time -= 24 * 60 * 60;
+        }
+        $prevPage = mktime(2, 59, 59, 
+            date("n", $time), date("j", $time), date("Y", $time));
     }
-    
-    displayPage($id, $programs, $nowTime, $endTime, $parser->hasArchive);
+
+    if (! isset($nextPage)) {
+        $time = $arcTime;
+        if (getTime($time) > 3 * 60 * 60) {
+            $time += 24 * 60 * 60;
+        }
+        $nextPage = mktime(3, 0, 1, 
+            date("n", $time), date("j", $time), date("Y", $time));
+    }
+
+    displayPage($id, $programs, $nowTime, $nextPage, $parser->hasArchive);
+
 ?>
+
 </table>
 <a href="index.php" TVID="BACK"></a>
-<?php displayHtmlEnd(); ?>
+<?php
+
+    # support for days/page navigation
+    $prevDay = $arcTime - 24 * 60 * 60;
+    print '<a href="'. $ref . '&archiveTime=' . $prevDay . '" TVID="PGUP">';
+    print (EMBEDDED_BROWSER ? "" : " &lt;DAY ") . "</a>\n";
+
+    print '<a href="'. $ref . '&archiveTime=' . $prevPage . '" TVID="LEFT">';
+    print (EMBEDDED_BROWSER ? "" : " &lt;PAGE ") . "</a>\n";
+
+    print '<a href="'. $ref . '" TVID="HOME">';
+    print (EMBEDDED_BROWSER ? "" : " NOW ") . "</a>\n";
+
+    print '<a href="'. $ref . '&archiveTime=' . $nextPage . '" TVID="RIGHT">';
+    print (EMBEDDED_BROWSER ? "" : " PAGE&gt; ") . "</a>\n";
+
+    $nextDay = $arcTime + 24 * 60 * 60;
+    print '<a href="'. $ref . '&archiveTime=' . $nextDay . '" TVID="PGDN">';
+    print (EMBEDDED_BROWSER ? "" : " DAY&gt; ") . "</a>\n";
+
+    displayHtmlEnd();
+?>
