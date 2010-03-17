@@ -7,6 +7,9 @@ the IP-TV channels broadcasted by katrina.tv provider.
 
 Changes
 -------
+Changes in version 0.8.8:
+- RC support of archives, press MENU to activate detailed program
+
 Changes in version 0.8.7:
 - Beta support of archives, press REPEAT to activate day selection
 
