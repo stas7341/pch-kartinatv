@@ -66,21 +66,27 @@ function displayCategory($category) {
 function displayChannel($channel, $firstChannelNumber,
     $lastChannelNumber, $showDetailsPanel)
 {
-    $number   = ($channel->number < 10 ? "0" : "") . $channel->number;
-    $logo     = "http://iptv.kartina.tv/img/ico/24/$channel->id.gif";
-    $linkUrl  = "openChannel.php?id=$channel->id&number=$channel->number";
-    $linkUrl .= "&title=" . urlencode($channel->name);
-    $linkUrl .= "&vid=" . ($channel->isVideo ? 1 : 0);
-    $linkExt  = "name=\"channel-$channel->number\"";
+    $number  = ($channel->number < 10 ? "0" : "") . $channel->number;
+    $logo    = "http://iptv.kartina.tv/img/ico/24/$channel->id.gif";
+    $linkUrl = "openChannel.php";
+    $linkExt = "";
 
     # use media proxy if provided
     if (0 != strlen(MEDIA_PROXY)) {
-        $linkUrl  = "playlist.php?id=" . $channel->id;
-        $linkExt .= "\nvod=\"playlist\"";
+        $linkUrl = "playlist.php";
+        $linkExt = "vod=\"playlist\"\n";
         if (BUFFER_SIZE > 0) {
-            $linkExt .= "\nprebuf=\"" . (BUFFER_SIZE * 1024) . "\"";
+            $linkExt .= "prebuf=\"" . (BUFFER_SIZE * 1024) . "\"\n";
         }
     }
+
+    $linkUrl .= "?d=0"; // dummy option to include in REF argument
+    $linkUrl .= "&id=$channel->id";
+    $linkUrl .= "&number=$channel->number";
+    $linkUrl .= "&title=" . urlencode($channel->name);
+    $linkUrl .= "&vid=" . ($channel->isVideo ? 1 : 0);
+
+    $linkExt .= "name=\"channel-$channel->number\"";
     
     # info button on selected chanel
     if ("" != $channel->program) {

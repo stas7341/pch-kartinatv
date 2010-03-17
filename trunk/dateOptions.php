@@ -27,6 +27,7 @@ for ($i=0; $i < 12; $i++) {
     $currentTime-=86400;
 
     $linkUrl  = "displayProgram.php?ref=" . $_GET['ref'];
+    $linkUrl .= "&id=" . $_GET['id'];
     $linkUrl .= "&title=" . $_GET['title'];
     $linkUrl .= "&number=" . $_GET['number'];
     $linkUrl .= "&vid=" . $_GET['vid'];

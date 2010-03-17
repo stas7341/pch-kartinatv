@@ -5,151 +5,77 @@
 # Author: consros 2009                                                      #
 #############################################################################
 
+require_once "pageTools.inc";
 require_once "settings.inc";
 require_once "ktvFunctions.inc";
 require_once "channelsParser.inc";
+require_once "lang.inc";
+require_once "uft8_tools.inc";
 
-session_start();
+$id = $_GET['id'];
 
-# id transmitted as a part of ref parameter at the very end
-$id  = preg_replace('/.*\?id=/', '', $_GET['ref']);
-$realTime = (time() + (TIME_ZONE * 60 * 60));
-$currentTime = isset($_GET['archiveTime']) ? $_GET['archiveTime'] : $realTime;
-#date(EPG_DATE_FORMAT, time() + ((TIME_ZONE - 3.5) * 60 * 60))
-# $ref = isset($_GET['ref']) ? $_GET['ref'] : "index.php";
-$ref = "index.php";
+$nowTime = time() + TIME_ZONE * 60 * 60;
+
+# at 03:00 starts another EPG day
+$arcTime = isset($_GET['archiveTime']) ? $_GET['archiveTime'] : ($nowTime - 3*60*60);
+
+$title = $_GET['title'] . "   (" . date('d.m', $arcTime) . ")";
 
 
-function getArraySlice($array, $selIndex, $wndWidth) {
-    return getBottomArraySlice($array, $selIndex, $wndWidth);
-}
-
-function getBottomArraySlice($array, $selIndex, $wndWidth) {    
-    $backStep = 2;
-    $A = max(0, $selIndex - $backStep - 1);
-    $B = min(count($array), $A + $wndWidth);
-    while ($B - $A < $wndWidth && $A > 0) {
-        $A--;
-    }
-    return array_slice($array, $A, $B - $A); 
-}
-
-function getMiddleArraySlice($array, $selIndex, $wndWidth) {    
-    $lastIndex = count($array) - 1;
-
-    $leftWidth  = (int) ($wndWidth / 2);
-    $rightWidth = (int) ($wndWidth / 2 - 0.5);
-
-    $leftWished  = $selIndex - $leftWidth;
-    $rightWished = $selIndex + $rightWidth;
-
-    $leftOver  = max(0, 0 - $leftWished);
-    $rightOver = max(0, $rightWished - $lastIndex);
-
-    $A = max(0, $leftWished - $rightOver);
-    $B = min($lastIndex, $rightWished + $leftOver);
-
-    return array_slice($array, $A, $B - $A + 1); 
-}
-
-function calcWndWidth($programs, $defaultWidth) {    
-    if (count($programs) == 0) {
-        return $defaultWidth;
-    }
-    foreach ($programs as $program) {
-        if (isset($program->details) && "" != $program->details) {
-            $detailed++;
-        }
-    }
-    return $defaultWidth - $detailed * 0.5 * $defaultWidth / count($programs);
-}
-
-?>
-<html>
-<head>
-    <title>NMT detailed programs list for desired channel</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta http-equiv="refresh" content="60" />
-    <?php displayCommonStyles(FONT_SIZE); ?>
-    <style type="text/css">
-        td.no-data   { font-weight: bold; background-color: #005B95; }
-        td.past      { background-color: #4d6080; }
-        td.current   { background-color: #99a1bd; font-size: 16pt; font-weight: bold; }
-        td.future    { background-color: #6d80a0; }
-        td.title     { width: 800px; font-weight: bold; background-color: #005B95; }
-        td.titleTime { width: 200px; font-weight: bold; background-color: #005B95; }
-        td.time      { width: 100px; font-weight: bold; background-color: #005B95; }
-        td.current-details { font-size: 12pt; }
-        td.past-details    { font-size: 11pt; color: #888888; }
-        td.future-details  { font-size: 11pt; color: #AAAAAA; }
-    </style>
-</head>
-<body <?php echo getBodyStyles() ?>>
-<div align="center">
-<table>
-<tr>
-<td class="time" align="center">
-    <img src="http://www.kartina.tv/images/icons/channels/<?php echo $id?>.gif" />
-</td>
-<td class="title" align="center"><?php echo $_GET['title'] ?></td>
-<td class="titleTime" align="center"><?php echo date('d.m H:i', $currentTime)?></td>
-</tr>
-
-<?php
+function getEpg($id, $date) {
     # renew the list using existing cookie
     $ktvFunctions = new KtvFunctions();
-    $program = $ktvFunctions->getEpg($id, $currentTime);
+    $program = $ktvFunctions->getEpg($id, $date);
     
     $parser = new ProgramsParser();
     $parser->parse($program);
 
+    return $parser;
+}
+
+function displayPage($id, $programs, $nowTime, $endTime, $hasArchive) {
+
+    // detect current program    
     $currentProgram = null;
-    $currentIndex = 0;
-    foreach ($parser->programs as $program) {
-        if ($program->beginTime > $realTime) {
-            break;
+    if ($nowTime >= $programs[0]->beginTime && $nowTime < $endTime) {
+        foreach ($programs as $program) {
+            if ($program->beginTime > $nowTime) {
+                break;
+            }
+            $currentProgram = $program;
         }
-        $currentProgram = $program;
-        $currentIndex++;
     }
-
-    if (count($parser->programs) == 0) {
-        print '<tr><td class="no-data" colspan="3" align="center">- - -</td></tr>';
-        return;
-    }
-
-    $wndWidth = calcWndWidth($parser->programs, PR_ITEMS_PER_PAGE);
-    $programs = getArraySlice($parser->programs, $currentIndex, $wndWidth);
+    
     foreach ($programs as $program) {
         print "<tr>\n";
         print '<td class="time" align="center">' . date('H:i', $program->beginTime) . "</td>\n";
 
         $linkUrl  = "openChannel.php?id=$id";
-        $linkUrl .= "&number=" . $_GET['number'];
-        $linkUrl .= "&title=" . $_GET['title'];
-        $linkUrl .= "&vid=" . $_GET['vid'];
+        $linkUrl .= ! isset($_GET['number']) ? "" : "&number=" . $_GET['number']; 
+        $linkUrl .= ! isset($_GET['title'])  ? "" : "&title="  . $_GET['title'];
+        $linkUrl .= ! isset($_GET['vid'])    ? "" : "&vid="    . $_GET['vid'];
         $linkUrl .= "&ref=" . urlencode($_SERVER['REQUEST_URI']);
     
         $class = "";
         $name = $program->name;
         if ($program === $currentProgram) {
             $class="current";
-            
             $name = EMBEDDED_BROWSER ? 
                 '<marquee behavior="focus">'.$name.'</marquee>': $name;
             $name = "<a href=\"$linkUrl\" $linkExt>$name</a>";
-        } else if ($program->beginTime <= $realTime) {
+        } else if ($program->beginTime <= $nowTime) {
             $class="past";
-
-            $linkUrl .= "&gmt=" . $program->beginTime;
-            $name = EMBEDDED_BROWSER ? 
-                '<marquee behavior="focus">'.$name.'</marquee>': $name;
-            $name = "<a href=\"$linkUrl\" $linkExt>$name</a>";
+            if ($hasArchive) {
+                $linkUrl .= "&gmt=" . $program->beginTime;
+                $name = EMBEDDED_BROWSER ? 
+                    '<marquee behavior="focus">'.$name.'</marquee>': $name;
+                $name = "<a href=\"$linkUrl\" $linkExt>$name</a>";
+            }
         } else {
             $class="future";
         }
 
-        print "<td class=\"$class\" colspan=\"2\">\n";
+        print "<td class=\"$class\" colspan=\"3\">\n";
         print "<table width=\"100%\"><tr>\n";
         print '<td>' . $name . "</td>\n";
         if (isset($program->details) && "" != $program->details) {
@@ -159,9 +85,85 @@ function calcWndWidth($programs, $defaultWidth) {
         print "</tr></table>\n";
         print "</td></tr>\n";
     }
+}
+
+
+displayHtmlHeader(
+    "NMT detailed programs list for desired channel", 60);
+?>
+<style type="text/css">
+    td.no-data   { height:570px; background-color: #4d6080; }
+    td.titleText { width: 760px; font-weight: bold; background-color: #005B95; }
+    td.titleTime { width: 200px; font-weight: bold; background-color: #005B95; }
+    td.titleLogo { width: 100px; font-weight: bold; background-color: #005B95; }
+    td.titleArc  { width:  40px; font-weight: bold; background-color: #005B95; }
+    td.time      { background-color: #005B95; font-weight: bold; }
+    td.past      { background-color: #4d6080; }
+    td.current   { background-color: #99a1bd; font-size: 16pt; font-weight: bold; }
+    td.future    { background-color: #6d80a0; }
+    td.current-details { font-size: 12pt; }
+    td.past-details    { font-size: 11pt; color: #888888; }
+    td.future-details  { font-size: 11pt; color: #AAAAAA; }
+</style>
+
+<?php 
+    displayHtmlBody(); 
+    $parser = getEpg($id, $arcTime);
+?>
+
+<table>
+<tr>
+<td class="titleLogo" align="center">
+    <img src="http://www.kartina.tv/images/icons/channels/<?php echo $id?>.gif" />
+</td>
+<td class="titleText" align="center"><?php print $title ?></td>
+<td class="titleTime" align="center"><?php print date('d.m H:i', $nowTime) ?></td>
+<td class="titleArc" align="center">
+    <img src="img/indicator-<?php echo $parser->hasArchive ? "green" : "gray"?>.png" />
+</td>
+</tr>
+
+<?php    
+    $programs = array();
+    $page = 0;
+    $lines = 0;
+    foreach ($parser->programs as $program) {
+        $lines++;
+        if (isset($program->details) && "" != $program->details) {
+            // first details line ~= 0.55
+            // all next lines ~= 0.4
+            // mean details line length ~= 130 characters
+            $lines += 0.55 + ut8_strlen($program->details) / 130 * 0.4;
+        }
+        if ($lines > PR_ITEMS_PER_PAGE) {
+            $lines = 0;
+            $page++;
+        }
+        if ($page == $pageNumber) {
+            $programs[] = $program;
+        } else if (! isset($endTime) && $page > $pageNumber) {
+            $endTime = $program->beginTime;
+        }
+    }
+    $totalPages = $page + 1;
+
+    if (count($programs) == 0) {
+        print '<tr><td class="no-data" colspan="4" align="center">';
+        print '<table><tr><td>';
+        print '<img src="img/empty-list2.png" /></td><td>';
+        print LANG_ERR_NO_EPG;
+        print '</td></tr></table>';
+        print "</td></tr>\n";
+        return;
+    }
+
+    if (! isset($endTime)) {
+        // 30 minutes reserved for the very last program
+        $endTime = end($programs)->beginTime + 60 * 30;
+    }
+    
+    displayPage($id, $programs, $nowTime, $endTime, $parser->hasArchive);
 ?>
 </table>
-<a href="<?php print $ref ?>" TVID="BACK"></a>
-</div>
-</body>
-</html>
+<a href="index.php" TVID="BACK"></a>
+<?php displayHtmlEnd(); ?>
