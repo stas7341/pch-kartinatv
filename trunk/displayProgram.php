@@ -19,6 +19,10 @@ $id = $_GET['id'];
 $nowTime = time() + TIME_ZONE * 60 * 60;
 $arcTime = isset($_GET['archiveTime']) ? $_GET['archiveTime'] : $nowTime;
 
+function formatDate($formatStr, $date) {
+   $daysOfWeekArray = explode(',', LANG_WEEK_DAYS);
+   return $daysOfWeekArray[date('w', $date)] . " " . date($formatStr, $date);
+}
 
 function getEpg($id, $date) {
     # at 03:00 starts another EPG day
@@ -53,12 +57,22 @@ function displayProgram($program, $nowTime, $hasArchive, $openRef, $currentProgr
         }
     }
 
-    $beginTime = date('H:i', $program->beginTime);
+    $t = $program->beginTime;
+    $hour = date('H', $t) * 60 * 60 + date('i', $t) * 60 + date('s', $t);
+    if ($hour < EPG_START_OFFSET) {
+        $timeClass = "timeNight";
+        $beginTime = formatDate('H:i', $t);
+    } else {
+        $timeClass = "time";
+        $beginTime = date('H:i', $t);
+    }
+
+
     $details = ! isset($program->details) || "" == $program->details ? "" :
         "</tr><tr><td class=\"${class}-details\">$program->details</td>\n";
 
     print "<tr>\n";
-    print '<td class="time" align="center">' . $beginTime . "</td>\n";
+    print "<td class=\"$timeClass\" align=\"center\">$beginTime</td>\n";
     print "<td class=\"$class\" colspan=\"3\">\n";
     print "<table width=\"100%\"><tr>\n";
     print '<td>' . $name . "</td>\n";
@@ -67,7 +81,6 @@ function displayProgram($program, $nowTime, $hasArchive, $openRef, $currentProgr
     print "</td></tr>\n";
 }
 
-
 displayHtmlHeader(
     "NMT detailed programs list for desired channel", 300);
 ?>
@@ -75,9 +88,10 @@ displayHtmlHeader(
     td.no-data   { height:570px; background-color: #4d6080; }
     td.titleText { width: 760px; font-weight: bold; background-color: #005B95; }
     td.titleTime { width: 200px; font-weight: bold; background-color: #005B95; }
-    td.titleLogo { width: 100px; font-weight: bold; background-color: #005B95; }
+    td.titleLogo { width: 140px; font-weight: bold; background-color: #005B95; }
     td.titleArc  { width:  40px; font-weight: bold; background-color: #005B95; }
     td.time      { background-color: #005B95; font-weight: bold; }
+    td.timeNight { background-color: #005B95; font-weight: bold; color: #888888; }
     td.past      { background-color: #4d6080; }
     td.current   { background-color: #99a1bd; font-size: 16pt; font-weight: bold; }
     td.future    { background-color: #6d80a0; }
@@ -114,10 +128,11 @@ displayHtmlHeader(
 
         $lineHeight = 1;
         if (isset($program->details) && "" != $program->details) {
-            # first details line ~= 0.55
-            # all next lines ~= 0.4
-            # mean details line length ~= 130 characters
-            $lineHeight += 0.55 + ut8_strlen($program->details) / 130 * 0.4;
+            # first details line ~= 0.58
+            # all next lines ~= 0.48
+            # mean details line length ~= 205 characters
+            $lineHeight += 0.58;
+            $lineHeight += (int)(ut8_strlen($program->details)/205) * 0.48;
         }
 
         # check height of current page
@@ -152,7 +167,7 @@ displayHtmlHeader(
     # generate title
     $totalPages = $page + 1;
     $title  = $_GET['title'] . "   (" . LANG_EPG_FROM . " ";
-    $title .= date('d.m', $arcTime - EPG_START_OFFSET);
+    $title .= formatDate('d.m', $arcTime - EPG_START_OFFSET);
 
     # show pages only if there are more than one
     if ($totalPages > 1) {
@@ -162,6 +177,7 @@ displayHtmlHeader(
     }
     $title .= ")";
 
+    $titleTime = formatDate('d.m H:i', $nowTime);
 ?>
 
 <table>
@@ -170,7 +186,7 @@ displayHtmlHeader(
     <img src="http://www.kartina.tv/images/icons/channels/<?php echo $id?>.gif" />
 </td>
 <td class="titleText" align="center"><?php print $title ?></td>
-<td class="titleTime" align="center"><?php print date('d.m H:i', $nowTime) ?></td>
+<td class="titleTime" align="center"><?php print $titleTime ?></td>
 <td class="titleArc" align="center">
     <img src="img/indicator-<?php echo $parser->hasArchive ? "green" : "gray"?>.png" />
 </td>
@@ -241,6 +257,7 @@ displayHtmlHeader(
 
     print '<a href="'. $epgRef . '" TVID="HOME">';
     print (EMBEDDED_BROWSER ? "" : " NOW ") . "</a>\n";
+    print '<a href="'. $epgRef . '" TVID="TAB">' . "</a>\n";
 
     # forward +5 days
     print '<a href="'. $epgRef . '&archiveTime=' . $nextPage . '" TVID="RIGHT">';
