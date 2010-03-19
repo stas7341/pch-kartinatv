@@ -9,8 +9,10 @@
 define("LANG_YES", "Да");
 define("LANG_NO",  "Нет");
 
-define("LANG_EPG_FROM", "от");
+define("LANG_EPG_FROM", "за");
 define("LANG_EPG_PAGE", "страница");
+
+define("LANG_WEEK_DAYS", "Вс,Пн,Вт,Ср,Чт,Пт,Сб");
 
 define("LANG_DAYS_LIST", "Переход к нужному дню");
 define("LANG_CHANNELS_LIST", "Список каналов");
