@@ -11,6 +11,7 @@ require_once "settings.inc";
 require_once "tools.inc";
 
 define("COOKIE_NAME", "KtvCookie");
+define("BASE_URL", "http://iptv.kartina.tv/");
 
 class KtvFunctions {
     var $traces;
@@ -38,7 +39,7 @@ class KtvFunctions {
         $params  = "act=login";
         $params .= "&code_login=" . USERNAME;
         $params .= "&code_pass="  . PASSWORD;
-        $html = getPageContentByPost("http://iptv.kartina.tv", $params);
+        $html = getPageContentByPost(BASE_URL, $params);
         $this->cookie = parseOutCookies($html);
         strpos($this->cookie, "SSID") or 
             die (USERNAME . ": Authorization of user failed!");
@@ -49,8 +50,13 @@ class KtvFunctions {
     }
 
     function isAuthorized($reply) {
-        $ok = false == strpos($reply, "code_login") && 
-            false == strpos($reply, "code_pass");
+        $ok = isset($this->cookie) &&
+            0 != strlen($this->cookie) &&
+            false == strpos($this->cookie, "deleted") &&
+            false == strpos($reply, "code_login") && 
+            false == strpos($reply, "code_pass") && 
+            false == strpos($reply, "msg=access_denied") && 
+            false == strpos($reply, "msg=auth_err");
         if (! $ok) {
             $this->trace("Authorization missed or lost");
         }
@@ -71,14 +77,12 @@ class KtvFunctions {
     }
 
     function getChannelsList() {
-        $url  = "http://iptv.kartina.tv/";
-        $url .= "?m=channels&act=get_list_xml";
+        $url = BASE_URL . "?m=channels&act=get_list_xml";
         return $this->getData($url, "channels list");
     }
 
     function getStreamUrl($id, $time = null) {
-        $url  = "http://iptv.kartina.tv/";
-        $url .= "?m=channels&act=get_stream_url&cid=$id";
+        $url = BASE_URL . "?m=channels&act=get_stream_url&cid=$id";
         if (isset($time) && null != $time) {
             $url .= "&gmt=$time";
         }
@@ -94,8 +98,7 @@ class KtvFunctions {
             $param .= "" == $param ? "" : ",";
             $param .= $id;
         }
-        $url  = "http://iptv.kartina.tv/";
-        $url .= "?m=channels&act=get_info_xml&cids=";
+        $url  = BASE_URL . "?m=channels&act=get_info_xml&cids=";
         $url .= urlencode($param);
         return $this->getData($url, "info of streams");
     }
@@ -105,32 +108,30 @@ class KtvFunctions {
         # NOTE: at 03:00 starts another EPG day
         $date = isset($date) ? date(EPG_DATE_FORMAT, $date) : 
             date(EPG_DATE_FORMAT, time() + ((TIME_ZONE - 3) * 60 * 60));
-        $url  = "http://iptv.kartina.tv/";
+        $url  = BASE_URL;
         $url .= "?m=epg&act=show_day_xml&day=$date&cid=$id";
         return $this->getData($url, "EPG for channel $id");
     }
 
     function getTimeShift() {
-        $url  = "http://iptv.kartina.tv/";
-        $url .= "?m=clients&act=form_tshift";
+        $url = BASE_URL . "?m=clients&act=form_tshift";
         return $this->getData($url, "time shift");
     }
 
     function setTimeShift($timeShift) {
-        $url  = "http://iptv.kartina.tv/";
+        $url  = BASE_URL;
         $url .= "?act=x_set_timeshift&m=clients&ts=$timeShift";
         return $this->getData($url, "(setting) time shift $timeShift");
     }    
 
     function getBroadcastingServer() {
-        $url  = "http://iptv.kartina.tv/";
-        $url .= "?m=clients&act=form_sserv";
+        $url = BASE_URL . "?m=clients&act=form_sserv";
         return $this->getData($url, "broadcasting server");
     }
 
     function setBroadcastingServer($server) {
         $server = $server == 1 ? 3 : 1;
-        $url  = "http://iptv.kartina.tv/";
+        $url = BASE_URL;
         $url .= "?act=x_set_sserv&m=clients&ssrv=$server";
         return $this->getData($url, "(selecting) server $server");
     }    
