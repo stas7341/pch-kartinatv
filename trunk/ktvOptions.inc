@@ -127,6 +127,10 @@ class KtvTimeShiftOption extends ListOption {
     function init() {
         $content = $this->ktvFunctions->getTimeShift();
         $this->parseHtmlOptions($content);
+        if (isset($this->value) && 0 != strlen($this->value)) {
+            $_SESSION['timeShift'] = $this->value;
+        }
+
         if (preg_match('|<h3>(.*?)</h3>|', $content, $matches)) {
             $this->name = $matches[1];
         }
