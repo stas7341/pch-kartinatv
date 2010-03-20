@@ -14,7 +14,7 @@ define("LANG_EPG_PAGE", "страница");
 
 define("LANG_WEEK_DAYS", "Вс,Пн,Вт,Ср,Чт,Пт,Сб");
 
-define("LANG_DAYS_LIST", "Переход к нужному дню");
+define("LANG_DAYS_LIST", "Быстрый переход к нужному дню архива");
 define("LANG_CHANNELS_LIST", "Список каналов");
 
 define("LANG_NOT_IMPLEMENTED", "<br /><b>Опция временно не работает!</b>");
