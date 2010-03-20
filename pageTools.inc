@@ -5,9 +5,8 @@
 #############################################################################
 
 // Show occured errors
-ini_set("display_errors", "true");
-
-// Report all errors except E_NOTICE
+ini_set('display_errors', 1);
+ini_set('error_reporting', E_ALL ^ E_NOTICE);
 error_reporting(E_ALL ^ E_NOTICE);
 
 require_once "settings.inc";
@@ -23,8 +22,12 @@ session_start();
 $htmlState = 1;
 
 // handle selected channel if provided
-if (isset($_GET['number'])) {
+if (isset($_GET['selectedChannel'])) {
+    $_SESSION['selectedChannel'] = $_GET['selectedChannel'];
+} else if (isset($_GET['number'])) {
     $_SESSION['selectedChannel'] = $_GET['number'];
+} else {
+    $_GET['selectedChannel'] = 1;
 }
 
 function displayHtmlHeader($title = "NMT Kartina.TV plugin", 
