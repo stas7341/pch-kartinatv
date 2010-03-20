@@ -7,6 +7,7 @@
 # Author: consros 2010                                                      #
 #############################################################################
 
+require_once("pageTools.inc");
 require_once("settings.inc");
 require_once("sorter.inc");
 
@@ -72,11 +73,15 @@ class Category {
 class AbstractParser {
     function parseFile($filename) {
         if (! ($fp = fopen($filename, "r"))) {
-            die ("Could not open XML file: $filename");
+            dieOnError(LANG_ERR_FILE_READ . ": " . $filename);
         }
         $data = fread($fp, filesize($filename));
         fclose($fp);
         $this->parse($data);
+    }
+
+    function dieOnWrongElement($xmlElem) {
+        dieOnError(reportWrongElement($xmlElem));
     }
 
     function reportWrongElement($xmlElem) {
@@ -125,7 +130,7 @@ class ChannelsParser extends AbstractParser {
             if ('open' == $xmlElem['type']) {
                 if ('CHANNELGROUP' == $xmlElem['tag']) {
                     if ('2' != $xmlElem['level']) {
-                        die (reportWrongElement($xmlElem));
+                        dieOnWrongElement($xmlElem);
                     }
                     $attr = $xmlElem['attributes'];
                     $category = new Category(
@@ -137,7 +142,7 @@ class ChannelsParser extends AbstractParser {
             else if ('complete' == $xmlElem['type']) {
                 if ('CHANNEL' == $xmlElem['tag']) {
                     if ('3' != $xmlElem['level']) {
-                        die (reportWrongElement($xmlElem));
+                        dieOnWrongElement($xmlElem);
                     }
                     $attr = $xmlElem['attributes'];
                     $channel = new Channel(
@@ -186,14 +191,14 @@ class ProgramsParser extends AbstractParser {
         foreach ($elements as $xmlElem) {
             if ('complete' == $xmlElem['type'] && 'ITEM' == $xmlElem['tag']) {
                 if ('2' != $xmlElem['level']) {
-                    die (reportWrongElement($xmlElem));
+                    dieOnWrongElement($xmlElem);
                 }
                 $attr = $xmlElem['attributes'];
                 $this->programs[] = new Program(
                     $attr['PROGNAME'], $attr['PDESCR'], $attr['T_START']);
             } else if ('open' == $xmlElem['type'] && 'PROGRAMM' == $xmlElem['tag']) {
                 if ('1' != $xmlElem['level']) {
-                    die (reportWrongElement($xmlElem));
+                    dieOnWrongElement($xmlElem);
                 }
                 $attr = $xmlElem['attributes'];
                 $this->hasArchive = '1' == $attr['HAVE_ARCHIVE'];
