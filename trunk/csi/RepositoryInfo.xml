@@ -4,7 +4,7 @@
     <Applications>
         <Application>
             <Name>KartinaTV</Name>
-            <Version>0.8.8</Version>
+            <Version>0.8.9</Version>
             <DownloadURL>http://pch-kartinatv.googlecode.com/svn/trunk/csi/KartinaTV-installer.zip</DownloadURL>
             <Author>consros</Author>
             <Maintainer>consros</Maintainer>
