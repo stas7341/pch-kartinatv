@@ -22,12 +22,10 @@ $nowTime = time() + TIME_ZONE * 60 * 60;
 $arcTime = isset($_GET['archiveTime']) ? $_GET['archiveTime'] : $nowTime;
 
 function getTime($program) {
-    if (! isset($_SESSION['timeShift'])) {
-        $ktvFunctions = new KtvFunctions();
-        $option = new KtvTimeShiftOption($ktvFunctions);
-        $option->init();
-    }
-    return $program->beginTime + ($_SESSION['timeShift'] + TIME_ZONE) * 60 * 60;
+    # time shift will be taken directly from channel name
+    preg_match('/^.* -(\d+)$/', $_GET['title'], $matches);
+    $timeShift = isset($matches[1]) ? $matches[1] : 0;
+    return $program->beginTime + ($timeShift + TIME_ZONE) * 60 * 60;
 }
 
 function getEpg($id, $date) {
