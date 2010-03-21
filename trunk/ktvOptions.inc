@@ -165,7 +165,6 @@ class KtvBroadcastingServerOption extends ListOption {
 
         if (preg_match('|<div>(.*?)</div>|', $content, $matches)) {
             $this->description = $matches[1];
-            $this->description .= " " . LANG_NOT_IMPLEMENTED;
         }
     }
     function save($newValue) {
