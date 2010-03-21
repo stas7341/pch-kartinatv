@@ -14,7 +14,7 @@ function getBackgrounds() {
         getDeviantArtBackgrounds(),
         getDeviantArtBackgrounds());
     shuffle($images);
-    return $images;    
+    return $images;
 }
 
 function getDeviantArtBackgrounds() {
@@ -26,11 +26,11 @@ function getDeviantArtBackgrounds() {
         "http://browse.deviantart.com/photography/?order=9&offset=$offset", "");
     $content = compactHtml($content);
     $content = preg_replace('|You are viewing.*|', '', $content);
-    if (preg_match_all('|"http://th\d\d\.deviantart\..../[^"]*\.jpg"|i', 
-            $content, $matches)) 
+    if (preg_match_all('|"http://th\d\d\.deviantart\..../[^"]*\.jpg"|i',
+            $content, $matches))
     {
         foreach ($matches[0] as $thumb) {
-            $images[] = preg_replace('|"http://th(\d\d.*?)/150/(.*?)"$|', 
+            $images[] = preg_replace('|"http://th(\d\d.*?)/150/(.*?)"$|',
                 'http://fc$1/$2', $thumb);
         }
     }
@@ -44,11 +44,11 @@ function getPhotoDomBackgrounds() {
     $content = getPageContentByGet(
         "http://www.photodom.com/bestofweek.php", "");
     $content = compactHtml($content);
-    if (preg_match_all('|"\.\./new_fotos/\d\d\d\d/\d\d/\d\d?/thumb_\d*\.jpg"|i', 
-            $content, $matches)) 
+    if (preg_match_all('|"\.\./new_fotos/\d\d\d\d/\d\d/\d\d?/thumb_\d*\.jpg"|i',
+            $content, $matches))
     {
         foreach ($matches[0] as $thumb) {
-            $images[] = preg_replace('|"\.\./(.*?)/thumb_(.*?\.jpg)"$|', 
+            $images[] = preg_replace('|"\.\./(.*?)/thumb_(.*?\.jpg)"$|',
                 'http://www.photodom.com/$1/$2', $thumb);
         }
     }
