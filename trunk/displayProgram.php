@@ -53,13 +53,17 @@ function displayProgram($program, $nowTime, $hasArchive, $openRef, $currentProgr
         $name = EMBEDDED_BROWSER ?
             "<marquee behavior=\"focus\">$name</marquee>" : $name;
         $name = "<a href=\"$openRef\">$name</a>";
-    } else if (getTime($program) <= $nowTime) {
-        $class="past";
+    } else if ($program->beginTime + TIME_ZONE * 60 * 60 <= $nowTime) {
+        // no time shift offset for links, since it doesn't affect record
         if ($hasArchive) {
             $openRef .= "&gmt=" . $program->beginTime;
             $name = EMBEDDED_BROWSER ?
                 "<marquee behavior=\"focus\">$name</marquee>" : $name;
             $name = "<a href=\"$openRef\">$name</a>";
+        }
+        // but there is time shift for displayed style
+        if (getTime($program) <= $nowTime) {
+            $class="past";
         }
     }
 
