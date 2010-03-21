@@ -13,12 +13,23 @@ require_once "tools.inc";
 displayHtmlHeader("NMT Kartina.TV Archive");
 ?>
 <style type="text/css">
-    th { background-color: #005B95; width: 500px; }
+    th { font-weight: bold; background-color: #005B95; }
+    th.titleLogo { width:  60px;  }
+    th.titleText { width: 440px;  }
     td { background-color: #6d80a0; }
 </style>
 <?php
 displayHtmlBody();
-print '<table><tr><th align="center">' . LANG_DAYS_LIST . '</th></tr>';
+?>
+<table><tr>
+<th align="center" colspan="2"><?php echo LANG_DAYS_LIST ?></th>
+</tr></tr>
+<th align="center" class="titleLogo">
+    <img src="http://iptv.kartina.tv/img/ico/24/<?php echo $_GET['id'] ?>.gif" />
+</th>    
+<th align="center" class="titleText"><?php echo $_GET['title'] ?></th>
+</tr>
+<?php
 
 $arcTime = time() + (TIME_ZONE * 60 * 60);
 $linkUrl  = "displayProgram.php?ref=" . $_GET['ref'];
@@ -33,7 +44,7 @@ for ($i = 0; $i < 14; $i++) {
     $name = formatDate('d.m.Y', $arcTime);
     $name = "<a href=\"$linkUrl&archiveTime=$arcTime\">$name</a>";
 
-    print '<tr><td align="center">' . $name . "</td></tr>\n";
+    print '<tr><td align="center" colspan="2">' . $name . "</td></tr>\n";
 }
 
 print '</table>';
