@@ -8,8 +8,10 @@
 require_once "pageTools.inc";
 require_once "settings.inc";
 require_once "ktvFunctions.inc";
+require_once "ktvOptions.inc";
 require_once "channelsParser.inc";
 require_once "lang.inc";
+require_once "tools.inc";
 require_once "uft8_tools.inc";
 
 # at 03:00 starts another EPG day
@@ -19,9 +21,13 @@ $id = $_GET['id'];
 $nowTime = time() + TIME_ZONE * 60 * 60;
 $arcTime = isset($_GET['archiveTime']) ? $_GET['archiveTime'] : $nowTime;
 
-function formatDate($formatStr, $date) {
-   $daysOfWeekArray = explode(',', LANG_WEEK_DAYS);
-   return $daysOfWeekArray[date('w', $date)] . " " . date($formatStr, $date);
+function getTime($program) {
+    if (! isset($_SESSION['timeShift'])) {
+        $ktvFunctions = new KtvFunctions();
+        $option = new KtvTimeShiftOption($ktvFunctions);
+        $option->init();
+    }
+    return $program->beginTime + $_SESSION['timeShift'] * 60 * 60;
 }
 
 function getEpg($id, $date) {
@@ -47,7 +53,7 @@ function displayProgram($program, $nowTime, $hasArchive, $openRef, $currentProgr
         $name = EMBEDDED_BROWSER ?
             "<marquee behavior=\"focus\">$name</marquee>" : $name;
         $name = "<a href=\"$openRef\">$name</a>";
-    } else if ($program->beginTime <= $nowTime) {
+    } else if (getTime($program) <= $nowTime) {
         $class="past";
         if ($hasArchive) {
             $openRef .= "&gmt=" . $program->beginTime;
@@ -57,7 +63,7 @@ function displayProgram($program, $nowTime, $hasArchive, $openRef, $currentProgr
         }
     }
 
-    $t = $program->beginTime;
+    $t = getTime($program);
     $hour = date('H', $t) * 60 * 60 + date('i', $t) * 60 + date('s', $t);
     if ($hour < EPG_START_OFFSET) {
         $timeClass = "timeNight";
@@ -117,12 +123,12 @@ displayHtmlHeader(
 
     foreach ($parser->programs as $program) {
         # check whether it's our destination page
-        if ((! isset($lastProgram) || $lastProgram->beginTime <= $arcTime) && $arcTime < $program->beginTime) {
+        if ((! isset($lastProgram) || getTime($lastProgram) <= $arcTime) && $arcTime < getTime($program)) {
             $dstPage = $page;
         }
 
         # remember current program if it fits to bounds
-        if (isset($lastProgram) && $lastProgram->beginTime <= $nowTime && $nowTime < $program->beginTime) {
+        if (isset($lastProgram) && getTime($lastProgram) <= $nowTime && $nowTime < getTime($program)) {
             $currentProgram = $lastProgram;
         }
 
@@ -144,7 +150,7 @@ displayHtmlHeader(
             # reset page programs and remember last begin time
             if (! isset($dstPage)) {
                 $programs = array();
-                $prevPage = $lastProgram->beginTime;
+                $prevPage = getTime($lastProgram);
             }
         }
         $lines += $lineHeight;
@@ -157,7 +163,7 @@ displayHtmlHeader(
 
         # if current is beyond destination remember first program begining
         if (isset($dstPage) && $page > $dstPage && ! isset($nextPage)) {
-            $nextPage = $program->beginTime;
+            $nextPage = getTime($program);
         }
 
         # remember last program for next iteration
