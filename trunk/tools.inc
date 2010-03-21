@@ -5,6 +5,8 @@
 # Author: consros 2009                                                      #
 #############################################################################
 
+require_once "lang.inc";
+
 function compactHtml($html) {
     # compact all to a single line
     $html = preg_replace('|\n|', '', $html);
@@ -57,7 +59,7 @@ function getPageContentByGet($url, $headerExt) {
     error_reporting($oldLevel);
 
     if (! $f) {
-        die ("Cannot open $host");
+        dieOnError(LANG_ERR_SERVER_CONNECTION . ": " . $host);
     }
 
     $content = "";
@@ -85,7 +87,7 @@ function getPageContentByPost($url, $params, $headerExt = "") {
 
     $fp = fsockopen($host, $port, $errno, $errstr, 30); 
     if (! $fp) {
-        die ("Cannot open $host");
+        dieOnError(LANG_ERR_SERVER_CONNECTION . ": " . $host);
     }
 
     fputs($fp, $header . $params);
@@ -98,7 +100,8 @@ function getPageContentByPost($url, $params, $headerExt = "") {
 
 
 function readLocalFile($filename) {
-    $fh = fopen($filename, 'r') or die("Cannot read file: " . $filename);
+    $fh = fopen($filename, 'r') or 
+        dieOnError(LANG_ERR_FILE_READ . ": " . $filename);
     while($data = fread($fh, 1024)) {
         $content .= $data;
     }
@@ -107,35 +110,15 @@ function readLocalFile($filename) {
 }
 
 function writeLocalFile($filename, $content) {
-    $fh = fopen($filename, 'w') or die("Cannot write file: " . $filename);
+    $fh = fopen($filename, 'w') or 
+        dieOnError(LANG_ERR_FILE_WRITE . ": " . $filename);
     fwrite($fh, $content);
     fclose($fh);
 }
 
-
-function getBodyStyles() {
-    return 'focusColor="#880000" focusText="#000000" background="img/bg.jpg"';
-}
-
-function displayCommonStyles($fontSize) {
-?>
-<style type="text/css">
-    body { 
-        color             : white; 
-        background-color  : #27699B; 
-        font-family       : arial,helvetica,verdana,sans-serif;
-        font-size         : <?php echo $fontSize?>pt;
-        text-align        : left;
-    }
-    img     { font-size: <?php echo $fontSize?>pt; color: #46d0f0; }
-    a       { font-size: <?php echo $fontSize?>pt; color: white; text-decoration: none; }
-    a:hover { font-size: <?php echo $fontSize?>pt; background: #880000; }
-    div     { font-size: <?php echo $fontSize?>pt; color: #46d0f0; }
-    th      { font-size: <?php echo $fontSize?>pt; color: white;   }
-    td      { font-size: <?php echo $fontSize?>pt; color: white;   }
-</style>
-<link rel="shortcut icon" href="img/favicon.ico" />
-<?php
+function formatDate($formatStr, $date) {
+   $daysOfWeekArray = explode(',', LANG_WEEK_DAYS);
+   return $daysOfWeekArray[date('w', $date)] . " " . date($formatStr, $date);
 }
 
 ?>

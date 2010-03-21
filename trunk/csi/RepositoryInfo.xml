@@ -58,6 +58,8 @@
             </UsageInstructions>
             <Forum>http://www.pristavka.de/index.php/topic,4386.new.html#new</Forum>
             <Changelog>
+                Changes in version 0.8.9:
+                - Time shift support in archives, more localized messages
                 Changes in version 0.8.8:
                 - RC support of archives, press MENU to activate detailed program
                 Changes in version 0.8.7:

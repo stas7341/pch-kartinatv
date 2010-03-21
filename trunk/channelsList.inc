@@ -1,59 +1,19 @@
 <?php
 #############################################################################
-# Set of helper functions used to display already parsed list of channels.  #
+# Script for kartina.tv channels list generation.                           #
+# Checks whether it is needed to refresh the list or it's enough            #
+# simply to display already loaded one.                                     #
+# Performs logon and channels list obtaining operations.                    #
 # Displays the list and adds diverse keyboard shortcuts.                    #
 #                                                                           #
-# Author: consros 2008                                                      #
+# Author: consros 2010                                                      #
 #############################################################################
 
-require_once "uft8_tools.inc";
 require_once "settings.inc";
 require_once "tools.inc";
+require_once "uft8_tools.inc";
 require_once "channelsParser.inc";
-
-function displayHtmlHeader() {
-?>
-<title>NMT channels list for Kartina.TV</title>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta http-equiv="refresh" content="300" />
-<?php
-}
-
-function displayCustomStyles() {
-?>
-<style type="text/css">
-    td             { font-weight: bold; }
-    table.channels { width: <?php echo CL_WIDTH_TABLE?>px; }
-    td.number      { width: <?php echo CL_WIDTH_NUMBER?>px; }
-    td.logo        { width: <?php echo CL_WIDTH_LOGO?>px; }
-    td.name        { width: <?php echo CL_WIDTH_NAME?>px; background-color: #005B95; }
-    th.longName    { width: <?php echo CL_WIDTH_LONGNAME?>px; background-color: #005B95; }
-    td.program     { width: <?php echo CL_WIDTH_PROGRAM?>px; font-weight: normal; }
-    td.time        { width: <?php echo CL_WIDTH_TIME?>px; }
-    th.details     { width: <?php echo CL_WIDTH_TABLE?>px; height: 70px; background-color: #005B95; }
-    td.progress    { background-color: #79a1bd; height: 3px; }
-
-</style>
-<?php
-}
-
-function displayDetailsPanel() {
-?>
-    <tr><th colspan="7"><table border="1" cellspacing="0" cellpadding="0"><tr>
-    <th class="details" align="center">
-    <a href="" id="details"></a>Kartina TV</th>
-    </tr></table></th></tr>
-<?php
-}
-
-function displayCredits() {
-?>
-    <hr>
-    <div align="center">Kartina.TV for
-    <font color="white"> Popcorn Hour</font> by <b>consros</b>
-    <font color="white"> (c) 2009</font></div>
-<?php
-}
+require_once "ktvFunctions.inc";
 
 function displayCategory($category) {
     $name = ($category->color == "#efefef") ?
@@ -64,7 +24,7 @@ function displayCategory($category) {
 }
 
 function displayChannel($channel, $firstChannelNumber,
-    $lastChannelNumber, $showDetailsPanel)
+    $lastChannelNumber)
 {
     $number  = ($channel->number < 10 ? "0" : "") . $channel->number;
     $logo    = "http://iptv.kartina.tv/img/ico/24/$channel->id.gif";
@@ -111,14 +71,6 @@ function displayChannel($channel, $firstChannelNumber,
         $linkExt .= "\nonKeyRightSet=\"channel-$lastChannelNumber\"";
     }
 
-    # details panel or name scrolling
-    if ($showDetailsPanel) {
-        $text = htmlspecialchars($channel->program);
-        $linkExt .= "\nonFocus=\"updateDetails('$text')\"";
-        $linkExt .= "\nonMouseOver=\"updateDetails('$text')\"";
-        $linkExt .= "\nonMouseOut=\"updateDetails('')\"";
-    }
-
     # add time stamps only if they are provided
     if (isset($channel->beginTime) && isset($channel->endTime)) {
         $start = date('H:i', $channel->beginTime);
@@ -141,7 +93,6 @@ function displayChannel($channel, $firstChannelNumber,
             utf8_cutByPixel($channel->program, CL_WIDTH_PROGRAM, false);
         $program = "<a href=\"$linkUrl\" $linkExt>$program</a>";
     }
-
 
 
     # now the entry itself
@@ -169,7 +120,7 @@ function displayChannel($channel, $firstChannelNumber,
 
 function addShortcuts(
     $channelsAmount, $firstChannelNumber,
-    $lastChannelNumber, $showDetailsPanel, $hideNames = EMBEDDED_BROWSER)
+    $lastChannelNumber, $hideNames = EMBEDDED_BROWSER)
 {
     $pageupRef = ($firstChannelNumber > 1) ?
         $firstChannelNumber - 1 : $channelsAmount;
@@ -204,11 +155,6 @@ function addShortcuts(
         print ($hideNames ? "" : " $color ") . "</font></a>\n";
     }
 
-    # support for toggle details panel operation
-    print '<a href="' . $_SERVER['PHP_SELF'] . '?showDetailsPanel=';
-    print ($showDetailsPanel ? '0' : '1') .'" TVID="COPY">';
-    print ($hideNames ? "" : " DETAILS ") . "</a>\n";
-
     # support for date archive
     print '<a href="dateOptions.php?ref=" TVID="_REPEAT"></a>' . "\n";
 
@@ -224,39 +170,53 @@ function addShortcuts(
     print 'TVID="BACK"></a>' . "\n";
 }
 
-function displayChannelsList($channelsParser, $showDetailsPanel) {
-?>
-<html>
-<head>
-<?php displayHtmlHeader();   ?>
-<?php displayCommonStyles(FONT_SIZE); ?>
-<?php displayCustomStyles(); ?>
 
-<script type="text/javascript">
-    function updateDetails(text) {
-        document.getElementById('details').nextSibling.nodeValue =
-            text == '' ? "Kartina TV" : text;
+
+
+
+displayHtmlHeader("NMT channels list for Kartina.TV", 300);
+
+# decide whether chanels list update is needed
+if (! isset($_SESSION['channelsList']) || ! isset($_SESSION['lastUpdate']) ||
+    time() - $_SESSION['lastUpdate'] > CL_UPDATE_INTERVAL) 
+{
+    # renew the list using existing cookie
+    $ktvFunctions = new KtvFunctions();
+    $rawList = $ktvFunctions->getChannelsList();
+
+    # remember new state
+    $_SESSION['channelsList'] = $rawList;
+    $_SESSION['lastUpdate'] = time();
+} else {
+    # use remembered list
+    $rawList = $_SESSION['channelsList'];
+}
+
+# parse raw list into prepared class hierarchy
+$channelsParser = new ChannelsParser();
+$channelsParser->parse($rawList);
+$channelsParser->selectedChannel = $_SESSION['selectedChannel'];
+
+
+
+$itemsToDisplay     = array(); # itmes to be displayed on page
+$firstChannelNumber = 0;       # first displayed channel on page
+$lastChannelNumber  = 0;       # last displayed channel on page
+$currentEntry       = 0;
+$foundSelected      = false;
+$limit = CL_ITEMS_PER_PAGE;
+foreach ($channelsParser->categories as $category) {
+    if ($currentEntry % $limit == 0) {
+        if ($foundSelected) {
+            break;
+        } else {
+            $itemsToDisplay = array();
+            $firstChannelNumber = 0;
+        }
     }
-</script>
-
-</head>
-<body <?php echo getBodyStyles() .
-    " onLoadSet=\"channel-$channelsParser->selectedChannel\""?>>
-<div align="center">
-<table class="channels">
-
-<?php
-    if ($showDetailsPanel) {
-        displayDetailsPanel();
-    }
-
-    $itemsToDisplay     = array(); # itmes to be displayed on page
-    $firstChannelNumber = 0;       # first displayed channel on page
-    $lastChannelNumber  = 0;       # last displayed channel on page
-    $currentEntry       = 0;
-    $foundSelected      = false;
-    $limit = $showDetailsPanel ? CL_ITEMS_PER_PAGE - 2 : CL_ITEMS_PER_PAGE;
-    foreach ($channelsParser->categories as $category) {
+    $itemsToDisplay[] = $category;
+    $currentEntry++;
+    foreach ($category->channels as $channel) {
         if ($currentEntry % $limit == 0) {
             if ($foundSelected) {
                 break;
@@ -265,54 +225,60 @@ function displayChannelsList($channelsParser, $showDetailsPanel) {
                 $firstChannelNumber = 0;
             }
         }
-        $itemsToDisplay[] = $category;
+        $itemsToDisplay[] = $channel;
         $currentEntry++;
-        foreach ($category->channels as $channel) {
-            if ($currentEntry % $limit == 0) {
-                if ($foundSelected) {
-                    break;
-                } else {
-                    $itemsToDisplay = array();
-                    $firstChannelNumber = 0;
-                }
-            }
-            $itemsToDisplay[] = $channel;
-            $currentEntry++;
 
-            if ($channel->number == $channelsParser->selectedChannel) {
-                $foundSelected = true;
-            }
-            if (0 == $firstChannelNumber) {
-                $firstChannelNumber = $channel->number;
-            }
-            $lastChannelNumber = $channel->number;
+        if ($channel->number == $channelsParser->selectedChannel) {
+            $foundSelected = true;
         }
-    }
-
-    # display collected items
-    foreach ($itemsToDisplay as $item) {
-        if (is_a($item, 'Category')) {
-            displayCategory($item);
-        } else {
-            displayChannel($item, $firstChannelNumber,
-                $lastChannelNumber, $showDetailsPanel);
+        if (0 == $firstChannelNumber) {
+            $firstChannelNumber = $channel->number;
         }
+        $lastChannelNumber = $channel->number;
     }
+}
 
-    # time for shortcuts
-    print "<tr><th colspan=\"7\" align=\"center\">\n";
-    addShortcuts($channelsParser->channelsAmount,
-        $firstChannelNumber, $lastChannelNumber, $showDetailsPanel);
-    print "</th></tr>\n";
-    print "</table>\n";
 
-    if ($lastChannelNumber == $channelsParser->channelsAmount) {
-        displayCredits();
-    }
 ?>
-</div>
-</body>
-</html>
+<style type="text/css">
+    td             { font-weight: bold; }
+    table.channels { width: <?php echo CL_WIDTH_TABLE?>px; }
+    td.number      { width: <?php echo CL_WIDTH_NUMBER?>px; }
+    td.logo        { width: <?php echo CL_WIDTH_LOGO?>px; }
+    td.name        { width: <?php echo CL_WIDTH_NAME?>px; background-color: #005B95; }
+    td.program     { width: <?php echo CL_WIDTH_PROGRAM?>px; font-weight: normal; }
+    td.time        { width: <?php echo CL_WIDTH_TIME?>px; }
+</style>
+<?php
+
+displayHtmlBody("channel-" . $channelsParser->selectedChannel);
+print '<table class="channels">';
+
+
+# display collected items
+foreach ($itemsToDisplay as $item) {
+    if (is_a($item, 'Category')) {
+        displayCategory($item);
+    } else {
+        displayChannel($item, $firstChannelNumber, $lastChannelNumber);
+    }
+}
+
+# time for shortcuts
+print "<tr><th colspan=\"7\" align=\"center\">\n";
+addShortcuts($channelsParser->channelsAmount,
+    $firstChannelNumber, $lastChannelNumber);
+print "</th></tr>\n";
+print "</table>\n";
+
+if ($lastChannelNumber == $channelsParser->channelsAmount) {
+?>
+    <hr>
+    <div align="center">Kartina.TV for
+    <font color="white"> Popcorn Hour</font> by <b>consros</b>
+    <font color="white"> (c) 2009</font></div>
 <?php
 }
+
+displayHtmlEnd();
 ?>
