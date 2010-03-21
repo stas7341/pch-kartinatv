@@ -203,7 +203,7 @@ displayHtmlHeader(
     if (count($programs) == 0) {
         print '<tr><td class="no-data" colspan="4" align="center">';
         print '<table><tr><td>';
-        print '<img src="img/empty-list.png" /></td><td>';
+        print '<img src="img/errors/empty-list.png" /></td><td>';
         print LANG_ERR_NO_EPG;
         print '</td></tr></table>';
         print "</td></tr>\n";

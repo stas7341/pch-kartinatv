@@ -6,6 +6,7 @@
 # Author: consros 2008                                                      #
 #############################################################################
 
+require_once "pageTools.inc";
 require_once "settings.inc";
 require_once "tools.inc";
 require_once "ktvFunctions.inc";
@@ -15,11 +16,9 @@ define("FILE_REF", "http://localhost:8088/stream/file=");
 define("TMP_CHANNEL", "/tmp/channel.jsp");
 define("TMP_BACKGROUND", "/tmp/bg.jsp");
 
-session_start();
-
 function playMedia($url = null) {
     if (! isset($url) || FALSE === $url) {
-        print '<img src="http://www.kartina.tv/templates/redline/img/logo.jpg" border="4" />';
+        print '<img src="img/kartina-logo.jpg" border="4" />';
     } else {
         print '<embed type="application/x-vlc-plugin"' . "\n";
         print '    pluginspage="http://www.videolan.org"' . "\n";
@@ -52,21 +51,18 @@ function displayAudioPlaylist($name, $url) {
     print 'pod="2,1,' . FILE_REF . TMP_BACKGROUND . '">';
 }
 
+
+displayHtmlHeader("NMT playing a channel from Kartina.TV");
 ?>
-<html>
-<head>
-<title>NMT playing a channel from Kartina.TV</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <?php displayCommonStyles(FONT_SIZE); ?>
-    <style type="text/css">
-        a       { color: #46d0f0; }
-        div     { color: white;   }
-        td.page { height:<?php echo DEFAULT_PAGE_HEIGHT?>px; }
-    </style>
-</head>
-<body <?php echo getBodyStyles()?>>
-<div align="center"><table><tr><td class="page" align="center">
+<style type="text/css">
+    a       { color: #46d0f0; }
+    div     { color: white;   }
+    td.page { height:<?php echo DEFAULT_PAGE_HEIGHT?>px; }
+</style>
 <?php
+    displayHtmlBody();
+    print '<table><tr><td class="page" align="center">';
+
     $ktvFunctions = new KtvFunctions();
 
     $id     = $_GET['id'];
@@ -125,14 +121,15 @@ function displayAudioPlaylist($name, $url) {
 
         # this onFocusLoad will be activated when the video will be stopped
         print '<a href="' . $ref . '" name="returnToIndex" onFocusLoad>';
-        print "Returning to channel selection...</a><br>\n";
+        print (EMBEDDED_BROWSER ? LANG_RETURNING_BACK : 
+            (" &lt;&lt;&nbsp;" . LANG_CHANNELS_LIST));
+        print "</a><br>\n";
     } else {
         # show kartina.tv logo
         playMedia();
-        print "Channel is closed or temporary unavailable!<br>\n";
-        print "Press <b>RETURN</b> to get back to channels selection\n";
+        print LANG_ERR_CHANNEL_OPEN . "<br>\n" . LANG_PRESS_RETURN . "\n";
     }
+
+    print '</td></tr></table>';
+    displayHtmlEnd();    
 ?>
-</td></tr></table></div>
-</body>
-</html>

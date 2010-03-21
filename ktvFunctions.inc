@@ -9,6 +9,7 @@
 
 require_once "settings.inc";
 require_once "tools.inc";
+require_once "lang.inc";
 
 define("COOKIE_NAME", "KtvCookie");
 define("BASE_URL", "http://iptv.kartina.tv/");
@@ -42,9 +43,9 @@ class KtvFunctions {
         $html = getPageContentByPost(BASE_URL, $params);
         $this->cookie = parseOutCookies($html);
         strpos($this->cookie, "SSID") or 
-            die (USERNAME . ": Authorization of user failed!");
+            dieOnError(USERNAME . ": " . LANG_ERR_AUTHORIZATION);
         strpos($this->cookie, "=deleted") and 
-            die (USERNAME . ": Wrong authorization request");
+            dieOnError(USERNAME . ": " . LANG_ERR_SESSION_TIMEOUT);
         $this->trace("Authorization returned: $this->cookie");
         $_SESSION[COOKIE_NAME] = $this->cookie;
     }
@@ -71,7 +72,7 @@ class KtvFunctions {
             $this->trace("Second try to get $name");
             $reply = getPageContentByGet($url, $this->cookie);
             $this->isAuthorized($reply) or 
-                die ("Failed to get $name:\n$reply");
+                dieOnError(LANG_ERR_REQUEST_SENDING . ": $name:\n$reply");
         }
         return $reply;
     }

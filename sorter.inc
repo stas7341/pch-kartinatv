@@ -131,7 +131,8 @@ class Sorter {
 
     function traceCategories($categories) {
         $filename = "channels.txt";
-        $fh = fopen($filename, 'w') or die("Can't open file $filename");
+        $fh = fopen($filename, 'w') or 
+            dieOnError(LANG_ERR_FILE_READ . ": " . $filename);
         fwrite($fh, "# Current channels state (" . date("r") .  ")\r\n");
         $channelNumber = 1;
         foreach ($categories as $category) {
