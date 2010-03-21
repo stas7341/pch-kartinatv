@@ -157,7 +157,7 @@ function addShortcuts(
     }
 
     # support for date archive
-    print '<a href="dateOptions.php?ref=" TVID="_REPEAT"></a>' . "\n";
+    print '<a href="dayJump.php?ref=" TVID="_REPEAT"></a>' . "\n";
 
     # support for detailed channel programs display
     print '<a href="displayProgram.php?ref=" TVID="_TAB"></a>' . "\n";
