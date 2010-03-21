@@ -9,6 +9,7 @@
 # Author: consros 2010                                                      #
 #############################################################################
 
+require_once "pageTools.inc";
 require_once "settings.inc";
 require_once "tools.inc";
 require_once "uft8_tools.inc";

@@ -1,9 +1,3 @@
-<?php
-#############################################################################
-# Author: consros 2008                                                      #
-#############################################################################
-
-require_once "pageTools.inc";
-require_once "channelsList.inc";
-
+<?php 
+require_once "channelsList.php";
 ?>
