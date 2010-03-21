@@ -138,7 +138,7 @@ displayHtmlHeader(
             # all next lines ~= 0.48
             # mean details line length ~= 205 characters
             $lineHeight += 0.58;
-            $lineHeight += (int)(ut8_strlen($program->details)/205) * 0.48;
+            $lineHeight += (int)(utf8_strlen($program->details)/205) * 0.48;
         }
 
         # check height of current page
