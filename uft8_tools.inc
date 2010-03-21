@@ -12,11 +12,11 @@ define("FONT_SIZE", 16);
 define("FONT_GRADIENT", serialize(array("#dde5f8", "#bbbed9", "#99a1bd", "#6d80a0")));
 
 
-function ut8_strlen($str) {
+function utf8_strlen($str) {
     return preg_match_all('/./uSs', $str, $out);
 }
 
-function ut8_substr($str, $start, $length = null) {    
+function utf8_substr($str, $start, $length = null) {    
     if (! isset($length)) {
         return preg_replace('/^.{'.$start.'}(.*)$/uSs', '$1', $str);
     } else if ($length <= 0) {
@@ -60,9 +60,9 @@ function utf8_cutByPixel($str, $pixels, $bold = false) {
     $wishedStart = $limit - count($colors);
     for ($start = $wishedStart; $start < 0; $start++);
     
-    $res = ut8_substr($str, 0, $start);
+    $res = utf8_substr($str, 0, $start);
     for ($i = $start; $i < $limit; $i++) {
-        $char = ut8_substr($str, $i, 1);
+        $char = utf8_substr($str, $i, 1);
         $res .= '<font color="' . $colors[$i - $wishedStart] . '">';
         $res .= ($char == " " ? "&nbsp;" : $char) . "</font>";
     }
