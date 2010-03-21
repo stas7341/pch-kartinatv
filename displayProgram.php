@@ -27,7 +27,7 @@ function getTime($program) {
         $option = new KtvTimeShiftOption($ktvFunctions);
         $option->init();
     }
-    return $program->beginTime + $_SESSION['timeShift'] * 60 * 60;
+    return $program->beginTime + ($_SESSION['timeShift'] + TIME_ZONE) * 60 * 60;
 }
 
 function getEpg($id, $date) {
