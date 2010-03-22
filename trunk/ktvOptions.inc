@@ -270,7 +270,7 @@ class CfgBufferSizeOption extends ListOption {
         $this->description = LANG_BUFFER_SIZE_DETAILS;
         $this->param = new CfgParameter(CFG_FILE, "BUFFER_SIZE");
         $this->icon = OPT_ICONS_PATH . 'buffer-size.png';
-        $this->optionsList = array(1, 2, 4, 8, 16, 20, 32, 64, 128);
+        $this->optionsList = array(1, 16, 64, 128, 256, 512, 1024, 2048);
         $this->init();
     }
     function init() {
