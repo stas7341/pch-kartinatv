@@ -43,9 +43,11 @@ class KtvFunctions {
         $html = getPageContentByPost(BASE_URL, $params);
         $this->cookie = parseOutCookies($html);
         strpos($this->cookie, "SSID") or 
-            dieOnError(USERNAME . ": " . LANG_ERR_AUTHORIZATION);
+            dieOnError(USERNAME . ": " . LANG_ERR_AUTHORIZATION,
+                "img/errors/wrong-user.png");
         strpos($this->cookie, "=deleted") and 
-            dieOnError(USERNAME . ": " . LANG_ERR_SESSION_TIMEOUT);
+            dieOnError(USERNAME . ": " . LANG_ERR_SESSION_TIMEOUT,
+                "img/errors/session-timeout.png");
         $this->trace("Authorization returned: $this->cookie");
         $_SESSION[COOKIE_NAME] = $this->cookie;
     }
@@ -72,7 +74,8 @@ class KtvFunctions {
             $this->trace("Second try to get $name");
             $reply = getPageContentByGet($url, $this->cookie);
             $this->isAuthorized($reply) or 
-                dieOnError(LANG_ERR_REQUEST_SENDING . ": $name:\n$reply");
+                dieOnError(LANG_ERR_REQUEST_SENDING . ": $name:\n$reply",
+                    "img/errors/wrong-xml.png");
         }
         return $reply;
     }
