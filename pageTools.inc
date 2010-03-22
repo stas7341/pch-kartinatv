@@ -28,7 +28,7 @@ if (isset($_GET['selectedChannel'])) {
 } else if (isset($_GET['number'])) {
     $_SESSION['selectedChannel'] = $_GET['number'];
 } else {
-    $_GET['selectedChannel'] = 1;
+    $_SESSION['selectedChannel'] = 1;
 }
 
 function displayHtmlHeader($title = "NMT Kartina.TV plugin", 
