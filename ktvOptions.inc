@@ -237,32 +237,6 @@ class CfgAdultOption extends ListOption {
     }
 }
 
-class CfgTimeZoneOption extends ListOption {
-    var $param;
-    function CfgTimeZoneOption() {
-        $this->name = LANG_TIME_ZONE;
-        $this->description = LANG_TIME_ZONE_DETAILS;
-        $this->icon = OPT_ICONS_PATH . 'time-zone.png';
-        $this->param = new CfgParameter(CFG_FILE, "TIME_ZONE");
-        $this->optionsList = array();
-        for ($i = -12; $i < 0; $i++) {
-            $this->optionsList[] = $i;
-        }
-        $this->optionsList[] = '0';
-        for ($i = 1; $i <= 13; $i++) {
-            $this->optionsList[] = '+' . $i;
-        }
-        $this->init();
-    }
-    function init() {
-        $this->value = $this->param->read();
-    }
-    function save($newValue) {
-        $this->value = $newValue;
-        $this->param->write($newValue);
-    }
-}
-
 class CfgBufferSizeOption extends ListOption {
     var $param;
     function CfgBufferSizeOption() {
@@ -270,7 +244,7 @@ class CfgBufferSizeOption extends ListOption {
         $this->description = LANG_BUFFER_SIZE_DETAILS;
         $this->param = new CfgParameter(CFG_FILE, "BUFFER_SIZE");
         $this->icon = OPT_ICONS_PATH . 'buffer-size.png';
-        $this->optionsList = array(1, 16, 64, 128, 256, 512, 1024, 2048);
+        $this->optionsList = array(1, 16, 64, 128, 256, 512, 1024, 2048, 4096);
         $this->init();
     }
     function init() {

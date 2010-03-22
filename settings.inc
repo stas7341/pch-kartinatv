@@ -2,7 +2,7 @@
 #############################################################################
 # Diverse configuration parameters and constants used in this plugin.       #
 #                                                                           #
-# Author: consros 2008                                                      #
+# Author: consros 2010                                                      #
 #############################################################################
 
 # put here your account settings which you have got from kartina.tv
@@ -21,15 +21,12 @@
 define("USERNAME", "148");
 define("PASSWORD", "841");
 
-# defines time zone offset (in hours) for this region
-define("TIME_ZONE", "0");
-
 # set this flag to TRUE if you want the adult channels to be available
 # and to FALSE if you want to disable it
 define("ALLOW_EROTIC", TRUE);
 
-# video stream pre-bufferring size in Mb
-define("BUFFER_SIZE", 1);
+# video stream pre-bufferring size in Kb
+define("BUFFER_SIZE", 128);
 
 # default font size used in plugin
 define("FONT_SIZE", 16);
@@ -85,17 +82,18 @@ define("OC_SLIDE_SHOW_DELAY", 10);
 # so much programs should be displayed per page in program list
 define("PR_ITEMS_PER_PAGE",  17);
 
-
-define("EPG_DIR",   "/tmp/epg");
-define("EPG_TODAY", "/tmp/epg/" . USERNAME . "-" . date('Y-m-d'));
-
-
 # detection of used browser: normal or PCH-specific one
 define("EMBEDDED_BROWSER", 
     FALSE !== strpos($_SERVER['HTTP_USER_AGENT'], 'Syabas'));
 
-# detection of current platform
-define("PLATFORM", php_uname("n"));
+# detection of current platform (old for A-100/110 architecture)
+define("OLD_PLATFORM", file_exists("/mnt/syb8634/"));
+
+# defines time zone offset (in hours) for this region
+# note that this parameter is needed ONLY for OLD platform
+# in this case it will be cut out from actual settings file
+define("TIME_ZONE", ! OLD_PLATFORM ? 0 :
+    `cat /tmp/setting.txt |grep time_zone|sed 's/.*=//;s/:.*//'`);
 
 # date format accepted by EPG
 define("EPG_DATE_FORMAT", 'dmy');

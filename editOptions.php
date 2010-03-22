@@ -87,7 +87,6 @@ $options = array(
     new CfgUsernameOption(),
     new CfgPasswordOption(),
     new CfgAdultOption(),
-    new CfgTimeZoneOption(),
     new CfgBufferSizeOption(),
     new CfgSortingOption()
 );
