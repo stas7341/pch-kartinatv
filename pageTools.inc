@@ -98,7 +98,7 @@ function dieOnError($message, $image = "img/errors/warning.png") {
     print '<td class="errorWindow">';
     print '<table align="center"><tr><td>';
     if (0 != strlen($image)) {
-        print '<td><img src="' . $image . '" /></td><td>&nbsp;';
+        print '<td><img src="' . $image . '" /></td><td>&nbsp;&nbsp;</td><td>';
     }
     die ($message);
 }
