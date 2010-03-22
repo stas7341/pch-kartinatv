@@ -27,7 +27,7 @@ if (isset($_GET['selectedChannel'])) {
     $_SESSION['selectedChannel'] = $_GET['selectedChannel'];
 } else if (isset($_GET['number'])) {
     $_SESSION['selectedChannel'] = $_GET['number'];
-} else {
+} else if (! isset($_SESSION['selectedChannel'])) {
     $_SESSION['selectedChannel'] = 1;
 }
 
