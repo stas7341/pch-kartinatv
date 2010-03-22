@@ -18,7 +18,9 @@ define("TMP_BACKGROUND", "/tmp/bg.jsp");
 
 function playMedia($url = null) {
     if (! isset($url) || FALSE === $url) {
-        print '<img src="img/kartina-logo.jpg" border="4" />';
+        print '<div align="center"><table class="logo"><tr><td>';
+        print '<img src="img/kartina-logo.jpg" />';
+        print '</td></tr></table></div>';
     } else {
         print '<embed type="application/x-vlc-plugin"' . "\n";
         print '    pluginspage="http://www.videolan.org"' . "\n";
@@ -58,6 +60,7 @@ displayHtmlHeader("NMT playing a channel from Kartina.TV");
     a       { color: #46d0f0; }
     div     { color: white;   }
     td.page { height:<?php echo DEFAULT_PAGE_HEIGHT?>px; }
+    table.logo { background-color : #46d0f0; padding: 2px; }
 </style>
 <?php
     displayHtmlBody();
@@ -75,7 +78,7 @@ displayHtmlHeader("NMT playing a channel from Kartina.TV");
 
     $content = $ktvFunctions->getStreamUrl($id, $gmt);
     $url = preg_replace('/.*url="(rtsp|http)(\/ts|)([^ "]*).*/s', '$1$3', $content);
-
+    
     if (0 === strpos($url, "http://") || 0 === strpos($url, "rtsp://")) {
         # show kartina.tv logo or video via vlc
         playMedia(EMBEDDED_BROWSER ? null : $url);
@@ -106,16 +109,6 @@ displayHtmlHeader("NMT playing a channel from Kartina.TV");
         print "<img src=\"$imgUrl\" />\n";
         #print "$url";
         print "</a>\n";
-
-#        print "<br><br><a href=\"http://pch-a100:8088/stream/file=";
-#        print TMP_URL . "\">GO TO URL</a>";
-
-#        $content  = "<html><head></head><body bgcolor=\"220066\">";
-#        $content .= "\n<a href=\"$url\" vod>Video</a>\n";
-#        $content .= "\n<!--\n$url\n-->\n";
-#        $content .= "</body></html>";
-#
-#        writeLocalFile(TMP_URL, $content);
 
         print "<br><b>$name</b><br><br>";
 
