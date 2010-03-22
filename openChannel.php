@@ -87,8 +87,8 @@ displayHtmlHeader("NMT playing a channel from Kartina.TV");
 
         # set info for playback to channel name
         $info = preg_replace('/\s/', '_', $name);
-        $info = str_pad($info, 50, "_", STR_PAD_BOTH) . "________";
-        $url = preg_replace('/\?/', "?$info=0&", $url);
+        $info = str_pad($info, 50, "_");
+        $url = preg_replace('/\?/', "?___$info=0&", $url);
 
         # video and audio have different extensions
         if ($vid) {
