@@ -7,6 +7,9 @@ the IP-TV channels broadcasted by katrina.tv provider.
 
 Changes
 -------
+Changes in version 0.9.0:
+- Errors representation improved, time zone is now calculated automatically
+
 Changes in version 0.8.9:
 - Time shift support in archives, more localized messages
 
