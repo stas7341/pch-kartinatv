@@ -59,7 +59,8 @@ function getPageContentByGet($url, $headerExt) {
     error_reporting($oldLevel);
 
     if (! $f) {
-        dieOnError(LANG_ERR_SERVER_CONNECTION . ": " . $host);
+        dieOnError(LANG_ERR_SERVER_CONNECTION . ": " . $host,
+            "img/errors/no-connection.png");
     }
 
     $content = "";
@@ -87,7 +88,8 @@ function getPageContentByPost($url, $params, $headerExt = "") {
 
     $fp = fsockopen($host, $port, $errno, $errstr, 30); 
     if (! $fp) {
-        dieOnError(LANG_ERR_SERVER_CONNECTION . ": " . $host);
+        dieOnError(LANG_ERR_SERVER_CONNECTION . ": " . $host,
+            "img/errors/no-connection.png");
     }
 
     fputs($fp, $header . $params);
@@ -101,7 +103,8 @@ function getPageContentByPost($url, $params, $headerExt = "") {
 
 function readLocalFile($filename) {
     $fh = fopen($filename, 'r') or 
-        dieOnError(LANG_ERR_FILE_READ . ": " . $filename);
+        dieOnError(LANG_ERR_FILE_READ . ": " . $filename,
+            "img/errors/read-error.png");
     while($data = fread($fh, 1024)) {
         $content .= $data;
     }
@@ -111,7 +114,8 @@ function readLocalFile($filename) {
 
 function writeLocalFile($filename, $content) {
     $fh = fopen($filename, 'w') or 
-        dieOnError(LANG_ERR_FILE_WRITE . ": " . $filename);
+        dieOnError(LANG_ERR_FILE_WRITE . ": " . $filename,
+            "img/errors/write-error.png");
     fwrite($fh, $content);
     fclose($fh);
 }

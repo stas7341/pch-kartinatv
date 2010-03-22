@@ -73,7 +73,8 @@ class Category {
 class AbstractParser {
     function parseFile($filename) {
         if (! ($fp = fopen($filename, "r"))) {
-            dieOnError(LANG_ERR_FILE_READ . ": " . $filename);
+            dieOnError(LANG_ERR_FILE_READ . ": " . $filename, 
+                "img/errors/read-error.png");
         }
         $data = fread($fp, filesize($filename));
         fclose($fp);
