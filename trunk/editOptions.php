@@ -59,12 +59,6 @@ displayHtmlHeader("NMT plugin configuration");
 <tr><th colspan="4" align="center">Kartina.TV</th></tr>
 <?php
 
-# channel number should be restored to handle properly "return" button
-$number = $_GET['number'];
-if (isset($number)) {
-    $_SESSION['selectedChannel'] = $number;
-}
-
 # initialize connection and options
 $ktvFunctions = new KtvFunctions();
 $options = array(

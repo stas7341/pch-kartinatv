@@ -74,7 +74,6 @@ displayHtmlHeader("NMT playing a channel from Kartina.TV");
     $vid    = $_GET['vid'];
     $gmt    = $_GET['gmt'];
     $ref    = isset($_GET['ref']) ? urldecode($_GET['ref']) : "index.php";
-    $_SESSION['selectedChannel'] = $number;
 
     $content = $ktvFunctions->getStreamUrl($id, $gmt);
     $url = preg_replace('/.*url="(rtsp|http)(\/ts|)([^ "]*).*/s', '$1$3', $content);
