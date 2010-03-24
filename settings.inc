@@ -98,4 +98,8 @@ define("TIME_ZONE", ! OLD_PLATFORM ? 0 :
 # date format accepted by EPG
 define("EPG_DATE_FORMAT", 'dmy');
 
+#Show percent in the position of start time
+define("CL_SHOW_PERCENT", TRUE);
+
+
 ?>
