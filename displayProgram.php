@@ -248,12 +248,14 @@ displayHtmlHeader(
     print '<a href="index.php" TVID="BACK">';
     print (EMBEDDED_BROWSER ? "" : (" &lt;&lt;&nbsp;" . LANG_CHANNELS_LIST)) . "</a>\n";
 
+    # parameters used by next sctript
+    $params  = "&id="     . $_GET['id'];
+    $params .= "&number=" . $_GET['number'];
+    $params .= "&title="  . $_GET['title'];
+    $params .= "&vid="    . $_GET['vid'];
+
     # support for days/page navigation
-    $epgRef  = $_SERVER['PHP_SELF'] . "?d=0";
-    $epgRef .= "&id="     . $_GET['id'];
-    $epgRef .= "&number=" . $_GET['number'];
-    $epgRef .= "&title="  . $_GET['title'];
-    $epgRef .= "&vid="    . $_GET['vid'];
+    $epgRef  = $_SERVER['PHP_SELF'] . "?d=0" . $params;
 
     # backward -1 month
     $prevDay = $arcTime - 24 * 60 * 60;
@@ -274,6 +276,15 @@ displayHtmlHeader(
     $nextDay = $arcTime + 24 * 60 * 60;
     print '<a href="'. $epgRef . '&archiveTime=' . $nextDay . '" TVID="PGDN">';
     print (EMBEDDED_BROWSER ? "" : " DAY&gt; ") . "</a>\n";
+
+    
+    # support for day jumping
+    print '<a href="dayJump.php?d=0' . $params . '" TVID="REPEAT">';
+    print (EMBEDDED_BROWSER ? "" : " DAY JUMP") . "</a>\n";
+    
+    # support for setup
+    print '<a href="editOptions.php?d=0' . $params . '" TVID="SETUP">';
+    print (EMBEDDED_BROWSER ? "" : " SETUP ") . "</a>\n";
 
     displayHtmlEnd();
 ?>
