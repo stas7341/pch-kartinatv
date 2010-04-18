@@ -15,7 +15,7 @@ function displayChannel($channel) {
 
 # decide whether chanels list update is needed
 if (! isset($_SESSION['lastUpdate']) || 
-    time() - $_SESSION['lastUpdate'] > CL_UPDATE_INTERVAL ||
+    NOW_TIME - $_SESSION['lastUpdate'] > CL_UPDATE_INTERVAL ||
     ! isset($_SESSION['channelsList'])) 
 {
     # renew the list using existing cookie
@@ -24,7 +24,7 @@ if (! isset($_SESSION['lastUpdate']) ||
 
     # remember new state
     $_SESSION['channelsList'] = $rawList;
-    $_SESSION['lastUpdate'] = time();
+    $_SESSION['lastUpdate'] = NOW_TIME;
 } else {
 
     # use remembered list

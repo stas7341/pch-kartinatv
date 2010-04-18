@@ -6,6 +6,7 @@
 # Author: consros 2009                                                      #
 #############################################################################
 
+require_once("settings.inc");
 
 class Sorter {
 
@@ -134,7 +135,7 @@ class Sorter {
         $fh = fopen($filename, 'w') or 
             dieOnError(LANG_ERR_FILE_READ . ": " . $filename,
                 "img/errors/read-error.png");
-        fwrite($fh, "# Current channels state (" . date("r") .  ")\r\n");
+        fwrite($fh, "# Current channels state (" . date("r", NOW_TIME) .  ")\r\n");
         $channelNumber = 1;
         foreach ($categories as $category) {
             fwrite($fh, "!" . $category->color . ":" . $category->name . "\r\n");

@@ -208,7 +208,7 @@ class ProgramsParser extends AbstractParser {
 
         # archive is limited by two weeks back
         if ($this->hasArchive && count($this->programs) > 0 && 
-            $this->programs[0]->beginTime + 14 * 24 * 60 * 60 < time())
+            $this->programs[0]->beginTime + 14 * 24 * 60 * 60 < NOW_TIME)
         {
             $this->hasArchive = false;
         }

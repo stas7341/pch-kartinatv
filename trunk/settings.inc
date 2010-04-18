@@ -26,7 +26,7 @@ define("PASSWORD", "841");
 define("ALLOW_EROTIC", TRUE);
 
 # video stream pre-bufferring size in Kb
-define("BUFFER_SIZE", 128);
+define("BUFFER_SIZE", 512);
 
 # default font size used in plugin
 define("FONT_SIZE", 16);
@@ -71,6 +71,9 @@ define("CL_SHOW_PROGRESS", TRUE);
 # allow custom sorting using sorting.txt (TRUE for yes and FALSE for no)
 define("CL_CUSTOM_SORTING", FALSE);
 
+# show percent in the position of start time
+define("CL_SHOW_PERCENT", FALSE);
+
 # size of video window on open channel page
 define("OC_VIDEO_WIDTH",  704);
 define("OC_VIDEO_HEIGHT", 576);
@@ -86,19 +89,23 @@ define("PR_ITEMS_PER_PAGE",  17);
 define("EMBEDDED_BROWSER", 
     FALSE !== strpos($_SERVER['HTTP_USER_AGENT'], 'Syabas'));
 
-# detection of current platform (old for A-100/110 architecture)
-define("OLD_PLATFORM", file_exists("/mnt/syb8634/"));
+# on some hardware the time zone is ignored - let's be ready
+date_default_timezone_set('UTC'); 
 
-# defines time zone offset (in hours) for this region
-# note that this parameter is needed ONLY for OLD platform
-# in this case it will be cut out from actual settings file
-define("TIME_ZONE", ! OLD_PLATFORM ? 0 :
-    `cat /tmp/setting.txt |grep time_zone|sed 's/.*=//;s/:.*//'`);
+# current time will be taken from shell
+define("TIME_STRING", `date -R`);
+
+# UTC time is calculated by direct parse
+define("UTC_TIME", strtotime(TIME_STRING));
+
+# time zone can be parsed out from the time string
+define("TIME_ZONE_SECONDS", 1 == preg_match('/((\+|-)\d\d)(\d\d)$/', 
+    TIME_STRING, $matches) ? ($matches[1] * 60 + $matches[3]) * 60 : 0);
+
+# now time can be calculated using UTC time and time zone
+define("NOW_TIME", UTC_TIME + TIME_ZONE_SECONDS);
 
 # date format accepted by EPG
 define("EPG_DATE_FORMAT", 'dmy');
-
-#Show percent in the position of start time
-define("CL_SHOW_PERCENT", FALSE);
 
 ?>

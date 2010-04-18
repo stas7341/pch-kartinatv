@@ -111,7 +111,7 @@ class KtvFunctions {
         # date format is yymmdd: 981231
         # NOTE: at 03:00 starts another EPG day
         $date = isset($date) ? date(EPG_DATE_FORMAT, $date) : 
-            date(EPG_DATE_FORMAT, time() + ((TIME_ZONE - 3) * 60 * 60));
+            date(EPG_DATE_FORMAT, NOW_TIME);
         $url  = BASE_URL;
         $url .= "?m=epg&act=show_day_xml&day=$date&cid=$id";
         return $this->getData($url, "EPG for channel $id");
