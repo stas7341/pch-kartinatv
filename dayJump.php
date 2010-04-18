@@ -31,7 +31,7 @@ displayHtmlBody();
 </tr>
 <?php
 
-$arcTime = time() + (TIME_ZONE * 60 * 60);
+$arcTime = NOW_TIME;
 $linkUrl  = "displayProgram.php?ref=" . $_GET['ref'];
 $linkUrl .= "&id="     . $_GET['id'];
 $linkUrl .= "&title="  . $_GET['title'];

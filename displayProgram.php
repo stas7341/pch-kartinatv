@@ -18,14 +18,14 @@ require_once "uft8_tools.inc";
 define("EPG_START_OFFSET", 3 * 60 * 60);
 
 $id = $_GET['id'];
-$nowTime = time() + TIME_ZONE * 60 * 60;
+$nowTime = NOW_TIME;
 $arcTime = isset($_GET['archiveTime']) ? $_GET['archiveTime'] : $nowTime;
 
-function getTime($program) {
+function getTime($program, $ignoreTimeShift = false) {
     # time shift will be taken directly from channel name
-    preg_match('/^.* -(\d+)$/', $_GET['title'], $matches);
-    $timeShift = isset($matches[1]) ? $matches[1] : 0;
-    return $program->beginTime + ($timeShift + TIME_ZONE) * 60 * 60;
+    $timeShift = $ignoreTimeShift || 1 != preg_match('/^.* -(\d+)$/', $_GET['title'], $m) ? 
+        0 : $m[1];
+    return $program->beginTime + $timeShift * 60 * 60 + TIME_ZONE_SECONDS;
 }
 
 function getEpg($id, $date) {
@@ -51,7 +51,7 @@ function displayProgram($program, $nowTime, $hasArchive, $openRef, $currentProgr
         $name = EMBEDDED_BROWSER ?
             "<marquee behavior=\"focus\">$name</marquee>" : $name;
         $name = "<a href=\"$openRef\">$name</a>";
-    } else if ($program->beginTime + TIME_ZONE * 60 * 60 <= $nowTime) {
+    } else if (getTime($program, true) <= $nowTime) {
         // no time shift offset for links, since it doesn't affect record
         if ($hasArchive) {
             $openRef .= "&gmt=" . $program->beginTime;

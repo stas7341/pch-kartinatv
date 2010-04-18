@@ -73,9 +73,8 @@ function displayChannel($channel, $firstChannelNumber,
     }
 
     if (CL_SHOW_PROGRESS || CL_SHOW_PERCENT) {
-        $offset = TIME_ZONE * 60 * 60;
         $full = ($channel->endTime - $channel->beginTime);
-        $curr = time() + $offset - $channel->beginTime;
+        $curr = NOW_TIME - $channel->beginTime;
         $percent = 0 == $full ? 0 : (int) ($curr * 100 / $full);
         if (CL_SHOW_PROGRESS) {
 	        $num = round($percent / 10.0);
@@ -181,7 +180,7 @@ displayHtmlHeader("NMT channels list for Kartina.TV", 300);
 
 # decide whether chanels list update is needed
 if (! isset($_SESSION['channelsList']) || ! isset($_SESSION['lastUpdate']) ||
-    time() - $_SESSION['lastUpdate'] > CL_UPDATE_INTERVAL) 
+    NOW_TIME - $_SESSION['lastUpdate'] > CL_UPDATE_INTERVAL) 
 {
     # renew the list using existing cookie
     $ktvFunctions = new KtvFunctions();
@@ -189,7 +188,7 @@ if (! isset($_SESSION['channelsList']) || ! isset($_SESSION['lastUpdate']) ||
 
     # remember new state
     $_SESSION['channelsList'] = $rawList;
-    $_SESSION['lastUpdate'] = time();
+    $_SESSION['lastUpdate'] = NOW_TIME;
 } else {
     # use remembered list
     $rawList = $_SESSION['channelsList'];
