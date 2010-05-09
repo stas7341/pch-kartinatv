@@ -48,6 +48,9 @@ function displayProgram($program, $nowTime, $hasArchive, $openRef, $currentProgr
     $name = $program->name;
     if ($program === $currentProgram) {
         $class="current";
+        if ($hasArchive) {
+            $openRef .= "&gmt=" . $program->beginTime;
+        }
         $name = EMBEDDED_BROWSER ?
             "<marquee behavior=\"focus\">$name</marquee>" : $name;
         $name = "<a href=\"$openRef\">$name</a>";
