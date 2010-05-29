@@ -7,6 +7,11 @@ the IP-TV channels broadcasted by katrina.tv provider.
 
 Changes
 -------
+Changes in version 0.9.1:
+- Time zone calculation corrected
+- REPEAT (day jump) and SETUP (options page) are available from archive page
+- Option "always use archive" enabling playing program always from its beginning
+
 Changes in version 0.9.0:
 - Errors representation improved, time zone is now calculated automatically
 

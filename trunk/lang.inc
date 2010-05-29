@@ -39,6 +39,9 @@ define("LANG_BUFFER_SIZE_DETAILS", "Если у Вас нестабильное 
 define("LANG_SORTING",         "Пользовательская сортировка каналов");
 define("LANG_SORTING_DETAILS", "Разрешить пользовательскую сортировку каналов с помощью файла правил <b>sorting.txt</b>");
 
+define("LANG_ALWAYS_ARC",         "Всегда использовать архив");
+define("LANG_ALWAYS_ARC_DETAILS", "Открывать текущую программу с её начала, используя для этого архив");
+
 
 define("LANG_ERR_AUTHORIZATION",     "Пользователю отказано в доступе.<br />Возможно действие аккаунта закончилость<br />или пароль задан неверно");
 define("LANG_ERR_SESSION_TIMEOUT",   "Сессия пользователя завершена, попробуйте позднее");

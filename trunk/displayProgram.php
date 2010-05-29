@@ -166,7 +166,7 @@ displayHtmlHeader(
             $programs[] = $program;
         }
 
-        # if current is beyond destination remember first program begining
+        # if current is beyond destination remember first program beginning
         if (isset($dstPage) && $page > $dstPage && ! isset($nextPage)) {
             $nextPage = getTime($program);
         }
