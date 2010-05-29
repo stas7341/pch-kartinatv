@@ -79,14 +79,19 @@ function displayChannel($channel, $firstChannelNumber,
         if (CL_SHOW_PROGRESS) {
 	        $num = round($percent / 10.0);
         	$progressbar = "background=\"img/progress/progress-${num}0.PNG\"";
-	}
+        }
     }
 
     # add time stamps only if they are provided
     if (isset($channel->beginTime) && isset($channel->endTime)) {
         $start = date('H:i', $channel->beginTime);
         $stop  = date('H:i', $channel->endTime);
-       	$time  = CL_SHOW_PERCENT ? "$percent % - $stop" : "$start - $stop";
+        $time  = CL_SHOW_PERCENT ? "$percent % - $stop" : "$start - $stop";
+
+        # play program from it's beginning if wished 
+        if (TRUE === CL_PLAY_FROM_ARC) {
+            $linkUrl .= "&gmt=" . ($channel->beginTime - TIME_ZONE_SECONDS);
+        }
     }
 
     # decide how to display the program

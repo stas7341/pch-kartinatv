@@ -44,7 +44,9 @@ case "$1" in
         checkConfig settings.inc
 
         # set right permissions on /tmp
-        chmod go+w /tmp
+        if [ -d /tmp ]; then 
+            chmod go+w /tmp
+        fi
     ;;
 esac
 

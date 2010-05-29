@@ -277,4 +277,25 @@ class CfgSortingOption extends ListOption {
     }
 }
 
+class CfgAlwaysArcOption extends ListOption {
+    var $param;
+    function CfgAlwaysArcOption() {
+        $this->name = LANG_ALWAYS_ARC;
+        $this->description = LANG_ALWAYS_ARC_DETAILS;
+        $this->icon = OPT_ICONS_PATH . 'alwaysarc.png';
+        $this->optionsList = array(LANG_YES, LANG_NO);
+        $this->param = new CfgParameter(CFG_FILE, "CL_PLAY_FROM_ARC");
+        $this->init();
+    }
+    function init() {
+        $this->value = "TRUE" === $this->param->read() ? 
+            $this->optionsList[0] : $this->optionsList[1]; 
+    }
+    function save($newValue) {
+        $this->value = $newValue;
+        $this->param->write($newValue === $this->optionsList[0] ?
+            "TRUE" : "FALSE");
+    }
+}
+
 ?>

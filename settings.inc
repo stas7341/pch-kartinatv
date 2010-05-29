@@ -74,6 +74,9 @@ define("CL_CUSTOM_SORTING", FALSE);
 # show percent in the position of start time
 define("CL_SHOW_PERCENT", FALSE);
 
+# always start playing from the beginning of program directly from archive
+define("CL_PLAY_FROM_ARC", FALSE);
+
 # size of video window on open channel page
 define("OC_VIDEO_WIDTH",  704);
 define("OC_VIDEO_HEIGHT", 576);
