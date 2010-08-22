@@ -22,8 +22,8 @@ mkdir %TEMP%\web\cfg
 setLocal
 setLocal EnableDelayedExpansion
 
-call :UPDATE_APP_INFO_VERSION appinfo.json "version="
-call :UPDATE_REPOSITORY_VERSION RepositoryInfo.xml "Version"
+if "%1" NEQ "-n" call :UPDATE_APP_INFO_VERSION appinfo.json "version="
+if "%1" NEQ "-n" call :UPDATE_REPOSITORY_VERSION RepositoryInfo.xml "Version"
 
 echo Copying required files:
 xcopy /Q /I /E ..\img %TEMP%\web\img
@@ -38,11 +38,11 @@ move %TEMP%\web\settings.inc %TMP\web\cfg\
 
 echo Packing files...
 %IZARC% -a -p -r -w .\%TAR% %TEMP% > nul
-del KartinaTV-installer.zip
+del .\%ZIP%
 %IZARC% -a -cx .\%ZIP% .\%TAR% > nul
 
 echo Cleaning...
-del KartinaTV.tar
+del .\%TAR%
 rmdir /S /Q %TEMP%
 
 echo Done.
