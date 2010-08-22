@@ -155,6 +155,29 @@
                 - Comments are over all the code now.             
             </Changelog>
         </Application>
+        <Application>
+            <Name>eTVnet</Name>
+            <Version>0.1.0</Version>
+            <DownloadURL>http://pch-etvnet.googlecode.com/svn/trunk/csi/eTVnet-installer.zip</DownloadURL>
+            <Author>consros</Author>
+            <Maintainer>consros</Maintainer>
+            <Description>
+                This plugin (set of scripts) allows to view on Popcorn Hour family the Russian TV archive stored by eTVnet provider.
+                Plugin was tested on A-100, A-110, C-200, A-200, but should probably work on other models and clones.
+            </Description>
+            <Homepage>http://code.google.com/p/pch-etvnet/</Homepage>
+            <InstallScript>Apps/AppInit/appinit.cgi?install&amp;eTVnet.tar</InstallScript>
+            <WebInterfaceURL>http://[NMT_IP]:9999/eTVnet_web/</WebInterfaceURL>
+            <GayaInterfaceURL>http://[NMT_IP]:9999/eTVnet_gaya/</GayaInterfaceURL>
+            <Screenshots>
+                <URL>http://pch-etvnet.googlecode.com/svn/trunk/img/screenshots/catalog.png</URL>
+                <URL>http://pch-etvnet.googlecode.com/svn/trunk/img/screenshots/search.png</URL>
+                <URL>http://pch-etvnet.googlecode.com/svn/trunk/img/screenshots/watch.png</URL>
+            </Screenshots>
+            <UsageInstructions></UsageInstructions>
+            <Forum>http://www.pristavka.de/index.php/topic,6849.new.html#new</Forum>
+            <Changelog></Changelog>
+        </Application>
     </Applications>
     <Themes />
     <Indexes />

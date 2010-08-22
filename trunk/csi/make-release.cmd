@@ -23,7 +23,7 @@ setLocal
 setLocal EnableDelayedExpansion
 
 if "%1" NEQ "-n" call :UPDATE_APP_INFO_VERSION appinfo.json "version="
-if "%1" NEQ "-n" call :UPDATE_REPOSITORY_VERSION RepositoryInfo.xml "Version"
+rem if "%1" NEQ "-n" call :UPDATE_REPOSITORY_VERSION RepositoryInfo.xml "Version"
 
 echo Copying required files:
 xcopy /Q /I /E ..\img %TEMP%\web\img
