@@ -167,14 +167,17 @@
             </Description>
             <Homepage>http://code.google.com/p/pch-etvnet/</Homepage>
             <InstallScript>Apps/AppInit/appinit.cgi?install&amp;eTVnet.tar</InstallScript>
-            <WebInterfaceURL>http://[NMT_IP]:9999/eTVnet_web/</WebInterfaceURL>
+            <WebInterfaceURL>http://[NMT_IP]:9999/eTVnet_web/options.php</WebInterfaceURL>
             <GayaInterfaceURL>http://[NMT_IP]:9999/eTVnet_gaya/</GayaInterfaceURL>
             <Screenshots>
                 <URL>http://pch-etvnet.googlecode.com/svn/trunk/img/screenshots/catalog.png</URL>
                 <URL>http://pch-etvnet.googlecode.com/svn/trunk/img/screenshots/search.png</URL>
                 <URL>http://pch-etvnet.googlecode.com/svn/trunk/img/screenshots/watch.png</URL>
             </Screenshots>
-            <UsageInstructions></UsageInstructions>
+            <UsageInstructions>
+                After installation configure your account using following script:
+                http://[NMT_IP]:9999/eTVnet_web/options.php
+            </UsageInstructions>
             <Forum>http://www.pristavka.de/index.php/topic,6849.new.html#new</Forum>
             <Changelog></Changelog>
         </Application>
