@@ -102,11 +102,10 @@ displayHtmlHeader("NMT playing a channel from Kartina.TV");
 
         # video and audio have different extensions
         if ($vid) {
-            if ($gmt) {
-                print "href=\"$url\" vod";
-            } else {
-                print "href=\"stream.php?id=" . $id . "\" vod";
+            if (! $gmt) {
+                # $url = "stream.php?id=" . $id;
             }
+            print "href=\"$url\" vod";
             if (BUFFER_SIZE > 0) {
                 print " prebuf=\"" . (BUFFER_SIZE * 1024) . "\"";
             }
