@@ -7,6 +7,9 @@ the IP-TV channels broadcasted by katrina.tv provider.
 
 Changes
 -------
+Changes in version 0.9.2:
+- Support of new broadcasting servers
+
 Changes in version 0.9.1:
 - Time zone calculation corrected
 - REPEAT (day jump) and SETUP (options page) are available from archive page
