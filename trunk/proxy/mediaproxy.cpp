@@ -286,9 +286,14 @@ int startProxyServer(int port, int videoConnectionNumber, const char* sampleFile
                 fflush(stdout);
 
                 char id[10] = "";
+                char gmt[20] = "";
                 const char *str = strstr(header, "GET /?");
-                if (NULL != str && sscanf(str, "GET /?id=%[^& ]", &id) == 1) {
-                    string html = ktv.getStreamUrl(id);
+                printf("STR = %s\n", str);
+                if (NULL != str && sscanf(str, "GET /?id=%[^& ]&gmt=%[^& ]", &id, &gmt) >= 1) {
+
+                    printf("ID = %s, GMT = %s\n", id, gmt);
+
+                    string html = ktv.getStreamUrl(id, gmt);
                     // printf("HTML = %s\n", html.c_str());
                     string url = findExpr(html, "url=\"", " ");
                     string hostPort = findExpr(url, "//", "/");
