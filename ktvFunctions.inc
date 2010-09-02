@@ -134,7 +134,7 @@ class KtvFunctions {
     }
 
     function setBroadcastingServer($server) {
-        $server = $server == 1 ? 3 : 1;
+        # currently available values are: 1, 3 and 5
         $url = BASE_URL;
         $url .= "?act=x_set_sserv&m=clients&ssrv=$server";
         return $this->getData($url, "(selecting) server $server");

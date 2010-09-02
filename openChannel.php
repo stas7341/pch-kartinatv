@@ -87,14 +87,26 @@ displayHtmlHeader("NMT playing a channel from Kartina.TV");
         # the link written in onFocusSet will be immediately activated
         print '<a onFocusLoad onFocusSet="returnToIndex" ';
 
+        # use media proxy if provided
+        if (0 != strlen(MEDIA_PROXY)) {
+            $title = $channel->number;
+            $url = MEDIA_PROXY . "?id=" . $id . "&gmt=" . $gmt . "&n=" . $name;
+        }
+
+        /*
         # set info for playback to channel name
         $info = preg_replace('/\s/', '_', $name);
         $info = str_pad($info, 50, "_");
         $url = preg_replace('/\?/', "?___$info=0&", $url);
+         */
 
         # video and audio have different extensions
         if ($vid) {
-            print "href=\"$url\" vod";
+            if ($gmt) {
+                print "href=\"$url\" vod";
+            } else {
+                print "href=\"stream.php?id=" . $id . "\" vod";
+            }
             if (BUFFER_SIZE > 0) {
                 print " prebuf=\"" . (BUFFER_SIZE * 1024) . "\"";
             }

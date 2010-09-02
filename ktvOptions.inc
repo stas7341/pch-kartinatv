@@ -32,13 +32,16 @@ class TextOption extends Option {
 }
 
 class ListOption extends Option {
+    var $valuesList;
     var $optionsList;
 
     function getControlHtml($number) {
         $control = '<select name="value' . $number . '" ' . SC_KEYS . ">\n";
-        foreach ($this->optionsList as $opt) {
-            $sel = $this->value == $opt ? "selected" : "";
-            $control .= "<option value=\"$opt\" $sel>$opt</option>\n";
+        for ($i = 0; $i < count($this->optionsList); $i++) {
+            $opt = $this->optionsList[$i];
+            $val = isset($this->valuesList) ? $this->valuesList[$i] : $opt;
+            $sel = $this->value == $val ? "selected" : "";
+            $control .= "<option value=\"$val\" $sel>$opt</option>\n";
         }
         $control .= "</select>\n";
         return $control;
@@ -46,11 +49,12 @@ class ListOption extends Option {
 
     function parseHtmlOptions($content) {
         $this->optionsList = array();
-        if (preg_match_all('|<option value="\d+\".*?>(.*?)</option>|', 
+        if (preg_match_all('|<option value="(.*?)".*?>(.*?)</option>|', 
             $content, $matches)) 
         {
             for ($i = 0; $i < count($matches[0]); $i++) {
-                $this->optionsList[] = $matches[1][$i];
+                $this->valuesList[] = $matches[1][$i];
+                $this->optionsList[] = $matches[2][$i];
                 if (preg_match('|selected|i', $matches[0][$i])) {
                     $this->value = $matches[1][$i];
                 }
@@ -164,18 +168,8 @@ class KtvBroadcastingServerOption extends ListOption {
         }
     }
     function save($newValue) {
-        $this->ktvFunctions->setBroadcastingServer(
-            $this->findValueIndex($newValue));
+        $this->ktvFunctions->setBroadcastingServer($newValue);
     }
-    
-    function findValueIndex($value) {
-        for ($i = 0; $i < count($this->optionsList); $i++) {
-            if ($this->optionsList[$i] == $value) {
-                return $i;
-            }
-        }
-        return -1;        
-    }    
 }
 
 
