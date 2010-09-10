@@ -159,7 +159,7 @@
         </Application>
         <Application>
             <Name>eTVnet</Name>
-            <Version>0.1.3</Version>
+            <Version>0.1.4</Version>
             <DownloadURL>http://pch-etvnet.googlecode.com/svn/trunk/csi/eTVnet-installer.zip</DownloadURL>
             <Author>consros</Author>
             <Maintainer>consros</Maintainer>
