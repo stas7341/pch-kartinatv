@@ -58,9 +58,9 @@ public:
                 if (m_read_idx == m_write_idx) {
                     // sleep until data is read out
                     // aquiere mutes
-                    pthread_mutex_lock(&wd_mutex);
+                    pthread_mutex_lock(&wr_mutex);
                     // wait for cond var
-                    pthread_cond_wait(&wd_cond, &wd_mutex);
+                    pthread_cond_wait(&wr_cond, &wr_mutex);
                 }
                 continue;
             }
@@ -82,7 +82,7 @@ public:
 
 class Reader {
     unsigned     m_read_idx;
-    const Writer *m_writer;
+    Writer       *m_writer;
     const Byte   *m_buffer;
     bool         m_sync;
 
@@ -95,7 +95,7 @@ class Reader {
     }
 
 public:
-    Reader(const Writer *writer, bool sync)
+    Reader(Writer *writer, bool sync)
         : m_read_idx(0)
         , m_writer(writer)
         , m_buffer(writer->get_buffer())
@@ -177,7 +177,7 @@ static void* reader_thread(void *args)
 
 
 
-int main(int args, char *argv[])
+int main_test(int args, char *argv[])
 {
     queue<Reader*> readers;
     Writer_args    writer;
